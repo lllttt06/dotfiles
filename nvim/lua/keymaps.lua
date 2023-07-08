@@ -45,6 +45,7 @@ keymap("n", "<C-n>", ":NvimTreeOpen<Return>", opts)
 
 -- ファイル検索
 keymap("n", "sf", '<cmd>lua require("telescope.builtin").find_files()<cr>',opts)
+keymap("n", "sg", '<cmd>lua require("telescope.builtin").live_grep()<cr>',opts)
 keymap("n", "sb", '<cmd>lua require("telescope.builtin").buffers()<cr>',opts)
 keymap("n", "sh", '<cmd>lua require("telescope.builtin").help_tags()<cr>',opts)
 
@@ -61,7 +62,4 @@ keymap("i", "<C-e>", "<C-o>$", opts)
 -- Terminal
 keymap("n", "@t", ":terminal<CR>", opts)
 keymap("t", "jj", "<C-\\><C-n>", opts)
-
--- Dart Format
-keymap("n", "ss", ":DartFmt<CR>", opts)
 

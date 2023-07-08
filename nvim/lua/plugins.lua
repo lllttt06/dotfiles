@@ -73,6 +73,4 @@ return require('packer').startup(function(use)
             'stevearc/dressing.nvim', -- optional for vim.ui.select
         },
     }
-
-    use 'dart-lang/dart-vim-plugin'
 end)

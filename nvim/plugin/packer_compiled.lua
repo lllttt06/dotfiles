@@ -94,11 +94,6 @@ _G.packer_plugins = {
     path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/cmp-path",
     url = "https://github.com/hrsh7th/cmp-path"
   },
-  ["dart-vim-plugin"] = {
-    loaded = true,
-    path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/dart-vim-plugin",
-    url = "https://github.com/dart-lang/dart-vim-plugin"
-  },
   ["dressing.nvim"] = {
     loaded = true,
     path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/dressing.nvim",
