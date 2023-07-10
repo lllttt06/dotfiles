@@ -19,21 +19,21 @@ return require('packer').startup(function(use)
     -- 見た目
     use 'folke/tokyonight.nvim'
     use {
-        "nvim-lualine/lualine.nvim", 
-        requires = { "nvim-tree/nvim-web-devicons", opt = true }
+        'nvim-lualine/lualine.nvim', 
+        requires = { 'nvim-tree/nvim-web-devicons', opt = true }
     }
-    use "nvim-tree/nvim-web-devicons"
-    use "kdheepak/tabline.nvim"
-    use "echasnovski/mini.indentscope"
+    use 'nvim-tree/nvim-web-devicons'
+    use 'kdheepak/tabline.nvim'
+    use 'echasnovski/mini.indentscope'
     use {
-      "nvim-treesitter/nvim-treesitter",
-      run = ":TSUpdate",
+      'nvim-treesitter/nvim-treesitter',
+      run = ':TSUpdate',
     }
     
     -- brackets 補完 
     use {
-		"windwp/nvim-autopairs",
-		config = function() require("nvim-autopairs").setup {} end
+		'windwp/nvim-autopairs',
+		config = function() require('nvim-autopairs').setup {} end
 	}
 
     -- ファイル検索
@@ -51,19 +51,19 @@ return require('packer').startup(function(use)
 
     -- Lsp
     use {
-        "williamboman/mason.nvim",
-        "williamboman/mason-lspconfig.nvim",
-        "neovim/nvim-lspconfig",
+        'williamboman/mason.nvim',
+        'williamboman/mason-lspconfig.nvim',
+        'neovim/nvim-lspconfig',
     }
     
     -- Cmp
-    use "hrsh7th/nvim-cmp"
-    use "hrsh7th/cmp-nvim-lsp"
-    use "hrsh7th/vim-vsnip"
-    use "hrsh7th/cmp-path"
-    use "hrsh7th/cmp-buffer"
-    use "hrsh7th/cmp-cmdline" 
-    use "onsails/lspkind.nvim"
+    use 'hrsh7th/nvim-cmp'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/vim-vsnip'
+    use 'hrsh7th/cmp-path'
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-cmdline' 
+    use 'onsails/lspkind.nvim'
 
     -- Flutter
     use {
@@ -76,11 +76,10 @@ return require('packer').startup(function(use)
 
     -- auto save
     use{
-    	"Pocco81/auto-save.nvim",
+    	'Pocco81/auto-save.nvim',
 	    config = function()
-		    require("auto-save").setup {
-			    -- your config goes here
-			    -- or just leave it empty :)
+		    require('auto-save').setup {
+                trigger_events = {'InsertLeave', 'BufLeave', 'FocusLost'},               
 		    }
 	    end,
     }
