@@ -39,6 +39,10 @@ keymap("n", "dw", 'vb"_d', opts)
 
 -- 削除の時にコピーしない
 keymap("n", "d", '"_d', opts)
+keymap("x", "d", '"_d', opts);
+keymap("n", "x", '"_x', opts)
+keymap("x", "x", '"_x', opts);
+keymap("x", "p", '"_dP', opts);
 
 -- ファイルツリーを開く
 keymap("n", "<C-n>", ":NvimTreeOpen<Return>", opts)
@@ -62,4 +66,8 @@ keymap("i", "<C-e>", "<C-o>$", opts)
 -- Terminal
 keymap("n", "@t", ":terminal<CR>", opts)
 keymap("t", "jj", "<C-\\><C-n>", opts)
+
+-- buffer
+keymap("n", "[b", ":bprev<CR>", opts)
+keymap("n", "]b", ":bnext<CR>", opts)
 
