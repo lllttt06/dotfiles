@@ -50,7 +50,7 @@ return require('packer').startup(function(use)
         'karb94/neoscroll.nvim',
         config = function()
             require('neoscroll').setup {
-                mappings = { '<C-u>', '<C-d>', '<C-b>', '<C-f>',
+                mappings = { '<C-u>', '<C-d>', '<C-b>',
                     '<C-y>', 'zt', 'zz', 'zb' },
             }
         end
@@ -60,7 +60,7 @@ return require('packer').startup(function(use)
         config = function()
             require('scrollbar').setup {
                 handle = {
-                    color = '#4FD1C5',
+                    color = '#292e42',
                 },
                 marks = {
                     Search = { color = '#F6AD55' },
