@@ -1,12 +1,13 @@
 -- Mason 経由でインストールしていない LSP 用の設定
--- Global mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
+-- Use LspAttach autocommand to only map the following keys
+-- Lsp
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+vim.keymap.set('n', '<space>qq', vim.diagnostic.setqflist)
 
--- Use LspAttach autocommand to only map the following keys
+
 -- after the language server attaches to the current buffer
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),

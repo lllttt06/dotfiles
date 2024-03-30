@@ -1,25 +1,25 @@
 -- Lspkindのrequire
 local lspkind = require 'lspkind'
 --補完関係の設定
-local cmp = require("cmp")
+local cmp = require('cmp')
 cmp.setup({
   snippet = {
     expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body)
+      vim.fn['vsnip#anonymous'](args.body)
     end,
   },
-  sources = { 
-    { name = "nvim_lsp" },--ソース類を設定
+  sources = {
+    { name = 'nvim_lsp' },--ソース類を設定
     { name = 'vsnip' }, -- For vsnip users.
-    { name = "buffer" },
-    { name = "path" },
+    { name = 'buffer' },
+    { name = 'path' },
   },
   mapping = cmp.mapping.preset.insert({
-    ["<C-p>"] = cmp.mapping.select_prev_item(), --Ctrl+pで補完欄を一つ上に移動
-    ["<C-n>"] = cmp.mapping.select_next_item(), --Ctrl+nで補完欄を一つ下に移動
-    ['<C-l>'] = cmp.mapping.complete(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(), --Ctrl+pで補完欄を一つ上に移動
+    ['<C-n>'] = cmp.mapping.select_next_item(), --Ctrl+nで補完欄を一つ下に移動
+    -- ['<C-l>'] = cmp.mapping.complete(),  insert モードの keymap で左に移動を当てているため無効化
     ['<C-e>'] = cmp.mapping.abort(),
-    ["<C-y>"] = cmp.mapping.confirm({ select = true }),--Ctrl+yで補完を選択確定
+    ['<C-y>'] = cmp.mapping.confirm({ select = true }),--Ctrl+yで補完を選択確定
   }),
   experimental = {
     ghost_text = false,
@@ -36,16 +36,16 @@ cmp.setup({
   }
 })
 
-cmp.setup.cmdline("/", {
+cmp.setup.cmdline('/', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
-    { name = "buffer" },　--ソース類を設定
+    { name = 'buffer' }, --ソース類を設定
   },
 })
 
-cmp.setup.cmdline(":", {
+cmp.setup.cmdline(':', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
-    { name = "path" },　--ソース類を設定
+    { name = 'path' }, --ソース類を設定
   },
 })
