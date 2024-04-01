@@ -6,6 +6,13 @@ return require('packer').startup(function(use)
     use {
         'folke/tokyonight.nvim',
         config = function()
+            require("tokyonight").setup {
+                transparent = true,
+                styles = {
+                    sidebars = "transparent",
+                    floats = "transparent",
+                },
+            }
             vim.cmd([[colorscheme tokyonight-night]])
         end
     }
@@ -26,6 +33,16 @@ return require('packer').startup(function(use)
             }
         end,
     }
+
+    -- 画像表示
+    -- use {
+    --     'edluffy/hologram.nvim',
+    --     config = function()
+    --         require('hologram').setup {
+    --             auto_display = true -- WIP automatic markdown image display, may be prone to breaking
+    --         }
+    --     end
+    -- }
 
     -- Code highlight
     use {
@@ -60,7 +77,7 @@ return require('packer').startup(function(use)
         config = function()
             require('scrollbar').setup {
                 handle = {
-                    color = '#292e42',
+                    color = '#4FD1C5',
                 },
                 marks = {
                     Search = { color = '#F6AD55' },
@@ -90,7 +107,10 @@ return require('packer').startup(function(use)
     use 'nvim-lua/plenary.nvim'
     use {
         'nvim-telescope/telescope.nvim',
-        config = function() require('telescope').load_extension('flutter') end
+        config = function()
+            require('telescope').load_extension('flutter')
+            require('telescope').load_extension('dap')
+        end
     }
 
     -- ファイルツリー
@@ -149,6 +169,29 @@ return require('packer').startup(function(use)
 
     -- Debugger
     use 'mfussenegger/nvim-dap'
+    use 'nvim-telescope/telescope-dap.nvim'
+    use {
+        'rcarriga/nvim-dap-ui',
+        config = function()
+            require("dapui").setup {
+                icons = { expanded = "▾", collapsed = "▸" },
+                expand_lines = vim.fn.has("nvim-0.7"),
+                layouts = {
+                    {
+                        elements = {
+                            { id = "scopes", size = 0.25 },
+                            "breakpoints",
+                            "stacks",
+                            "watches",
+                        },
+                        size = 10, -- columns
+                        position = "bottom",
+                    },
+                },
+            }
+        end
+    }
+
 
     -- auto save
     use {

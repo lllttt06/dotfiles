@@ -182,6 +182,12 @@ _G.packer_plugins = {
     path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/nvim-dap",
     url = "https://github.com/mfussenegger/nvim-dap"
   },
+  ["nvim-dap-ui"] = {
+    config = { "\27LJ\2\n£\2\0\0\a\0\16\0\0236\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0026\3\6\0009\3\a\0039\3\b\3'\5\t\0B\3\2\2=\3\n\0024\3\3\0005\4\r\0005\5\f\0005\6\v\0>\6\1\5=\5\14\4>\4\1\3=\3\15\2B\0\2\1K\0\1\0\flayouts\relements\1\0\2\rposition\vbottom\tsize\3\n\1\5\0\0\0\16breakpoints\vstacks\fwatches\1\0\2\aid\vscopes\tsize\4\0ÄÄ¿˛\3\17expand_lines\rnvim-0.7\bhas\afn\bvim\nicons\1\0\0\1\0\2\rexpanded\b‚ñæ\14collapsed\b‚ñ∏\nsetup\ndapui\frequire\0" },
+    loaded = true,
+    path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/nvim-dap-ui",
+    url = "https://github.com/rcarriga/nvim-dap-ui"
+  },
   ["nvim-highlight-colors"] = {
     config = { "\27LJ\2\nG\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\26nvim-highlight-colors\frequire\0" },
     loaded = true,
@@ -194,7 +200,7 @@ _G.packer_plugins = {
     url = "https://github.com/neovim/nvim-lspconfig"
   },
   ["nvim-scrollbar"] = {
-    config = { "\27LJ\2\n¶\2\0\0\5\0\20\0\0236\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0025\3\a\0005\4\6\0=\4\b\0035\4\t\0=\4\n\0035\4\v\0=\4\f\0035\4\r\0=\4\14\0035\4\15\0=\4\16\0035\4\17\0=\4\18\3=\3\19\2B\0\2\1K\0\1\0\nmarks\tMisc\1\0\1\ncolor\f#805AD5\tHint\1\0\1\ncolor\f#68D391\tInfo\1\0\1\ncolor\f#4FD1C5\tWarn\1\0\1\ncolor\f#ED8936\nError\1\0\1\ncolor\f#F56565\vSearch\1\0\0\1\0\1\ncolor\f#F6AD55\vhandle\1\0\0\1\0\1\ncolor\f#292e42\nsetup\14scrollbar\frequire\0" },
+    config = { "\27LJ\2\n¶\2\0\0\5\0\20\0\0236\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0025\3\a\0005\4\6\0=\4\b\0035\4\t\0=\4\n\0035\4\v\0=\4\f\0035\4\r\0=\4\14\0035\4\15\0=\4\16\0035\4\17\0=\4\18\3=\3\19\2B\0\2\1K\0\1\0\nmarks\tMisc\1\0\1\ncolor\f#805AD5\tHint\1\0\1\ncolor\f#68D391\tInfo\1\0\1\ncolor\f#4FD1C5\tWarn\1\0\1\ncolor\f#ED8936\nError\1\0\1\ncolor\f#F56565\vSearch\1\0\0\1\0\1\ncolor\f#F6AD55\vhandle\1\0\0\1\0\1\ncolor\f#4FD1C5\nsetup\14scrollbar\frequire\0" },
     loaded = true,
     path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/nvim-scrollbar",
     url = "https://github.com/petertriho/nvim-scrollbar"
@@ -231,14 +237,19 @@ _G.packer_plugins = {
     path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/tabline.nvim",
     url = "https://github.com/kdheepak/tabline.nvim"
   },
+  ["telescope-dap.nvim"] = {
+    loaded = true,
+    path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/telescope-dap.nvim",
+    url = "https://github.com/nvim-telescope/telescope-dap.nvim"
+  },
   ["telescope.nvim"] = {
-    config = { "\27LJ\2\nL\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0B\0\2\1K\0\1\0\fflutter\19load_extension\14telescope\frequire\0" },
+    config = { "\27LJ\2\nh\0\0\3\0\5\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0B\0\2\0016\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\4\0B\0\2\1K\0\1\0\bdap\fflutter\19load_extension\14telescope\frequire\0" },
     loaded = true,
     path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
   },
   ["tokyonight.nvim"] = {
-    config = { "\27LJ\2\n@\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0!colorscheme tokyonight-night\bcmd\bvim\0" },
+    config = { "\27LJ\2\nª\1\0\0\4\0\t\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\0016\0\6\0009\0\a\0'\2\b\0B\0\2\1K\0\1\0!colorscheme tokyonight-night\bcmd\bvim\vstyles\1\0\2\vfloats\16transparent\rsidebars\16transparent\1\0\1\16transparent\2\nsetup\15tokyonight\frequire\0" },
     loaded = true,
     path = "/Users/s18556/.local/share/nvim/site/pack/packer/start/tokyonight.nvim",
     url = "https://github.com/folke/tokyonight.nvim"
@@ -251,22 +262,14 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
--- Config for: flutter-tools.nvim
-time([[Config for flutter-tools.nvim]], true)
-try_loadstring("\27LJ\2\nt\0\1\4\0\6\0\f6\1\0\0'\3\1\0B\1\2\0029\1\2\0014\2\0\0=\2\3\0016\1\0\0'\3\4\0B\1\2\0029\1\5\1B\1\1\1K\0\1\0\18load_launchjs\19dap.ext.vscode\tdart\19configurations\bdap\frequire∏\2\1\0\5\0\14\0\0196\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0025\3\6\0004\4\0\0=\4\a\3=\3\b\0025\3\t\0004\4\0\0=\4\n\0033\4\v\0=\4\f\3=\3\r\2B\0\2\1K\0\1\0\rdebugger\28register_configurations\0\26exception_breakpoints\1\0\2\16run_via_dap\2\fenabled\2\rsettings\28analysisExcludedFolders\1\0\0\14dev_tools\1\0\2\14autostart\2\22auto_open_browser\1\1\0\1\23flutter_lookup_cmd\23asdf where flutter\nsetup\18flutter-tools\frequire\0", "config", "flutter-tools.nvim")
-time([[Config for flutter-tools.nvim]], false)
--- Config for: tokyonight.nvim
-time([[Config for tokyonight.nvim]], true)
-try_loadstring("\27LJ\2\n@\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0!colorscheme tokyonight-night\bcmd\bvim\0", "config", "tokyonight.nvim")
-time([[Config for tokyonight.nvim]], false)
--- Config for: lualine.nvim
-time([[Config for lualine.nvim]], true)
-try_loadstring("\27LJ\2\n9\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\flualine\frequire\0", "config", "lualine.nvim")
-time([[Config for lualine.nvim]], false)
--- Config for: gitsigns.nvim
-time([[Config for gitsigns.nvim]], true)
-try_loadstring("\27LJ\2\nn\0\0\3\0\4\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\0016\0\0\0'\2\3\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0 scrollbar.handlers.gitsigns\nsetup\rgitsigns\frequire\0", "config", "gitsigns.nvim")
-time([[Config for gitsigns.nvim]], false)
+-- Config for: telescope.nvim
+time([[Config for telescope.nvim]], true)
+try_loadstring("\27LJ\2\nh\0\0\3\0\5\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0B\0\2\0016\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\4\0B\0\2\1K\0\1\0\bdap\fflutter\19load_extension\14telescope\frequire\0", "config", "telescope.nvim")
+time([[Config for telescope.nvim]], false)
+-- Config for: nvim-treesitter
+time([[Config for nvim-treesitter]], true)
+try_loadstring("\27LJ\2\nw\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\14highlight\1\0\1\venable\2\1\0\1\17auto_install\2\nsetup\28nvim-treesitter.configs\frequire\0", "config", "nvim-treesitter")
+time([[Config for nvim-treesitter]], false)
 -- Config for: nvim-highlight-colors
 time([[Config for nvim-highlight-colors]], true)
 try_loadstring("\27LJ\2\nG\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\26nvim-highlight-colors\frequire\0", "config", "nvim-highlight-colors")
@@ -275,14 +278,38 @@ time([[Config for nvim-highlight-colors]], false)
 time([[Config for neoscroll.nvim]], true)
 try_loadstring("\27LJ\2\nt\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\rmappings\1\0\0\1\b\0\0\n<C-u>\n<C-d>\n<C-b>\n<C-y>\azt\azz\azb\nsetup\14neoscroll\frequire\0", "config", "neoscroll.nvim")
 time([[Config for neoscroll.nvim]], false)
--- Config for: nvim-scrollbar
-time([[Config for nvim-scrollbar]], true)
-try_loadstring("\27LJ\2\n¶\2\0\0\5\0\20\0\0236\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0025\3\a\0005\4\6\0=\4\b\0035\4\t\0=\4\n\0035\4\v\0=\4\f\0035\4\r\0=\4\14\0035\4\15\0=\4\16\0035\4\17\0=\4\18\3=\3\19\2B\0\2\1K\0\1\0\nmarks\tMisc\1\0\1\ncolor\f#805AD5\tHint\1\0\1\ncolor\f#68D391\tInfo\1\0\1\ncolor\f#4FD1C5\tWarn\1\0\1\ncolor\f#ED8936\nError\1\0\1\ncolor\f#F56565\vSearch\1\0\0\1\0\1\ncolor\f#F6AD55\vhandle\1\0\0\1\0\1\ncolor\f#292e42\nsetup\14scrollbar\frequire\0", "config", "nvim-scrollbar")
-time([[Config for nvim-scrollbar]], false)
 -- Config for: nvim-autopairs
 time([[Config for nvim-autopairs]], true)
 try_loadstring("\27LJ\2\n@\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\19nvim-autopairs\frequire\0", "config", "nvim-autopairs")
 time([[Config for nvim-autopairs]], false)
+-- Config for: flutter-tools.nvim
+time([[Config for flutter-tools.nvim]], true)
+try_loadstring("\27LJ\2\nt\0\1\4\0\6\0\f6\1\0\0'\3\1\0B\1\2\0029\1\2\0014\2\0\0=\2\3\0016\1\0\0'\3\4\0B\1\2\0029\1\5\1B\1\1\1K\0\1\0\18load_launchjs\19dap.ext.vscode\tdart\19configurations\bdap\frequire∏\2\1\0\5\0\14\0\0196\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0025\3\6\0004\4\0\0=\4\a\3=\3\b\0025\3\t\0004\4\0\0=\4\n\0033\4\v\0=\4\f\3=\3\r\2B\0\2\1K\0\1\0\rdebugger\28register_configurations\0\26exception_breakpoints\1\0\2\16run_via_dap\2\fenabled\2\rsettings\28analysisExcludedFolders\1\0\0\14dev_tools\1\0\2\14autostart\2\22auto_open_browser\1\1\0\1\23flutter_lookup_cmd\23asdf where flutter\nsetup\18flutter-tools\frequire\0", "config", "flutter-tools.nvim")
+time([[Config for flutter-tools.nvim]], false)
+-- Config for: gitsigns.nvim
+time([[Config for gitsigns.nvim]], true)
+try_loadstring("\27LJ\2\nn\0\0\3\0\4\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\0016\0\0\0'\2\3\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0 scrollbar.handlers.gitsigns\nsetup\rgitsigns\frequire\0", "config", "gitsigns.nvim")
+time([[Config for gitsigns.nvim]], false)
+-- Config for: lualine.nvim
+time([[Config for lualine.nvim]], true)
+try_loadstring("\27LJ\2\n9\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\flualine\frequire\0", "config", "lualine.nvim")
+time([[Config for lualine.nvim]], false)
+-- Config for: tokyonight.nvim
+time([[Config for tokyonight.nvim]], true)
+try_loadstring("\27LJ\2\nª\1\0\0\4\0\t\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\0016\0\6\0009\0\a\0'\2\b\0B\0\2\1K\0\1\0!colorscheme tokyonight-night\bcmd\bvim\vstyles\1\0\2\vfloats\16transparent\rsidebars\16transparent\1\0\1\16transparent\2\nsetup\15tokyonight\frequire\0", "config", "tokyonight.nvim")
+time([[Config for tokyonight.nvim]], false)
+-- Config for: nvim-dap-ui
+time([[Config for nvim-dap-ui]], true)
+try_loadstring("\27LJ\2\n£\2\0\0\a\0\16\0\0236\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0026\3\6\0009\3\a\0039\3\b\3'\5\t\0B\3\2\2=\3\n\0024\3\3\0005\4\r\0005\5\f\0005\6\v\0>\6\1\5=\5\14\4>\4\1\3=\3\15\2B\0\2\1K\0\1\0\flayouts\relements\1\0\2\rposition\vbottom\tsize\3\n\1\5\0\0\0\16breakpoints\vstacks\fwatches\1\0\2\aid\vscopes\tsize\4\0ÄÄ¿˛\3\17expand_lines\rnvim-0.7\bhas\afn\bvim\nicons\1\0\0\1\0\2\rexpanded\b‚ñæ\14collapsed\b‚ñ∏\nsetup\ndapui\frequire\0", "config", "nvim-dap-ui")
+time([[Config for nvim-dap-ui]], false)
+-- Config for: nvim-scrollbar
+time([[Config for nvim-scrollbar]], true)
+try_loadstring("\27LJ\2\n¶\2\0\0\5\0\20\0\0236\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0025\3\a\0005\4\6\0=\4\b\0035\4\t\0=\4\n\0035\4\v\0=\4\f\0035\4\r\0=\4\14\0035\4\15\0=\4\16\0035\4\17\0=\4\18\3=\3\19\2B\0\2\1K\0\1\0\nmarks\tMisc\1\0\1\ncolor\f#805AD5\tHint\1\0\1\ncolor\f#68D391\tInfo\1\0\1\ncolor\f#4FD1C5\tWarn\1\0\1\ncolor\f#ED8936\nError\1\0\1\ncolor\f#F56565\vSearch\1\0\0\1\0\1\ncolor\f#F6AD55\vhandle\1\0\0\1\0\1\ncolor\f#4FD1C5\nsetup\14scrollbar\frequire\0", "config", "nvim-scrollbar")
+time([[Config for nvim-scrollbar]], false)
+-- Config for: mini.indentscope
+time([[Config for mini.indentscope]], true)
+try_loadstring("\27LJ\2\nP\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\1\vsymbol\b‚ñè\nsetup\21mini.indentscope\frequire\0", "config", "mini.indentscope")
+time([[Config for mini.indentscope]], false)
 -- Config for: tabline.nvim
 time([[Config for tabline.nvim]], true)
 try_loadstring("\27LJ\2\n9\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\ftabline\frequire\0", "config", "tabline.nvim")
@@ -295,18 +322,6 @@ time([[Config for nvim-comment]], false)
 time([[Config for auto-save.nvim]], true)
 try_loadstring("\27LJ\2\nx\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\19trigger_events\1\0\0\1\4\0\0\16InsertLeave\rBufLeave\14FocusLost\nsetup\14auto-save\frequire\0", "config", "auto-save.nvim")
 time([[Config for auto-save.nvim]], false)
--- Config for: mini.indentscope
-time([[Config for mini.indentscope]], true)
-try_loadstring("\27LJ\2\nP\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\1\vsymbol\b‚ñè\nsetup\21mini.indentscope\frequire\0", "config", "mini.indentscope")
-time([[Config for mini.indentscope]], false)
--- Config for: telescope.nvim
-time([[Config for telescope.nvim]], true)
-try_loadstring("\27LJ\2\nL\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0B\0\2\1K\0\1\0\fflutter\19load_extension\14telescope\frequire\0", "config", "telescope.nvim")
-time([[Config for telescope.nvim]], false)
--- Config for: nvim-treesitter
-time([[Config for nvim-treesitter]], true)
-try_loadstring("\27LJ\2\nw\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\14highlight\1\0\1\venable\2\1\0\1\17auto_install\2\nsetup\28nvim-treesitter.configs\frequire\0", "config", "nvim-treesitter")
-time([[Config for nvim-treesitter]], false)
 
 _G._packer.inside_compile = false
 if _G._packer.needs_bufread == true then
