@@ -6,13 +6,7 @@ return require('packer').startup(function(use)
     use {
         'folke/tokyonight.nvim',
         config = function()
-            require("tokyonight").setup {
-                transparent = true,
-                styles = {
-                    sidebars = "transparent",
-                    floats = "transparent",
-                },
-            }
+            require('tokyonight').setup {}
             vim.cmd([[colorscheme tokyonight-night]])
         end
     }
@@ -22,8 +16,46 @@ return require('packer').startup(function(use)
         requires = { 'nvim-tree/nvim-web-devicons', opt = true },
         config = function() require('lualine').setup {} end
     }
-    use { 'kdheepak/tabline.nvim',
-        config = function() require('tabline').setup {} end
+    use {
+        'akinsho/bufferline.nvim',
+        tag = "*",
+        requires = 'nvim-tree/nvim-web-devicons',
+        config = function()
+            vim.opt.termguicolors = true
+
+            require('bufferline').setup {
+                highlights = {
+                    buffer_selected = { bold = true },
+                    diagnostic_selected = { bold = true },
+                    info_selected = { bold = true },
+                    info_diagnostic_selected = { bold = true },
+                    warning_selected = { bold = true },
+                    warning_diagnostic_selected = { bold = true },
+                    error_selected = { bold = true },
+                    error_diagnostic_selected = { bold = true },
+                },
+                options = {
+                    offsets = { {
+                        filetype = "NvimTree",
+                        text = "NvimTree",
+                        text_align = "center",
+                        separator = true, }
+                    },
+                    color_icons = true,
+                    diagnostics = 'nvim_lsp',
+                    separator_style = "slant",
+                    diagnostics_indicator = function(_, _, diagnostics_dict, _)
+                        local s = " "
+                        for e, n in pairs(diagnostics_dict) do
+                            local sym = e == "error" and " "
+                                or (e == "warning" and " " or " ")
+                            s = s .. sym .. n .. ' '
+                        end
+                        return s
+                    end
+                },
+            }
+        end
     }
     use {
         'echasnovski/mini.indentscope',
@@ -32,6 +64,73 @@ return require('packer').startup(function(use)
                 symbol = '▏',
             }
         end,
+    }
+    -- 非アクティブウィンドウに影をつける
+    use {
+        'sunjon/shade.nvim',
+        config = function()
+            require('shade').setup {
+                overlay_opacity = 50,
+                opacity_step = 1,
+            }
+        end
+    }
+
+    -- 通知
+    use {
+        'j-hui/fidget.nvim',
+        config = function() require('fidget').setup {} end,
+    }
+
+
+    use {
+        'rcarriga/nvim-notify',
+        config = function()
+            require('notify').setup {
+                stages = 'fade_in_slide_out',
+                background_colour = 'FloatShadow',
+                timeout = 3000,
+            }
+            vim.notify = require('notify')
+        end
+    }
+
+    use {
+        'folke/noice.nvim',
+        event = 'VimEnter',
+        config = function()
+            require('noice').setup {
+                lsp = {
+                    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+                    override = {
+                        ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+                        ['vim.lsp.util.stylize_markdown'] = true,
+                        ['cmp.entry.get_documentation'] = true, -- requires hrsh7th/nvim-cmp
+                    },
+                },
+                -- you can enable a preset for easier configuration
+                presets = {
+                    bottom_search = true,         -- use a classic bottom cmdline for search
+                    command_palette = true,       -- position the cmdline and popupmenu together
+                    long_message_to_split = true, -- long messages will be sent to a split
+                    inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+                    lsp_doc_border = false,       -- add a border to hover docs and signature help
+                },
+                routes = {
+                    {
+                        filter = {
+                            event = "msg_show",
+                            find = "%[Buffer%]",
+                        },
+                        opts = { skip = true },
+                    },
+                },
+            }
+        end,
+        requires = {
+            'MunifTanjim/nui.nvim',
+            'rcarriga/nvim-notify',
+        }
     }
 
     -- 画像表示
@@ -94,7 +193,12 @@ return require('packer').startup(function(use)
     -- コメントアウト
     use {
         'terrortylor/nvim-comment',
-        config = function() require('nvim_comment').setup {} end
+        config = function()
+            require('nvim_comment').setup {
+                line_mapping = "gk",
+                operator_mapping = "gkk",
+            }
+        end
     }
 
     -- brackets 補完
@@ -109,7 +213,8 @@ return require('packer').startup(function(use)
         'nvim-telescope/telescope.nvim',
         config = function()
             require('telescope').load_extension('flutter')
-            require('telescope').load_extension('dap')
+            -- require('telescope').load_extension('dap')
+            require('telescope').load_extension('notify')
         end
     }
 
@@ -137,6 +242,41 @@ return require('packer').startup(function(use)
     use 'hrsh7th/cmp-cmdline'
     use 'onsails/lspkind.nvim'
 
+    -- Debugger
+    -- use 'mfussenegger/nvim-dap'
+    -- use 'nvim-telescope/telescope-dap.nvim'
+    -- use 'nvim-neotest/nvim-nio'
+    -- use {
+    --     'rcarriga/nvim-dap-ui',
+    --     requires = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
+    --     config = function()
+    --         require('dapui').setup({
+    --             icons = { expanded = '▾', collapsed = '▸' },
+    --             expand_lines = vim.fn.has('nvim-0.7'),
+    --             layouts = {
+    --                 {
+    --                     elements = {
+    --                         { id = 'scopes', size = 0.25 },
+    --                         'breakpoints',
+    --                         'stacks',
+    --                         'watches',
+    --                     },
+    --                     size = 10, -- columns
+    --                     position = 'bottom',
+    --                 },
+    --             },
+    --         })
+    --     end
+    -- }
+    -- use {
+    --     'folke/neodev.nvim',
+    --     config = function()
+    --         require('neodev').setup {
+    --             library = { plugins = { 'nvim-dap-ui' }, types = true },
+    --         }
+    --     end
+    -- }
+
     -- Flutter
     use {
         'akinsho/flutter-tools.nvim',
@@ -147,47 +287,30 @@ return require('packer').startup(function(use)
         config = function()
             require('flutter-tools').setup {
                 flutter_lookup_cmd = 'asdf where flutter',
+                widget_guides = { enabled = true },
                 dev_tools = {
-                    autostart = true,          -- autostart devtools server if not detected
-                    auto_open_browser = false, -- Automatically opens devtools in the browser
+                    autostart = true,
+                    auto_open_browser = false,
                 },
                 settings = {
-                    analysisExcludedFolders = {},
-                },
-                debugger = {
-                    enabled = true,
-                    run_via_dap = true,
-                    exception_breakpoints = {},
-                    register_configurations = function(_)
-                        require('dap').configurations.dart = {}
-                        require('dap.ext.vscode').load_launchjs()
-                    end,
-                },
-            }
-        end
-    }
-
-    -- Debugger
-    use 'mfussenegger/nvim-dap'
-    use 'nvim-telescope/telescope-dap.nvim'
-    use {
-        'rcarriga/nvim-dap-ui',
-        config = function()
-            require("dapui").setup {
-                icons = { expanded = "▾", collapsed = "▸" },
-                expand_lines = vim.fn.has("nvim-0.7"),
-                layouts = {
-                    {
-                        elements = {
-                            { id = "scopes", size = 0.25 },
-                            "breakpoints",
-                            "stacks",
-                            "watches",
-                        },
-                        size = 10, -- columns
-                        position = "bottom",
+                    showTodos = true,
+                    completeFunctionCalls = true,
+                    analysisExcludedFolders = {
+                        vim.fn.expand('$HOME/.pub-cache'),
                     },
+                    renameFilesWithClasses = 'prompt',
+                    updateImportsOnRename = true,
+                    enableSnippets = true
                 },
+                -- debugger = {
+                --     enabled = true,
+                --     -- run_via_dap = true,
+                --     exception_breakpoints = {},
+                --     register_configurations = function(_)
+                --         require("dap").configurations.dart = {}
+                --         require('dap.ext.vscode').load_launchjs()
+                --     end,
+                -- },
             }
         end
     }
@@ -218,4 +341,7 @@ return require('packer').startup(function(use)
             'nvim-lua/plenary.nvim',
         },
     }
+
+    -- Multi cursor
+    use 'mg979/vim-visual-multi'
 end)
