@@ -57,14 +57,37 @@ return require('packer').startup(function(use)
             }
         end
     }
+
+    -- Chunk の表示
     use {
-        'echasnovski/mini.indentscope',
+        'shellRaining/hlchunk.nvim',
         config = function()
-            require('mini.indentscope').setup {
-                symbol = '▏',
+            require('hlchunk').setup {
+                chunk = {
+                    notify = true,
+                    use_treesitter = true,
+                    chars = {
+                        horizontal_line = "─",
+                        vertical_line = "│",
+                        left_top = "╭",
+                        left_bottom = "╰",
+                        right_arrow = ">",
+                    },
+                    style = {
+                        { fg = "#4FD1C5" },
+                        { fg = "#c21f30" }, -- this fg is used to highlight wrong chunk
+                    },
+                    textobject = "",
+                    max_file_size = 1024 * 1024,
+                    error_sign = true,
+                },
+                indent = {
+                    enable = false,
+                }
             }
         end,
     }
+
     -- 非アクティブウィンドウに影をつける
     use {
         'sunjon/shade.nvim',
@@ -72,6 +95,21 @@ return require('packer').startup(function(use)
             require('shade').setup {
                 overlay_opacity = 50,
                 opacity_step = 1,
+            }
+        end
+    }
+
+
+    -- キーマップの表示
+    use {
+        "folke/which-key.nvim",
+        config = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 300
+            require("which-key").setup {
+                -- your configuration comes here
+                -- or leave it empty to use the default settings
+                -- refer to the configuration section below
             }
         end
     }
