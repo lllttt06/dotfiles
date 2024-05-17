@@ -262,6 +262,13 @@ return require('packer').startup(function(use)
         requires = {
             'nvim-tree/nvim-web-devicons',
         },
+        config = function()
+            require('nvim-tree').setup {
+                filters = {
+                    git_ignored = false, -- デフォルトはtrue
+                },
+            }
+        end
     }
 
     -- Lsp
