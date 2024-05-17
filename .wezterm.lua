@@ -1,7 +1,10 @@
+local wezterm = require 'wezterm'
+
 -- Common settings
 local config = {
     color_scheme = "duskfox",
     font_size = 15,
+    font = wezterm.font("Hack Nerd Font"),
     front_end = "OpenGL",
 
     window_background_opacity = 1,
