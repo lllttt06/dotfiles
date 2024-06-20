@@ -1,0 +1,7 @@
+require('core.autocmds')
+require('core.autopairs')
+require('core.keymaps')
+require('core.my_lspconfig_for_mason')
+require('core.my_lspconfig')
+require('core.my_nvim_cmp')
+require('core.options')

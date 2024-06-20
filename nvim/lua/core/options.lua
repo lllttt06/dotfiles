@@ -25,7 +25,7 @@ vim.opt.matchtime = 1 -- 入力された文字列がマッチするまでにか�
 
 -- カラースキーム
 vim.opt.termguicolors = true -- 24 ビットカラーを使用
-vim.opt.background = "dark" -- ダークカラーを使用する
+vim.opt.background = 'dark' -- drak カラー使用する
 
 -- インデント
 vim.opt.shiftwidth = 4 -- シフト幅を4に設定する
@@ -47,3 +47,4 @@ vim.opt.winblend = 20 -- ウィンドウの不透明度
 vim.opt.pumblend = 20 -- ポップアップメニューの不透明度
 vim.opt.showtabline = 2 -- タブラインを表示する設定
 vim.opt.signcolumn = "yes" -- サインカラムを表示
+
