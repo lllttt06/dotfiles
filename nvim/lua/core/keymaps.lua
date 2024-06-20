@@ -32,9 +32,8 @@ keymap("n", "x", '"_x', opts)
 keymap("x", "x", '"_x', opts)
 keymap("x", "p", '"_dP', opts)
 
--- ファイルツリーを開く
--- keymap("n", "<C-n>", ":NvimTreeOpen<Return>", opts)
--- keymap("n", "<C-f>", ":NvimTreeFindFile<Return>", opts)
+-- バッファを中央に寄せる
+keymap("n", "-", ":NoNeckPain<Return>", opts)
 
 -- ファイル検索
 keymap("n", "sf", '<cmd>lua require("telescope.builtin").find_files()<cr>',opts)

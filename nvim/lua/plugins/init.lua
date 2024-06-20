@@ -59,23 +59,26 @@ return {
         end
     },
 
-    -- 中央よせ
-    -- {
-    --     "shortcuts/no-neck-pain.nvim", version = "*"
-    -- },
+    -- 中央寄せ
+    {
+        "shortcuts/no-neck-pain.nvim",
+        version = "*",
+    },
+
     -- Chunk の表示
-    -- {
-    --     "lukas-reineke/indent-blankline.nvim",
-    --     main = "ibl",
-    --     opts = {},
-    -- },
+    {
+        "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
+        opts = {
+            scope = { enabled = true },
+        },
+    },
 
     -- 通知
     {
         "j-hui/fidget.nvim",
         config = function() require("fidget").setup {} end,
     },
-
     {
         "rcarriga/nvim-notify",
         config = function()
@@ -87,7 +90,6 @@ return {
             vim.notify = require("notify")
         end
     },
-
     {
         "folke/noice.nvim",
         event = "VimEnter",
@@ -120,7 +122,7 @@ return {
                 },
             }
         end,
-        dependencies ={
+        dependencies = {
             "muniftanjim/nui.nvim",
             "rcarriga/nvim-notify",
         }
@@ -204,20 +206,49 @@ return {
 
     -- ファイルビューワ
     {
-        "stevearc/oil.nvim",
-        opts = {},
-        dependencies = { "nvim-tree/nvim-web-devicons" },
+        'echasnovski/mini.nvim',
+        version = false,
+        keys = {
+            -- mini.filesオープン用のショートカット
+            { '<C-n>', ':lua MiniFiles.open()<CR>' }
+        },
         config = function()
-            require("oil").setup {
-                columns = {
-                    "icon",
-                    "size",
-                    "mtime",
+            require('mini.files').setup({
+                mappings = {
+                    go_in_plus = 'o',
                 },
-                vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "open parent directory" })
-            }
+            })
         end,
     },
+    -- {
+    --     "stevearc/oil.nvim",
+    --     opts = {},
+    --     dependencies = { "nvim-tree/nvim-web-devicons" },
+    --     config = function()
+    --         require("oil").setup {
+    --             columns = {
+    --                 "icon",
+    --                 "size",
+    --                 "mtime",
+    --             },
+    --             view_options = {
+    --                 show_hidden = true,
+    --             },
+    --             -- Configuration for the floating window in oil.open_float
+    --             float = {
+    --                 -- Padding around the floating window
+    --                 padding = 10,
+    --                 border = "rounded",
+    --                 win_options = {
+    --                     winblend = 0,
+    --                 },
+    --             },
+    --
+    --             vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "open parent directory" })
+    --         }
+    --     end,
+    -- },
+
     -- lsp
     {
         "williamboman/mason.nvim"
@@ -290,7 +321,7 @@ return {
     -- flutter
     {
         "akinsho/flutter-tools.nvim",
-        dependencies ={
+        dependencies = {
             "nvim-lua/plenary.nvim",
             "stevearc/dressing.nvim",
         },
@@ -338,7 +369,7 @@ return {
     -- git
     {
         "kdheepak/lazygit.nvim",
-        dependencies ={
+        dependencies = {
             "nvim-lua/plenary.nvim",
         },
     },

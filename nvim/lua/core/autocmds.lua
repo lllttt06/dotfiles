@@ -8,3 +8,9 @@ vim.cmd [[
   autocmd TermOpen * setlocal norelativenumber
   autocmd TermOpen * setlocal nonumber
 ]]
+
+-- Neovimを開いた際に :NoNeckPain コマンドを実行
+vim.api.nvim_create_autocmd("VimEnter", {
+    pattern = "*",
+    command = "NoNeckPain"
+})
