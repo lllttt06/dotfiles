@@ -1,12 +1,12 @@
 return {
-    -- UI
+    -- カラーテーマ
     {
-        "Mofiqul/vscode.nvim",
+        "savq/melange-nvim",
         lazy = false,
         priority = 1000,
         config = function()
-            require("vscode").setup {}
-            vim.cmd("colorscheme vscode")
+            vim.opt.termguicolors = true
+            vim.cmd("colorscheme melange")
         end
     },
     {
@@ -213,11 +213,7 @@ return {
             { '<C-n>', ':lua MiniFiles.open()<CR>' }
         },
         config = function()
-            require('mini.files').setup({
-                mappings = {
-                    go_in_plus = 'o',
-                },
-            })
+            require('mini.files').setup({})
         end,
     },
     -- {
@@ -284,12 +280,19 @@ return {
     },
 
     -- debugger
-    -- "mfussenegger/nvim-dap"
-    -- "nvim-telescope/telescope-dap.nvim"
-    -- "nvim-neotest/nvim-nio"
+    -- {
+    --     "mfussenegger/nvim-dap",
+    --     config = function() end,
+    -- },
+    -- {
+    --     "nvim-telescope/telescope-dap.nvim"
+    -- },
+    -- {
+    --     "nvim-neotest/nvim-nio"
+    -- },
     -- {
     --     "rcarriga/nvim-dap-ui",
-    --     dependencies ={ "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    --     dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     --     config = function()
     --         require("dapui").setup({
     --             icons = { expanded = "▾", collapsed = "▸" },
@@ -321,33 +324,40 @@ return {
     -- flutter
     {
         "akinsho/flutter-tools.nvim",
+        lazy = false,
         dependencies = {
             "nvim-lua/plenary.nvim",
             "stevearc/dressing.nvim",
         },
         config = function()
             require("flutter-tools").setup {
+                flutter_path = nil,
                 flutter_lookup_cmd = "asdf where flutter",
+                fvm = false,
                 widget_guides = { enabled = true },
-                dev_tools = {
-                    autostart = true,
-                    auto_open_browser = false,
-                },
-                settings = {
-                    showtodos = true,
-                    completefunctioncalls = true,
-                    analysisexcludedfolders = {
-                        vim.fn.expand("$home/.pub-cache"),
+                root_patterns = { "main.dart" },
+                lsp = {
+                    settings = {
+                        showtodos = true,
+                        completefunctioncalls = true,
+                        analysisexcludedfolders = {
+                            vim.fn.expand("$home/.pub-cache"),
+                        },
+                        renamefileswithclasses = "prompt",
+                        updateimportsonrename = true,
+                        enablesnippets = true
                     },
-                    renamefileswithclasses = "prompt",
-                    updateimportsonrename = true,
-                    enablesnippets = true
                 },
                 -- debugger = {
                 --     enabled = true,
-                --     -- run_via_dap = true,
+                --     run_via_dap = true,
                 --     exception_breakpoints = {},
                 --     register_configurations = function(_)
+                --         require("dap").adapters.dart = {
+                --             type = "executable",
+                --             command = "dart",
+                --             args = { "debug_adapter" },
+                --         }
                 --         require("dap").configurations.dart = {}
                 --         require("dap.ext.vscode").load_launchjs()
                 --     end,
@@ -373,6 +383,12 @@ return {
             "nvim-lua/plenary.nvim",
         },
     },
+    {
+        "lewis6991/gitsigns.nvim",
+        config = function()
+            require('gitsigns').setup()
+        end
+    },
 
     -- Copilot
     {
@@ -394,6 +410,17 @@ return {
                         prev = "<M-[>",
                         dismiss = "<C-]>",
                     },
+                },
+                filetypes = {
+                    yaml = true,
+                    markdown = true,
+                    help = false,
+                    gitcommit = true,
+                    gitrebase = false,
+                    hgcommit = false,
+                    svn = false,
+                    cvs = false,
+                    ["."] = false,
                 },
             })
         end,

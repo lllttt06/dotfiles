@@ -65,12 +65,7 @@ keymap("n", "bh", ":bprev<CR>", opts)
 keymap("n", "bl", ":bnext<CR>", opts)
 
 -- flutter run dev
-keymap("n", "frd", ":FlutterRun --flavor dev --dart-define-from-file=define/flavor/dev/common.json --dart-define-from-file=define/flavor/dev/firebase_options.json", opts)
-keymap("n", "frs", ":FlutterRun --flavor stg --dart-define-from-file=define/flavor/stg/common.json --dart-define-from-file=define/flavor/stg/firebase_options.json", opts)
-keymap("n", "frp", ":FlutterRun --flavor prd --dart-define-from-file=define/flavor/prd/common.json --dart-define-from-file=define/flavor/prd/firebase_options.json", opts)
-
--- Git
-keymap("n", "<leader>hd", "<cmd>DiffviewOpen<CR>", opts)
-keymap("n", "<leader>hf", "<cmd>DiffviewFileHistory %<CR>", opts)
-keymap("n", "<leader>g", ":LazyGit<CR>", opts)
+keymap("n", "frd", ":FlutterRun --flavor dev --dart-define-from-file=define/flavor/dev/common.json --dart-define-from-file=define/flavor/dev/firebase_options.json<CR>", opts)
+keymap("n", "frs", ":FlutterRun --flavor stg --dart-define-from-file=define/flavor/stg/common.json --dart-define-from-file=define/flavor/stg/firebase_options.json<CR>", opts)
+keymap("n", "frp", ":FlutterRun --flavor prd --dart-define-from-file=define/flavor/prd/common.json --dart-define-from-file=define/flavor/prd/firebase_options.json<CR>", opts)
 
