@@ -210,7 +210,7 @@ return {
         version = false,
         keys = {
             -- mini.filesオープン用のショートカット
-            { '<C-n>', ':lua MiniFiles.open()<CR>' }
+            { '<C-n>', ':lua if not MiniFiles.close() then MiniFiles.open() end<CR>' }
         },
         config = function()
             require('mini.files').setup({})
@@ -379,9 +379,22 @@ return {
     -- git
     {
         "kdheepak/lazygit.nvim",
+        cmd = {
+            "LazyGit",
+            "LazyGitConfig",
+            "LazyGitCurrentFile",
+            "LazyGitFilter",
+            "LazyGitFilterCurrentFile",
+        },
+        -- optional for floating window border decoration
         dependencies = {
             "nvim-lua/plenary.nvim",
         },
+        -- setting the keybinding for LazyGit with 'keys' is recommended in
+        -- order to load the plugin when the command is run for the first time
+        keys = {
+            { "<leader>g", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+        }
     },
     {
         "lewis6991/gitsigns.nvim",
@@ -403,7 +416,7 @@ return {
                     hide_during_completion = true,
                     debounce = 75,
                     keymap = {
-                        accept = "<tab>",
+                        accept = "<C-a>",
                         accept_word = false,
                         accept_line = false,
                         next = "<M-]>",

@@ -42,7 +42,7 @@ keymap("n", "sb", '<cmd>lua require("telescope.builtin").buffers()<cr>',opts)
 keymap("n", "sh", '<cmd>lua require("telescope.builtin").help_tags()<cr>',opts)
 keymap("n", "sn", '<cmd>lua require("telescope").extensions.notify.notify()<cr>',opts)
 keymap("n", "fl", '<cmd>lua require("telescope").extensions.flutter.commands()<cr>',opts)
-keymap("n", "si", '<cmd>lua require("telescope").extensions.media_files.media_files()<cr>',opts)
+-- keymap("n", "si", '<cmd>lua require("telescope").extensions.media_files.media_files()<cr>',opts)
 
 -- Insert
 -- Emacs keybind
@@ -65,7 +65,7 @@ keymap("n", "bh", ":bprev<CR>", opts)
 keymap("n", "bl", ":bnext<CR>", opts)
 
 -- flutter run dev
-keymap("n", "frd", ":FlutterRun --flavor dev --dart-define-from-file=define/flavor/dev/common.json --dart-define-from-file=define/flavor/dev/firebase_options.json<CR>", opts)
-keymap("n", "frs", ":FlutterRun --flavor stg --dart-define-from-file=define/flavor/stg/common.json --dart-define-from-file=define/flavor/stg/firebase_options.json<CR>", opts)
-keymap("n", "frp", ":FlutterRun --flavor prd --dart-define-from-file=define/flavor/prd/common.json --dart-define-from-file=define/flavor/prd/firebase_options.json<CR>", opts)
+keymap("n", "frd", ":FlutterRun --flavor dev --dart-define-from-file=define/flavor/dev/common.json --dart-define-from-file=define/flavor/dev/firebase_options.json", opts)
+keymap("n", "frs", ":FlutterRun --flavor stg --dart-define-from-file=define/flavor/stg/common.json --dart-define-from-file=define/flavor/stg/firebase_options.json", opts)
+keymap("n", "frp", ":FlutterRun --flavor prd --dart-define-from-file=define/flavor/prd/common.json --dart-define-from-file=define/flavor/prd/firebase_options.json", opts)
 
