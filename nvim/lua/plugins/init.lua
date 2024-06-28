@@ -69,18 +69,18 @@ return {
     {
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
-        opts = {
-            scope = { enabled = true },
-        },
+        opts = {},
     },
 
     -- 通知
     {
         "j-hui/fidget.nvim",
+        event = "VeryLazy",
         config = function() require("fidget").setup {} end,
     },
     {
         "rcarriga/nvim-notify",
+        event = "VeryLazy",
         config = function()
             require("notify").setup {
                 stages = "fade_in_slide_out",
@@ -131,6 +131,7 @@ return {
     -- シンタックスハイライト
     {
         "nvim-treesitter/nvim-treesitter",
+        event = "VeryLazy",
         build = ":TSUpdate",
         config = function()
             require("nvim-treesitter.configs").setup {
@@ -143,12 +144,14 @@ return {
     },
     {
         "brenoprata10/nvim-highlight-colors",
+        event = "VeryLazy",
         config = function() require("nvim-highlight-colors").setup {} end
     },
 
     -- スクロール
     {
         "karb94/neoscroll.nvim",
+        event = "VeryLazy",
         config = function()
             require("neoscroll").setup {
                 mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-y>", "zt", "zz", "zb" },
@@ -157,6 +160,7 @@ return {
     },
     {
         "petertriho/nvim-scrollbar",
+        event = "VeryLazy",
         config = function()
             require("scrollbar").setup {
                 handle = {
@@ -177,6 +181,7 @@ return {
     -- コメントアウト
     {
         "terrortylor/nvim-comment",
+        event = "VeryLazy",
         config = function()
             require("nvim_comment").setup {
                 line_mapping = "gk",
@@ -188,15 +193,18 @@ return {
     -- brackets 補完
     {
         "windwp/nvim-autopairs",
+        event = "VeryLazy",
         config = function() require("nvim-autopairs").setup {} end
     },
 
     -- ファイル検索
     {
-        "nvim-lua/plenary.nvim"
+        "nvim-lua/plenary.nvim",
+        event = "VeryLazy",
     },
     {
         "nvim-telescope/telescope.nvim",
+        event = "VeryLazy",
         config = function()
             require("telescope").load_extension("flutter")
             -- require("telescope").load_extension("dap")
@@ -208,6 +216,7 @@ return {
     {
         'echasnovski/mini.nvim',
         version = false,
+        event = "VeryLazy",
         keys = {
             -- mini.filesオープン用のショートカット
             { '<C-n>', ':lua if not MiniFiles.close() then MiniFiles.open() end<CR>' }
@@ -216,67 +225,49 @@ return {
             require('mini.files').setup({})
         end,
     },
-    -- {
-    --     "stevearc/oil.nvim",
-    --     opts = {},
-    --     dependencies = { "nvim-tree/nvim-web-devicons" },
-    --     config = function()
-    --         require("oil").setup {
-    --             columns = {
-    --                 "icon",
-    --                 "size",
-    --                 "mtime",
-    --             },
-    --             view_options = {
-    --                 show_hidden = true,
-    --             },
-    --             -- Configuration for the floating window in oil.open_float
-    --             float = {
-    --                 -- Padding around the floating window
-    --                 padding = 10,
-    --                 border = "rounded",
-    --                 win_options = {
-    --                     winblend = 0,
-    --                 },
-    --             },
-    --
-    --             vim.keymap.set("n", "-", "<CMD>Oil --float<CR>", { desc = "open parent directory" })
-    --         }
-    --     end,
-    -- },
 
     -- lsp
     {
-        "williamboman/mason.nvim"
+        "williamboman/mason.nvim",
+        event = "VeryLazy",
     },
     {
         "williamboman/mason-lspconfig.nvim",
+        event = "VeryLazy",
     },
     {
         "neovim/nvim-lspconfig",
+        event = "VeryLazy",
     },
 
     -- cmp
     {
-        "hrsh7th/nvim-cmp"
+        "hrsh7th/nvim-cmp",
+        event = "VeryLazy",
     },
     {
-        "hrsh7th/cmp-nvim-lsp"
+        "hrsh7th/cmp-nvim-lsp",
+        event = "VeryLazy",
     },
     {
-        "hrsh7th/vim-vsnip"
+        "hrsh7th/vim-vsnip",
+        event = "VeryLazy",
     },
     {
-        "hrsh7th/cmp-path"
+        "hrsh7th/cmp-path",
+        event = "VeryLazy",
     },
     {
-        "hrsh7th/cmp-buffer"
+        "hrsh7th/cmp-buffer",
+        event = "VeryLazy",
     },
     {
-        "hrsh7th/cmp-cmdline"
+        "hrsh7th/cmp-cmdline",
+        event = "VeryLazy",
     },
     {
-        "onsails/lspkind.nvim"
+        "onsails/lspkind.nvim",
+        event = "VeryLazy",
     },
 
     -- debugger
@@ -324,7 +315,7 @@ return {
     -- flutter
     {
         "akinsho/flutter-tools.nvim",
-        lazy = false,
+        event = "VeryLazy",
         dependencies = {
             "nvim-lua/plenary.nvim",
             "stevearc/dressing.nvim",
@@ -369,6 +360,7 @@ return {
     -- auto save
     {
         "pocco81/auto-save.nvim",
+        event = "VeryLazy",
         config = function()
             require("auto-save").setup {
                 trigger_events = { "InsertLeave", "BufLeave", "FocusLost" },
@@ -379,6 +371,7 @@ return {
     -- git
     {
         "kdheepak/lazygit.nvim",
+        event = "VeryLazy",
         cmd = {
             "LazyGit",
             "LazyGitConfig",
@@ -398,6 +391,7 @@ return {
     },
     {
         "lewis6991/gitsigns.nvim",
+        event = "VeryLazy",
         config = function()
             require('gitsigns').setup()
         end
