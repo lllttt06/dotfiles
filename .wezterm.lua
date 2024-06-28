@@ -2,7 +2,7 @@ local wezterm = require 'wezterm'
 
 -- Common settings
 local config = {
-    color_scheme = "Vs Code Dark+ (Gogh)",
+    color_scheme = "Tokyo Night",
     font_size = 15,
     font = wezterm.font("Hack Nerd Font"),
     front_end = "OpenGL",

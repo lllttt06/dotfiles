@@ -1,5 +1,14 @@
 return {
     -- カラーテーマ
+    -- {
+    --     "folke/tokyonight.nvim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     opts = {},
+    --     config = function()
+    --         vim.cmd("colorscheme tokyonight-night")
+    --     end
+    -- },
     {
         "savq/melange-nvim",
         lazy = false,
@@ -66,12 +75,23 @@ return {
     },
 
     -- Chunk の表示
+    -- {
+    --     "lukas-reineke/indent-blankline.nvim",
+    --     main = "ibl",
+    --     opts = {},
+    -- },
+    -- 空白文字ハイライト
     {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        opts = {},
+        "shellRaining/hlchunk.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        opts = {
+            chunk = {
+                enable = true,
+                use_treesitter = true,
+            },
+            indent = { enable = true },
+        },
     },
-
     -- 通知
     {
         "j-hui/fidget.nvim",
@@ -257,13 +277,7 @@ return {
     -- lsp
     {
         "williamboman/mason.nvim",
-        event = "VeryLazy",
-    },
-    {
         "williamboman/mason-lspconfig.nvim",
-        event = "VeryLazy",
-    },
-    {
         "neovim/nvim-lspconfig",
         event = "VeryLazy",
     },

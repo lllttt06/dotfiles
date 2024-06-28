@@ -15,3 +15,14 @@ vim.api.nvim_create_autocmd("VimEnter", {
     command = "NoNeckPain"
 })
 
+vim.api.nvim_create_autocmd({ "BufReadPost" }, {
+  pattern = { "*.gql", "*.graphql" },
+  callback = function()
+    vim.keymap.set(
+      "n",
+      "ga",
+      "/\\(\\(type\\)\\|\\(input\\)\\|\\(enum\\)\\|\\(scalar\\)\\) <C-r><C-w>[\\n| ]<CR>:nohl<CR>",
+      { buffer = true }
+    )
+  end,
+})
