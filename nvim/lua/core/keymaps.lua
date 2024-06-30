@@ -5,8 +5,6 @@ local keymap = vim.api.nvim_set_keymap
 
 --Remap space as leader key
 keymap("", "<space>", "<Nop>", opts)
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
 
 -- Normal --
 -- Better window navigation
@@ -63,9 +61,4 @@ keymap("t", "jj", "<C-\\><C-n>", opts)
 -- buffer
 keymap("n", "bh", ":bprev<CR>", opts)
 keymap("n", "bl", ":bnext<CR>", opts)
-
--- flutter run dev
-keymap("n", "frd", ":FlutterRun --flavor dev --dart-define-from-file=define/flavor/dev/common.json --dart-define-from-file=define/flavor/dev/firebase_options.json", opts)
-keymap("n", "frs", ":FlutterRun --flavor stg --dart-define-from-file=define/flavor/stg/common.json --dart-define-from-file=define/flavor/stg/firebase_options.json", opts)
-keymap("n", "frp", ":FlutterRun --flavor prd --dart-define-from-file=define/flavor/prd/common.json --dart-define-from-file=define/flavor/prd/firebase_options.json", opts)
 

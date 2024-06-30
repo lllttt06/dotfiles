@@ -10,15 +10,18 @@ return {
         end
     },
     {
-        "nvim-tree/nvim-web-devicons"
+        "nvim-tree/nvim-web-devicons",
+        event = "VeryLazy",
     },
     {
         "nvim-lualine/lualine.nvim",
+        event = "VeryLazy",
         dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
         config = function() require("lualine").setup {} end
     },
     {
         "akinsho/bufferline.nvim",
+        event = "VeryLazy",
         version = "*",
         dependencies = "nvim-tree/nvim-web-devicons",
         config = function()
@@ -274,74 +277,40 @@ return {
     -- cmp
     {
         "hrsh7th/nvim-cmp",
-        event = "VeryLazy",
-    },
-    {
         "hrsh7th/cmp-nvim-lsp",
-        event = "VeryLazy",
-    },
-    {
         "hrsh7th/vim-vsnip",
-        event = "VeryLazy",
-    },
-    {
         "hrsh7th/cmp-path",
-        event = "VeryLazy",
-    },
-    {
         "hrsh7th/cmp-buffer",
-        event = "VeryLazy",
-    },
-    {
-        "hrsh7th/cmp-cmdline",
-        event = "VeryLazy",
-    },
-    {
         "onsails/lspkind.nvim",
         event = "VeryLazy",
     },
 
     -- debugger
-    -- {
-    --     "mfussenegger/nvim-dap",
-    --     config = function() end,
-    -- },
-    -- {
-    --     "nvim-telescope/telescope-dap.nvim"
-    -- },
-    -- {
-    --     "nvim-neotest/nvim-nio"
-    -- },
-    -- {
-    --     "rcarriga/nvim-dap-ui",
-    --     dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
-    --     config = function()
-    --         require("dapui").setup({
-    --             icons = { expanded = "▾", collapsed = "▸" },
-    --             expand_lines = vim.fn.has("nvim-0.7"),
-    --             layouts = {
-    --                 {
-    --                     elements = {
-    --                         { id = "scopes", size = 0.25 },
-    --                         "breakpoints",
-    --                         "stacks",
-    --                         "watches",
-    --                     },
-    --                     size = 10, -- columns
-    --                     position = "bottom",
-    --                 },
-    --             },
-    --         })
-    --     end
-    -- },
-    -- {
-    --     "folke/neodev.nvim",
-    --     config = function()
-    --         require("neodev").setup {
-    --             library = { plugins = { "nvim-dap-ui" }, types = true },
-    --         }
-    --     end
-    -- },
+    {
+        "mfussenegger/nvim-dap",
+        dependencies = {
+            'nvim-neotest/nvim-nio',
+            'rcarriga/nvim-dap-ui',
+        },
+        event = 'VeryLazy',
+        config = function()
+            require("dapui").setup({
+                icons = { expanded = "▾", collapsed = "▸" },
+                layouts = {
+                    {
+                        elements = {
+                            { id = "scopes", size = 0.25 },
+                            "breakpoints",
+                            "stacks",
+                            "watches",
+                        },
+                        size = 10, -- columns
+                        position = "bottom",
+                    },
+                },
+            })
+        end
+    },
 
     -- flutter
     {
@@ -357,33 +326,35 @@ return {
                 flutter_lookup_cmd = "asdf where flutter",
                 fvm = false,
                 widget_guides = { enabled = true },
-                root_patterns = { "main.dart" },
                 lsp = {
                     settings = {
                         showtodos = true,
                         completefunctioncalls = true,
                         analysisexcludedfolders = {
-                            vim.fn.expand("$home/.pub-cache"),
+                            vim.fn.expand("$Home/.pub-cache"),
                         },
                         renamefileswithclasses = "prompt",
                         updateimportsonrename = true,
-                        enablesnippets = true
+                        enablesnippets = false,
                     },
                 },
-                -- debugger = {
-                --     enabled = true,
-                --     run_via_dap = true,
-                --     exception_breakpoints = {},
-                --     register_configurations = function(_)
-                --         require("dap").adapters.dart = {
-                --             type = "executable",
-                --             command = "dart",
-                --             args = { "debug_adapter" },
-                --         }
-                --         require("dap").configurations.dart = {}
-                --         require("dap.ext.vscode").load_launchjs()
-                --     end,
-                -- },
+                debugger = {
+                    enabled = true,
+                    run_via_dap = true,
+                    exception_breakpoints = {},
+                    register_configurations = function(paths)
+                        local dap = require("dap")
+                        -- これを入れないと debugger が動かない
+                        -- See also: https://github.com/akinsho/flutter-tools.nvim/pull/292
+                        dap.adapters.dart = {
+                            type = "executable",
+                            command = paths.flutter_bin,
+                            args = { "debug-adapter" },
+                        }
+                        dap.configurations.dart = {}
+                        require("dap.ext.vscode").load_launchjs()
+                    end,
+                },
             }
         end
     },
