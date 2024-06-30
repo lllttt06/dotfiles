@@ -1,21 +1,12 @@
 return {
     -- カラーテーマ
-    -- {
-    --     "folke/tokyonight.nvim",
-    --     lazy = false,
-    --     priority = 1000,
-    --     opts = {},
-    --     config = function()
-    --         vim.cmd("colorscheme tokyonight-night")
-    --     end
-    -- },
     {
-        "savq/melange-nvim",
+        "folke/tokyonight.nvim",
         lazy = false,
         priority = 1000,
+        opts = {},
         config = function()
-            vim.opt.termguicolors = true
-            vim.cmd("colorscheme melange")
+            vim.cmd("colorscheme tokyonight-night")
         end
     },
     {
@@ -73,14 +64,7 @@ return {
         "shortcuts/no-neck-pain.nvim",
         version = "*",
     },
-
-    -- Chunk の表示
-    -- {
-    --     "lukas-reineke/indent-blankline.nvim",
-    --     main = "ibl",
-    --     opts = {},
-    -- },
-    -- 空白文字ハイライト
+    -- Chunk
     {
         "shellRaining/hlchunk.nvim",
         event = { "BufReadPre", "BufNewFile" },
@@ -88,8 +72,13 @@ return {
             chunk = {
                 enable = true,
                 use_treesitter = true,
+                style = {
+                    { fg = "#4fd1c5" },
+                    { fg = "#c21f30" },
+                },
             },
             indent = { enable = true },
+            line_num = { enable = true },
         },
     },
     -- 通知
