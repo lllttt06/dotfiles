@@ -31,15 +31,18 @@ keymap("x", "x", '"_x', opts)
 keymap("x", "p", '"_dP', opts)
 
 -- バッファを中央に寄せる
-keymap("n", "-", ":NoNeckPain<Return>", opts)
+keymap("n", "-", ":NoNeckPain<cr>", opts)
+
+-- ScreenKey
+keymap("n", "kt", ':Screenkey toggle<cr>', opts)
 
 -- ファイル検索
-keymap("n", "sf", '<cmd>lua require("telescope.builtin").find_files()<cr>',opts)
-keymap("n", "sg", '<cmd>lua require("telescope.builtin").live_grep()<cr>',opts)
-keymap("n", "sb", '<cmd>lua require("telescope.builtin").buffers()<cr>',opts)
-keymap("n", "sh", '<cmd>lua require("telescope.builtin").help_tags()<cr>',opts)
-keymap("n", "sn", '<cmd>lua require("telescope").extensions.notify.notify()<cr>',opts)
-keymap("n", "fl", '<cmd>lua require("telescope").extensions.flutter.commands()<cr>',opts)
+keymap("n", "sf", '<cmd>lua require("telescope.builtin").find_files()<cr>', opts)
+keymap("n", "sg", '<cmd>lua require("telescope.builtin").live_grep()<cr>', opts)
+keymap("n", "sb", '<cmd>lua require("telescope.builtin").buffers()<cr>', opts)
+keymap("n", "sh", '<cmd>lua require("telescope.builtin").help_tags()<cr>', opts)
+keymap("n", "sn", '<cmd>lua require("telescope").extensions.notify.notify()<cr>', opts)
+keymap("n", "fl", '<cmd>lua require("telescope").extensions.flutter.commands()<cr>', opts)
 -- keymap("n", "si", '<cmd>lua require("telescope").extensions.media_files.media_files()<cr>',opts)
 
 -- Insert
@@ -61,4 +64,3 @@ keymap("t", "jj", "<C-\\><C-n>", opts)
 -- buffer
 keymap("n", "bh", ":bprev<CR>", opts)
 keymap("n", "bl", ":bnext<CR>", opts)
-

@@ -14,6 +14,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
     pattern = "*",
     command = "NoNeckPain"
 })
+vim.api.nvim_create_autocmd("VimEnter", {
+    pattern = "*",
+    command = "Screenkey toggle"
+})
+
 
 
 -- local function has_flutter_dependency_in_pubspec()
