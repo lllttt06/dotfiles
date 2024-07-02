@@ -1,4 +1,43 @@
 return {
+    -- Dashboard
+    {
+        'nvimdev/dashboard-nvim',
+        event = 'VimEnter',
+        config = function()
+            require('dashboard').setup {
+                theme = 'hyper',
+                config = {
+                    week_header = {
+                        enable = true,
+                    },
+                    shortcut = {
+                        { desc = '󰊳 Update', group = '@property', action = 'Lazy update', key = 'u' },
+                        {
+                            icon = ' ',
+                            icon_hl = '@variable',
+                            desc = 'Files',
+                            group = 'Label',
+                            action = 'Telescope find_files',
+                            key = 'f',
+                        },
+                        {
+                            desc = ' Apps',
+                            group = 'DiagnosticHint',
+                            action = 'Telescope app',
+                            key = 'a',
+                        },
+                        {
+                            desc = ' dotfiles',
+                            group = 'Number',
+                            action = 'Telescope dotfiles',
+                            key = 'd',
+                        },
+                    },
+                },
+            }
+        end,
+        dependencies = { { 'nvim-tree/nvim-web-devicons' } }
+    },
     -- カラーテーマ
     {
         "folke/tokyonight.nvim",
@@ -278,10 +317,29 @@ return {
     {
         "hrsh7th/nvim-cmp",
         "hrsh7th/cmp-nvim-lsp",
-        "hrsh7th/vim-vsnip",
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-buffer",
         "onsails/lspkind.nvim",
+        event = "VeryLazy",
+    },
+
+    -- snippet
+    {
+        "L3MON4D3/LuaSnip",
+        event = "VeryLazy",
+        config = function()
+            require("luasnip").config.set_config {
+                history = true,
+                updateevents = "TextChanged,TextChangedI",
+            }
+        end
+    },
+    {
+        "rafamadriz/friendly-snippets",
+        event = "VeryLazy",
+    },
+    {
+        "saadparwaiz1/cmp_luasnip",
         event = "VeryLazy",
     },
 
