@@ -14,10 +14,10 @@ vim.api.nvim_create_autocmd("VimEnter", {
     pattern = "*",
     command = "NoNeckPain"
 })
-vim.api.nvim_create_autocmd("VimEnter", {
-    pattern = "*",
-    command = "Screenkey toggle"
-})
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--     pattern = "*",
+--     command = "Screenkey toggle"
+-- })
 
 
 
