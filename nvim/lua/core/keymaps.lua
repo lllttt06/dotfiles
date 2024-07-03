@@ -34,7 +34,7 @@ keymap("x", "p", '"_dP', opts)
 keymap("n", "-", ":NoNeckPain<cr>", opts)
 
 -- ScreenKey
-keymap("n", "kt", ':Screenkey toggle<cr>', opts)
+keymap("n", "sk", ':Screenkey toggle<cr>', opts)
 
 -- ファイル検索
 keymap("n", "sf", '<cmd>lua require("telescope.builtin").find_files()<cr>', opts)
