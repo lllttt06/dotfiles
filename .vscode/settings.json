@@ -1,5 +1,73 @@
 {
-    "Lua.diagnostics.globals": [
-        "vim"
-    ]
+  "editor.inlineSuggest.enabled": true,
+  "editor.fontSize": 14,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "vim.vimrc.enable": true,
+  "vim.vimrc.path": "~/dotfiles/.vimrc",
+  "vim.handleKeys": {
+    "<D-c>": false
+  },
+  "files.autoSave": "afterDelay",
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "dart.checkForSdkUpdates": false,
+  "redhat.telemetry.enabled": true,
+  "git.autofetch": true,
+  "workbench.iconTheme": "material-icon-theme",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "scminput": false
+  },
+  "cSpell.userWords": [
+    "Alives",
+    "artboard",
+    "autofocus",
+    "autovalidate",
+    "Cupertino",
+    "Datetime",
+    "Dprs",
+    "fastly",
+    "firestore",
+    "Haptics",
+    "Hoge",
+    "iijan",
+    "JUMPTOON",
+    "LTRB",
+    "Milli",
+    "Pinput",
+    "Reorderable",
+    "Riverpod",
+    "sakura",
+    "TOON",
+    "unawaited",
+    "Unfocus",
+    "userbff",
+    "waitfree",
+    "webp",
+    "widgetbook"
+  ],
+  "dart.debugExternalPackageLibraries": true,
+  "dart.debugSdkLibraries": true,
+  "terminal.integrated.fontSize": 14,
+  "editor.minimap.enabled": false,
+  "workbench.colorTheme": "Visual Studio 2019 Dark",
+  "svg.preview.mode": "svg",
+  "gitlens.views.branches.branches.layout": "list",
+  "github.copilot.editor.enableAutoCompletions": true
 }
