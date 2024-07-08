@@ -1,3 +1,5 @@
+set clipboard+=unnamed
+
 imap { {}<LEFT>
 imap [ []<LEFT>
 imap ( ()<LEFT>
