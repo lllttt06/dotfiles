@@ -186,29 +186,27 @@ return {
         "folke/trouble.nvim",
         event = "VeryLazy",
         opts = {
-            {
-                modes = {
-                    preview_float = {
-                        mode = "diagnostics",
-                        preview = {
-                            type = "float",
-                            relative = "editor",
-                            border = "rounded",
-                            title = "Preview",
-                            title_pos = "center",
-                            position = { 0, -2 },
-                            size = { width = 0.3, height = 0.3 },
-                            zindex = 200,
-                        },
+            modes = {
+                preview_float = {
+                    mode = "diagnostics",
+                    preview = {
+                        type = "float",
+                        relative = "editor",
+                        border = "rounded",
+                        title = "Preview",
+                        title_pos = "center",
+                        position = { 0, -2 },
+                        size = { width = 0.3, height = 0.3 },
+                        zindex = 200,
                     },
                 },
-            }
+            },
         }, -- for default options, refer to the configuration section for custom setup.
         cmd = "Trouble",
         keys = {
             {
                 "<leader>xx",
-                "<cmd>Trouble diagnostics toggle<cr>",
+                "<cmd>Trouble preview_float toggle<cr>",
                 desc = "Diagnostics (Trouble)",
             },
             {
@@ -371,6 +369,9 @@ return {
     {
         "nvim-telescope/telescope.nvim",
         event = "VeryLazy",
+        dependencies = {
+            "folke/trouble.nvim",
+        },
         config = function()
             local focus_preview = function(prompt_bufnr)
                 local action_state = require("telescope.actions.state")
@@ -385,7 +386,6 @@ return {
                 vim.cmd(string.format("noautocmd lua vim.api.nvim_set_current_win(%s)", winid))
                 -- api.nvim_set_current_win(winid)
             end
-            local open_with_trouble = require("trouble.sources.telescope").open
 
             require("telescope").setup {
                 defaults = {
@@ -394,10 +394,8 @@ return {
                             ["<C-p>"] = require("telescope.actions.layout").toggle_preview,
                             ["<Tab>"] = focus_preview,
                             ["Q"] = require("telescope.actions").close,
-                            ["<C-t>"] = open_with_trouble,
                         },
                         i = {
-                            ["<C-t>"] = open_with_trouble,
                             ["<esc>"] = require("telescope.actions").close,
                             ["<C-u>"] = false,
                             ["<S-Tab>"] = false,
@@ -557,7 +555,7 @@ return {
         version = "*",
         config = function()
             require("toggleterm").setup {
-                open_mapping = [[<C-4>]],
+                open_mapping = [[<C-\>]],
                 direction = "float",
                 float_opts = {
                     border = "curved",
