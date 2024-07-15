@@ -205,7 +205,7 @@ return {
         cmd = "Trouble",
         keys = {
             {
-                "<leader>xx",
+                "<leader>dd",
                 "<cmd>Trouble preview_float toggle<cr>",
                 desc = "Diagnostics (Trouble)",
             },
@@ -369,9 +369,6 @@ return {
     {
         "nvim-telescope/telescope.nvim",
         event = "VeryLazy",
-        dependencies = {
-            "folke/trouble.nvim",
-        },
         config = function()
             local focus_preview = function(prompt_bufnr)
                 local action_state = require("telescope.actions.state")
