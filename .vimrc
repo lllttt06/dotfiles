@@ -18,6 +18,6 @@ xnoremap x "_x
 xnoremap d "_d
 xnoremap p "_dP
 
-nnoremap <space>h <C-o>^
-nnoremap <space>l <C-o>$
+nnoremap <C-a> ^
+nnoremap <C-e> $
 

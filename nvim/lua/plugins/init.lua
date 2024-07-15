@@ -58,6 +58,8 @@ return {
         dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
         config = function() require("lualine").setup {} end
     },
+
+    -- Buffer
     {
         "akinsho/bufferline.nvim",
         event = "VeryLazy",
@@ -101,6 +103,17 @@ return {
                 },
             }
         end
+    },
+    {
+        "j-morano/buffer_manager.nvim",
+        event = "VeryLazy",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        keys = {
+            { "<leader>b", ":lua require('buffer_manager.ui').toggle_quick_menu()<cr>", desc = "Buffer Manager" }
+        },
+
     },
 
     -- 中央寄せ
@@ -512,6 +525,7 @@ return {
                         completefunctioncalls = true,
                         analysisexcludedfolders = {
                             vim.fn.expand("$Home/.pub-cache"),
+                            vim.fn.expand("$HOME/.asdf/installs/flutter"),
                         },
                         renamefileswithclasses = "prompt",
                         updateimportsonrename = true,
