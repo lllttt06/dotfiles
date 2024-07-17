@@ -547,6 +547,26 @@ return {
             }
         end
     },
+    {
+        "stevearc/overseer.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-telescope/telescope.nvim",
+        },
+        event = "VeryLazy",
+        config = function()
+            local overseer = require("overseer")
+
+            overseer.setup({
+                strategy = {
+                    "toggleterm",
+                    -- quit_on_exit = "success",
+                    dap = false,
+                },
+            })
+            vim.api.nvim_set_keymap("n", "<C-.>", "<cmd>OverseerRun<CR>", { noremap = true, silent = true })
+        end,
+    },
 
     -- auto save
     {
@@ -566,7 +586,7 @@ return {
         version = "*",
         config = function()
             require("toggleterm").setup {
-                open_mapping = [[<C-\>]],
+                open_mapping = [[<C-4>]],
                 direction = "float",
                 float_opts = {
                     border = "curved",
