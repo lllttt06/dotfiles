@@ -435,23 +435,320 @@ return {
         end,
     },
 
-    -- lsp
+    -- LSP Management
     {
-        "williamboman/mason.nvim",
-        "williamboman/mason-lspconfig.nvim",
         "neovim/nvim-lspconfig",
+        dependencies = {
+            "williamboman/mason.nvim",
+            "williamboman/mason-lspconfig.nvim",
+            "WhoIsSethDaniel/mason-tool-installer.nvim",
+            "hrsh7th/cmp-nvim-lsp",
+        },
         event = "VeryLazy",
-    },
+        config = function()
+            vim.keymap.set('n', '<space>di', vim.diagnostic.open_float)
+            vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+            vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+            vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+            vim.keymap.set('n', '<space>qq', vim.diagnostic.setqflist)
 
-    -- cmp
+            vim.api.nvim_create_autocmd('LspAttach', {
+                group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+                callback = function(ev)
+                    -- Enable completion triggered by <c-x><c-o>
+                    vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+                    -- Buffer local mappings.
+                    -- See `:help vim.lsp.*` for documentation on any of the below functions
+                    local opts = { buffer = ev.buf }
+                    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+                    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+                    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+                    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+                    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+                    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+                    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+                    vim.keymap.set('n', '<space>wl', function()
+                        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+                    end, opts)
+                    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
+                    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
+                    vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+                    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+                    vim.keymap.set('n', '<space>f', function()
+                        vim.lsp.buf.format { async = true }
+                    end, opts)
+                end,
+            })
+
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+            -- local on_attach = function(_, bufnr)
+            --     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+            --
+            --     local set = vim.keymap.set
+            --     set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+            --     set("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+            --     set("n", "<C-m>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+            --     set("n", "gy", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
+            --     set("n", "rn", "<cmd>lua vim.lsp.buf.rename()<CR>")
+            --     set("n", "ma", "<cmd>lua vim.lsp.buf.code_action()<CR>")
+            --     set("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
+            --     set("n", "<space>e", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
+            --     set("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>")
+            --     set("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>")
+            -- end
+
+            local lspconfig = require("lspconfig")
+            require("mason").setup({
+                ui = {
+                    border = "rounded",
+                    icons = {
+                        package_installed = "✓",
+                        package_pending = "➜",
+                        package_uninstalled = "✗"
+                    }
+                }
+            })
+            require("mason-lspconfig").setup()
+            require("mason-tool-installer").setup({
+                ensure_installed = {
+                    -- LSP
+                    "typos-lsp",
+                    "gopls",
+                    "lua-language-server",
+                    "typescript-language-server",
+                    "graphql-language-service-cli",
+
+                    -- Formatter
+                    "prettier",
+                    "actionlint",
+                    "goimports",
+                    "ktlint",
+                    "shellcheck",
+                    "shfmt",
+                    "swiftlint",
+                    "yamlfmt",
+                    "yamllint",
+                },
+                auto_update = true,
+                run_on_start = true,
+                start_delay = 3000,
+                debounce_hours = 5,
+            })
+            require("mason-lspconfig").setup_handlers({
+                function(server_name)
+                    -- dartls を除く (flutter-tools.nvim で行う)
+                    if server_name ~= "dartls" then
+                        lspconfig[server_name].setup({
+                            -- on_attach = on_attach,
+                            capabilities = capabilities,
+                        })
+                    end
+                end,
+            })
+
+            -- typo-lsp
+            lspconfig.typos_lsp.setup({
+                on_attach = function(client, bufnr)
+                    local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+                    if filetype == "log" or filetype == "toggleterm" then
+                        client.stop()
+                    end
+                end,
+                init_options = {
+                    config = "$HOME/.config/nvim/typos.toml",
+                    diagnosticSeverity = "Warning",
+                },
+            })
+        end,
+    },
+    -- LSP cmp
     {
         "hrsh7th/nvim-cmp",
-        "hrsh7th/cmp-nvim-lsp",
-        "hrsh7th/cmp-path",
-        "hrsh7th/cmp-buffer",
-        "onsails/lspkind.nvim",
-        event = "VeryLazy",
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-cmdline",
+
+            "hrsh7th/cmp-nvim-lsp-signature-help",
+            "hrsh7th/cmp-nvim-lsp-document-symbol",
+
+            "onsails/lspkind-nvim",
+        },
+        event = { "InsertEnter", "LspAttach" },
+        config = function()
+            vim.diagnostic.config({
+                -- virtual_text は非表示
+                -- virtual_text = {
+                --   severity = vim.diagnostic.severity.ERROR,
+                -- },
+                virtual_text = false,
+                -- signcolumn のアイコンを変える
+                signs = {
+                    text = {
+                        [vim.diagnostic.severity.ERROR] = " ",
+                        [vim.diagnostic.severity.WARN] = " ",
+                        [vim.diagnostic.severity.HINT] = " ",
+                        [vim.diagnostic.severity.INFO] = " ",
+                    },
+                },
+            })
+
+            local cmp = require("cmp")
+            local types = require("cmp.types")
+            local lspkind = require("lspkind")
+
+            lspkind.init({
+                mode = "symbol_text",
+                symbol_map = {
+                    Copilot = "",
+                    Text = "󰉿",
+                    Method = "󰆧",
+                    Function = "󰊕",
+                    Constructor = "",
+                    Field = "󰜢",
+                    Variable = "󰀫",
+                    Class = "󰠱",
+                    Interface = "",
+                    Module = "",
+                    Property = "󰜢",
+                    Unit = "󰑭",
+                    Value = "󰎠",
+                    Enum = "",
+                    Keyword = "󰌋",
+                    Snippet = "",
+                    Color = "󰏘",
+                    File = "󰈙",
+                    Reference = "󰈇",
+                    Folder = "󰉋",
+                    EnumMember = "",
+                    Constant = "󰏿",
+                    Struct = "󰙅",
+                    Event = "",
+                    Operator = "󰆕",
+                    TypeParameter = "",
+                },
+            })
+
+            vim.opt.completeopt = { "menu", "menuone", "noselect" }
+            vim.o.completefunc = 'v:lua.require("cmp").complete()'
+
+            cmp.setup({
+                completion = {
+                    autocomplete = {
+                        types.cmp.TriggerEvent.InsertEnter,
+                        types.cmp.TriggerEvent.TextChanged,
+                    },
+                    completeopt = "longest,menu,menuone,noselect,noinsert,preview",
+                    keyword_pattern = [[\%(-\?\d\+\%(\.\d\+\)\?\|\h\w*\%(-\w*\)*\)]],
+                    keyword_length = 1,
+                },
+                window = {
+                    completion = cmp.config.window.bordered({
+                        border = "rounded",
+                        -- max_width = 80,
+                        winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
+                    }),
+                    documentation = cmp.config.window.bordered({
+                        border = "rounded",
+                    }),
+                },
+                formatting = {
+                    expandable_indicator = true,
+                    fields = { "kind", "abbr", "menu" },
+                    format = function(entry, vim_item)
+                        local kind = lspkind.cmp_format({
+                            ellipsis_char = "…",
+                            maxwidth = 50,
+                            mode = "symbol_text",
+                            with_text = true,
+                        })(entry, vim_item)
+                        local strings = vim.split(kind.kind, "%s", { trimempty = true })
+                        kind.kind = " " .. (strings[1] or "") .. " "
+                        kind.menu = "    (" .. (strings[2] or "") .. ")"
+
+                        return kind
+                    end,
+                },
+                mapping = cmp.mapping.preset.insert({
+                    ["<C-d>"] = cmp.mapping.scroll_docs(4),
+                    ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+                    ["<C-p>"] = cmp.mapping.select_prev_item(),
+                    ["<C-n>"] = cmp.mapping.select_next_item(),
+                    ["<C-Space>"] = cmp.mapping.complete(),
+                    ["<C-e>"] = cmp.mapping.abort(),
+                    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+                }),
+                sources = cmp.config.sources({
+                    { name = "copilot",                 group_index = 2 },
+                    { name = "nvim_lsp",                group_index = 2 },
+                    { name = "vsnip",                   group_index = 2 },
+                    { name = "nvim_lsp_signature_help", group_index = 2 },
+                    { name = "path",                    group_index = 2 },
+                }, {
+                    { name = "buffer", group_index = 2 },
+                }),
+                experimental = {
+                    native_menu = false,
+                    ghost_text = true,
+                },
+            })
+
+            cmp.setup.cmdline({ "/", "?" }, {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = cmp.config.sources({
+                    { name = "nvim_lsp_document_symbol" },
+                }, {
+                    { name = "buffer" },
+                }),
+            })
+
+            cmp.setup.cmdline(":", {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = cmp.config.sources({
+                    { name = "path" },
+                }, {
+                    { name = "cmdline" },
+                }),
+                matching = { disallow_symbol_nonprefix_matching = false },
+            })
+        end,
     },
+    -- {
+    --     "williamboman/mason.nvim",
+    --     event = "VeryLazy",
+    --     config = function()
+    -- require("mason").setup({
+    --     ui = {
+    --         border = "rounded",
+    --         icons = {
+    --             package_installed = "✓",
+    --             package_pending = "➜",
+    --             package_uninstalled = "✗"
+    --         }
+    --     }
+    -- })
+    --     end
+    --
+    -- },
+    -- {
+    --     "williamboman/mason-lspconfig.nvim",
+    --     "neovim/nvim-lspconfig",
+    --     event = "VeryLazy",
+    -- },
+
+    -- cmp
+    -- {
+    --     "hrsh7th/nvim-cmp",
+    --     "hrsh7th/cmp-nvim-lsp",
+    --     "hrsh7th/cmp-path",
+    --     "hrsh7th/cmp-buffer",
+    --     "onsails/lspkind.nvim",
+    --     event = "VeryLazy",
+    -- },
 
     -- snippet
     {
