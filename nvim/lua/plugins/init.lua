@@ -136,8 +136,8 @@ return {
                     { fg = "#c21f30" },
                 },
             },
-            indent = { enable = true },
-            line_num = { enable = true },
+            -- indent = { enable = true },
+            -- line_num = { enable = true },
         },
     },
     -- 通知
