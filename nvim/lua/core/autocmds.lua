@@ -14,6 +14,19 @@ vim.api.nvim_create_autocmd("VimEnter", {
     pattern = "*",
     command = "NoNeckPain"
 })
+
+-- 前回開いたファイルのカーソル位置を復旧する
+vim.api.nvim_create_autocmd("BufReadPost", {
+    group = vim.api.nvim_create_augroup("restore_cursor", { clear = true }),
+    pattern = "*",
+    callback = function()
+        local row, col = unpack(vim.api.nvim_buf_get_mark(0, '"'))
+        if row > 0 and row <= vim.api.nvim_buf_line_count(0) then
+            vim.api.nvim_win_set_cursor(0, { row, col })
+        end
+    end,
+})
+
 -- vim.api.nvim_create_autocmd("VimEnter", {
 --     pattern = "*",
 --     command = "Screenkey toggle"

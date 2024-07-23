@@ -40,12 +40,14 @@ return {
     },
     -- カラーテーマ
     {
-        "folke/tokyonight.nvim",
+        -- "folke/tokyonight.nvim",
+        "Mofiqul/vscode.nvim",
         lazy = false,
         priority = 1000,
         opts = {},
         config = function()
-            vim.cmd("colorscheme tokyonight-night")
+            -- vim.cmd("colorscheme tokyonight-night")
+            vim.cmd("colorscheme vscode")
         end
     },
     {
@@ -277,6 +279,12 @@ return {
         "brenoprata10/nvim-highlight-colors",
         event = "VeryLazy",
         config = function() require("nvim-highlight-colors").setup {} end
+    },
+    {
+        'fei6409/log-highlight.nvim',
+        config = function()
+            require('log-highlight').setup {}
+        end,
     },
 
     -- カーソル位置ハイライト
@@ -548,18 +556,18 @@ return {
             })
 
             -- typo-lsp
-            lspconfig.typos_lsp.setup({
-                on_attach = function(client, bufnr)
-                    local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-                    if filetype == "log" or filetype == "toggleterm" then
-                        client.stop()
-                    end
-                end,
-                init_options = {
-                    config = "$HOME/.config/nvim/typos.toml",
-                    diagnosticSeverity = "Warning",
-                },
-            })
+            -- lspconfig.typos_lsp.setup({
+            --     on_attach = function(client, bufnr)
+            --         local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+            --         if filetype == "log" or filetype == "toggleterm" then
+            --             client.stop()
+            --         end
+            --     end,
+            --     init_options = {
+            --         config = "$HOME/.config/nvim/typos.toml",
+            --         diagnosticSeverity = "Warning",
+            --     },
+            -- })
         end,
     },
     -- LSP cmp
@@ -716,38 +724,6 @@ return {
             })
         end,
     },
-    -- {
-    --     "williamboman/mason.nvim",
-    --     event = "VeryLazy",
-    --     config = function()
-    -- require("mason").setup({
-    --     ui = {
-    --         border = "rounded",
-    --         icons = {
-    --             package_installed = "✓",
-    --             package_pending = "➜",
-    --             package_uninstalled = "✗"
-    --         }
-    --     }
-    -- })
-    --     end
-    --
-    -- },
-    -- {
-    --     "williamboman/mason-lspconfig.nvim",
-    --     "neovim/nvim-lspconfig",
-    --     event = "VeryLazy",
-    -- },
-
-    -- cmp
-    -- {
-    --     "hrsh7th/nvim-cmp",
-    --     "hrsh7th/cmp-nvim-lsp",
-    --     "hrsh7th/cmp-path",
-    --     "hrsh7th/cmp-buffer",
-    --     "onsails/lspkind.nvim",
-    --     event = "VeryLazy",
-    -- },
 
     -- snippet
     {
