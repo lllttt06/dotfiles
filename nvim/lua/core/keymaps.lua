@@ -6,6 +6,9 @@ local keymap = vim.api.nvim_set_keymap
 --Remap space as leader key
 keymap("", "<space>", "<Nop>", opts)
 
+-- Esc 連打でハイライトを消す
+keymap("n", "<Esc><Esc>", ":nohlsearch<CR><Esc>", opts)
+
 -- Normal --
 -- Better window navigation
 keymap("n", "<C-h>", "<C-w>h", opts)

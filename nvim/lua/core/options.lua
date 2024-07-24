@@ -4,8 +4,6 @@ vim.opt.swapfile = false       -- スワップファイルを作成しない
 vim.opt.helplang = "ja"        -- ヘルプファイルの言語は日本語
 vim.opt.hidden = true          -- バッファを切り替えるときにファイルを保存しなくてもOKに
 
--- vim.opt.linespace = 10
-
 -- カーソルと表示
 vim.opt.cursorline = true   -- カーソルがある行を強調
 vim.opt.cursorcolumn = true -- カーソルがある列を強調

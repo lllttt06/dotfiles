@@ -40,14 +40,14 @@ return {
     },
     -- カラーテーマ
     {
-        -- "folke/tokyonight.nvim",
-        "Mofiqul/vscode.nvim",
+        "folke/tokyonight.nvim",
+        -- "Mofiqul/vscode.nvim",
         lazy = false,
         priority = 1000,
         opts = {},
         config = function()
-            -- vim.cmd("colorscheme tokyonight-night")
-            vim.cmd("colorscheme vscode")
+            vim.cmd("colorscheme tokyonight-night")
+            -- vim.cmd("colorscheme vscode")
         end
     },
     {
