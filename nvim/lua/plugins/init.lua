@@ -41,13 +41,11 @@ return {
     -- カラーテーマ
     {
         "folke/tokyonight.nvim",
-        -- "Mofiqul/vscode.nvim",
         lazy = false,
         priority = 1000,
         opts = {},
         config = function()
             vim.cmd("colorscheme tokyonight-night")
-            -- vim.cmd("colorscheme vscode")
         end
     },
     {
@@ -136,8 +134,8 @@ return {
                     { fg = "#c21f30" },
                 },
             },
-            -- indent = { enable = true },
-            -- line_num = { enable = true },
+            indent = { enable = true },
+            line_num = { enable = true },
         },
     },
     -- 通知
@@ -279,12 +277,6 @@ return {
         "brenoprata10/nvim-highlight-colors",
         event = "VeryLazy",
         config = function() require("nvim-highlight-colors").setup {} end
-    },
-    {
-        'fei6409/log-highlight.nvim',
-        config = function()
-            require('log-highlight').setup {}
-        end,
     },
 
     -- カーソル位置ハイライト
@@ -556,18 +548,18 @@ return {
             })
 
             -- typo-lsp
-            -- lspconfig.typos_lsp.setup({
-            --     on_attach = function(client, bufnr)
-            --         local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-            --         if filetype == "log" or filetype == "toggleterm" then
-            --             client.stop()
-            --         end
-            --     end,
-            --     init_options = {
-            --         config = "$HOME/.config/nvim/typos.toml",
-            --         diagnosticSeverity = "Warning",
-            --     },
-            -- })
+            lspconfig.typos_lsp.setup({
+                on_attach = function(client, bufnr)
+                    local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+                    if filetype == "log" or filetype == "toggleterm" then
+                        client.stop()
+                    end
+                end,
+                init_options = {
+                    config = "$HOME/.config/nvim/typos.toml",
+                    diagnosticSeverity = "Warning",
+                },
+            })
         end,
     },
     -- LSP cmp
@@ -724,6 +716,20 @@ return {
             })
         end,
     },
+    {
+        "rachartier/tiny-code-action.nvim",
+        dependencies = {
+            { "nvim-lua/plenary.nvim" },
+            { "nvim-telescope/telescope.nvim" },
+        },
+        event = "LspAttach",
+        config = function()
+            require('tiny-code-action').setup()
+            vim.keymap.set("n", "<leader>ck", function()
+                require("tiny-code-action").code_action()
+            end, { noremap = true, silent = true })
+        end
+    },
 
     -- snippet
     {
@@ -837,6 +843,29 @@ return {
                 },
             })
             vim.api.nvim_set_keymap("n", "<C-.>", "<cmd>OverseerRun<CR>", { noremap = true, silent = true })
+        end,
+    },
+    -- pubspec.yaml のヘルパー
+    {
+        "akinsho/pubspec-assist.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        cmd = {
+            "PubspecAssistAddPackage",
+            "PubspecAssistAddDevPackage",
+            "PubspecAssistPickVersion",
+        },
+        ft = { "yaml" },
+        event = "BufEnter pubspec.yaml",
+        config = function()
+            require("pubspec-assist").setup()
+            vim.api.nvim_set_keymap(
+                "n",
+                "<Leader>p",
+                "<cmd>PubspecAssistPickVersion<CR>",
+                { noremap = true, silent = true }
+            )
         end,
     },
 

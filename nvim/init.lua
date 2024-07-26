@@ -1,4 +1,6 @@
 vim.loader.enable()
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -11,9 +13,6 @@ if not vim.loop.fs_stat(lazypath) then
         lazypath,
     })
 end
-
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
 
 -- Obsidian API key をセットする
 -- vim.env.OBSIDIAN_REST_API_KEY = '86dcd3f82d555be94345a66fa7f960fdb1c7f82dede0bfd680940f6812ed9e04'
