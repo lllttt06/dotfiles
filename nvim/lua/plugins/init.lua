@@ -134,8 +134,8 @@ return {
                     { fg = "#c21f30" },
                 },
             },
-            indent = { enable = true },
-            line_num = { enable = true },
+            -- indent = { enable = true },
+            -- line_num = { enable = true },
         },
     },
     -- 通知
@@ -548,18 +548,18 @@ return {
             })
 
             -- typo-lsp
-            lspconfig.typos_lsp.setup({
-                on_attach = function(client, bufnr)
-                    local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-                    if filetype == "log" or filetype == "toggleterm" then
-                        client.stop()
-                    end
-                end,
-                init_options = {
-                    config = "$HOME/.config/nvim/typos.toml",
-                    diagnosticSeverity = "Warning",
-                },
-            })
+            -- lspconfig.typos_lsp.setup({
+            --     on_attach = function(client, bufnr)
+            --         local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+            --         if filetype == "log" or filetype == "toggleterm" then
+            --             client.stop()
+            --         end
+            --     end,
+            --     init_options = {
+            --         config = "$HOME/.config/nvim/typos.toml",
+            --         diagnosticSeverity = "Warning",
+            --     },
+            -- })
         end,
     },
     -- LSP cmp
