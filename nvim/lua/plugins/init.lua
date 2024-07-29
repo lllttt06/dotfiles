@@ -123,21 +123,58 @@ return {
     },
     -- Chunk
     {
-        "shellRaining/hlchunk.nvim",
-        event = { "BufReadPre", "BufNewFile" },
-        opts = {
-            chunk = {
-                enable = true,
-                use_treesitter = true,
-                style = {
-                    { fg = "#4fd1c5" },
-                    { fg = "#c21f30" },
+        'echasnovski/mini.indentscope',
+        event = { 'BufRead', 'BufNewFile' },
+        config = function()
+            require('mini.indentscope').setup {
+                options = {
+                    try_as_border = false,
+                    indent_at_cursor = true,
                 },
-            },
-            -- indent = { enable = true },
-            -- line_num = { enable = true },
-        },
+                draw = {
+                    delay = 100,
+                },
+                mappings = {
+                    object_scope = 'ii',
+                    object_scope_with_border = 'ai',
+                    goto_top = '[i',
+                    goto_bottom = ']i',
+                },
+            }
+
+            vim.api.nvim_create_autocmd('FileType', {
+                pattern = {
+                    'help',
+                    'alpha',
+                    'Trouble',
+                    'lazy',
+                    'mason',
+                    'notify',
+                    'toggleterm',
+                    'lazyterm',
+                },
+                callback = function()
+                    vim.b.miniindentscope_disable = true
+                end,
+            })
+        end,
     },
+    -- {
+    --     "shellRaining/hlchunk.nvim",
+    --     event = { "BufReadPre", "BufNewFile" },
+    --     opts = {
+    --         chunk = {
+    --             enable = true,
+    --             use_treesitter = true,
+    --             style = {
+    --                 { fg = "#4fd1c5" },
+    --                 { fg = "#c21f30" },
+    --             },
+    --         },
+    --         -- indent = { enable = true },
+    --         -- line_num = { enable = true },
+    --     },
+    -- },
     -- 通知
     {
         "j-hui/fidget.nvim",
