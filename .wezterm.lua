@@ -161,26 +161,26 @@ end)
 config.leader = { key = 'Space', mods = 'SHIFT|CTRL' }
 config.keys = {
     -- Window
-    { key = 'n',         mods = 'SHIFT|CTRL',           action = wezterm.action.ToggleFullScreen },
-    { key = 'Enter',     mods = 'ALT',                  action = wezterm.action.DisableDefaultAssignment },
-    { key = 's',         mods = 'LEADER',               action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' } },
-    { key = 'v',         mods = 'LEADER',               action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' } },
-    { key = 'c',         mods = 'SHIFT|CTRL',           action = wezterm.action { CopyTo = 'Clipboard' } },
-    { key = 'u',         mods = 'SHIFT|CTRL',           action = wezterm.action.ScrollByPage(-0.5) },
-    { key = 'd',         mods = 'SHIFT|CTRL',           action = wezterm.action.ScrollByPage(0.5) },
-    { key = 'g',         mods = 'SHIFT|CTRL',           action = wezterm.action.ScrollToBottom },
-
-    -- Tab
-    { key = '{',         mods = 'SHIFT|ALT',            action = wezterm.action.MoveTabRelative(-1) },
-    { key = '}',         mods = 'SHIFT|ALT',            action = wezterm.action.MoveTabRelative(1) },
-
-    -- Keybinds of Copy and Paste
-    { key = 'C',         mods = 'CTRL|SHIFT',           action = wezterm.action.CopyTo 'ClipboardAndPrimarySelection' },
-    { key = 'V',         mods = 'CTRL|SHIFT',           action = wezterm.action.PasteFrom 'Clipboard' },
-    { key = 'h',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'LeftArrow' } },
-    { key = 'j',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'DownArrow' } },
-    { key = 'k',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'UpArrow' } },
-    { key = 'l',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'RightArrow' } },
+    -- { key = 'n',         mods = 'SHIFT|CTRL',           action = wezterm.action.ToggleFullScreen },
+    -- { key = 'Enter',     mods = 'ALT',                  action = wezterm.action.DisableDefaultAssignment },
+    -- { key = 's',         mods = 'LEADER',               action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+    -- { key = 'v',         mods = 'LEADER',               action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' } },
+    -- { key = 'c',         mods = 'SHIFT|CTRL',           action = wezterm.action { CopyTo = 'Clipboard' } },
+    -- { key = 'u',         mods = 'SHIFT|CTRL',           action = wezterm.action.ScrollByPage(-0.5) },
+    -- { key = 'd',         mods = 'SHIFT|CTRL',           action = wezterm.action.ScrollByPage(0.5) },
+    -- { key = 'g',         mods = 'SHIFT|CTRL',           action = wezterm.action.ScrollToBottom },
+    --
+    -- -- Tab
+    -- { key = '{',         mods = 'SHIFT|ALT',            action = wezterm.action.MoveTabRelative(-1) },
+    -- { key = '}',         mods = 'SHIFT|ALT',            action = wezterm.action.MoveTabRelative(1) },
+    --
+    -- -- Keybinds of Copy and Paste
+    -- { key = 'C',         mods = 'CTRL|SHIFT',           action = wezterm.action.CopyTo 'ClipboardAndPrimarySelection' },
+    -- { key = 'V',         mods = 'CTRL|SHIFT',           action = wezterm.action.PasteFrom 'Clipboard' },
+    -- { key = 'h',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'LeftArrow' } },
+    -- { key = 'j',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'DownArrow' } },
+    -- { key = 'k',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'UpArrow' } },
+    -- { key = 'l',         mods = 'CTRL',                 action = wezterm.action.SendKey { key = 'RightArrow' } },
 
     -- Fonts
     { key = '+',         mods = 'CTRL|SHIFT',           action = 'IncreaseFontSize' },

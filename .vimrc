@@ -1,4 +1,5 @@
-set clipboard+=unnamed
+set clipboard&
+set clipboard^=unnamedplus
 
 imap { {}<LEFT>
 imap [ []<LEFT>
