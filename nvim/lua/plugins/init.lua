@@ -152,6 +152,7 @@ return {
                     'notify',
                     'toggleterm',
                     'lazyterm',
+                    'NvimTree',
                 },
                 callback = function()
                     vim.b.miniindentscope_disable = true
@@ -159,22 +160,6 @@ return {
             })
         end,
     },
-    -- {
-    --     "shellRaining/hlchunk.nvim",
-    --     event = { "BufReadPre", "BufNewFile" },
-    --     opts = {
-    --         chunk = {
-    --             enable = true,
-    --             use_treesitter = true,
-    --             style = {
-    --                 { fg = "#4fd1c5" },
-    --                 { fg = "#c21f30" },
-    --             },
-    --         },
-    --         -- indent = { enable = true },
-    --         -- line_num = { enable = true },
-    --     },
-    -- },
     -- 通知
     {
         "j-hui/fidget.nvim",
@@ -460,15 +445,111 @@ return {
 
     -- ファイルビューワ
     {
-        'echasnovski/mini.nvim',
-        version = false,
-        event = "VeryLazy",
-        keys = {
-            -- mini.filesオープン用のショートカット
-            { '<C-n>', ':lua if not MiniFiles.close() then MiniFiles.open() end<CR>' }
+        'nvim-tree/nvim-tree.lua',
+        dependencies = {
+            'b0o/nvim-tree-preview.lua',
+            'nvim-lua/plenary.nvim',
         },
+        event = 'VeryLazy',
         config = function()
-            require('mini.files').setup({})
+            local preview = require 'nvim-tree-preview'
+            local function on_attach(bufnr)
+                local api = require 'nvim-tree.api'
+
+                local function opts(desc)
+                    return {
+                        desc = 'nvim-tree: ' .. desc,
+                        buffer = bufnr,
+                        noremap = true,
+                        silent = true,
+                        nowait = true,
+                    }
+                end
+
+                api.config.mappings.default_on_attach(bufnr)
+                vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
+                vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
+                vim.keymap.set('n', '=', api.tree.change_root_to_node, opts 'CD')
+                vim.keymap.set('n', '-', api.tree.change_root_to_parent, opts 'Dir Up')
+                vim.keymap.set('n', 'l', api.node.open.edit, opts 'Edit')
+                vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Close Node')
+                vim.keymap.set('n', 's', '', opts '')
+                vim.keymap.set('n', 'sl', '<c-w>l', opts '')
+
+                vim.keymap.set('n', 'P', preview.watch, opts 'Preview (Watch)')
+                vim.keymap.set('n', '<Esc>', preview.unwatch, opts 'Close Preview/Unwatch')
+                vim.keymap.set('n', '<Tab>', function()
+                    local ok, node = pcall(api.tree.get_node_under_cursor)
+                    if ok and node then
+                        if node.type == 'directory' then
+                            api.node.open.edit()
+                        else
+                            preview.watch()
+                        end
+                    end
+                end, opts 'Preview')
+            end
+
+            preview.setup {
+                keymaps = {
+                    ['<Esc>'] = { action = 'close', unwatch = true },
+                },
+                min_width = 60,
+                min_height = 15,
+                max_width = 160,
+                max_height = 40,
+                wrap = false,       -- Whether to wrap lines in the preview window
+                border = 'rounded', -- Border style for the preview window
+            }
+
+            require('nvim-tree').setup {
+                on_attach = on_attach,
+                view = {
+                    signcolumn = 'yes',
+                    float = {
+                        enable = true,
+                        open_win_config = {
+                            height = 65,
+                            width = 45,
+                        },
+                    },
+                },
+                diagnostics = {
+                    enable = true,
+                    icons = {
+                        hint = ' ',
+                        info = ' ',
+                        warning = ' ',
+                        error = ' ',
+                    },
+                    show_on_dirs = true,
+                },
+                renderer = {
+                    group_empty = true,
+                },
+                filters = {
+                    dotfiles = false,
+                },
+                git = {
+                    enable = true,
+                    ignore = false,
+                },
+            }
+            vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+            vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
+        end,
+    },
+
+    -- nvim-tree でファイル名変更した場合などに自動で更新
+    {
+        'antosha417/nvim-lsp-file-operations',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'nvim-tree/nvim-tree.lua',
+        },
+        event = 'VeryLazy',
+        config = function()
+            require('lsp-file-operations').setup()
         end,
     },
 

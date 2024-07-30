@@ -51,10 +51,21 @@ config.webgpu_power_preference = 'HighPerformance'
 
 -- window
 config.adjust_window_size_when_changing_font_size = false
+config.window_close_confirmation = 'NeverPrompt'
 config.integrated_title_button_style = 'Windows'
 config.window_decorations = 'RESIZE'
 config.window_background_opacity = 1
 config.window_background_image = '/Users/s18556/dotfiles/jododaira.jpg'
+config.window_background_image_hsb = {
+    -- Darken the background image by reducing it to 1/3rd
+    brightness = 0.2,
+    -- You can adjust the hue by scaling its value.
+    -- a multiplier of 1.0 leaves the value unchanged.
+    hue = 1.0,
+    -- You can adjust the saturation also.
+    saturation = 1.0,
+}
+
 config.window_padding = {
     left = '0',
     right = '0',
