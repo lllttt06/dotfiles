@@ -443,6 +443,7 @@ return {
         end
     },
 
+
     -- ファイルビューワ
     {
         'nvim-tree/nvim-tree.lua',
@@ -535,8 +536,13 @@ return {
                     ignore = false,
                 },
             }
+            local custom_actions = require("core.image")
             vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
             vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
+            vim.keymap.set('n', '<C-i>', function() custom_actions.openWithQuickLook() end,
+                { noremap = true, silent = true })
+            vim.keymap.set('n', '<C-w>', function() custom_actions.weztermPreview() end,
+                { noremap = true, silent = true })
         end,
     },
 

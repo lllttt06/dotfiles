@@ -1,11 +1,13 @@
 {
     "diagnostics.globals": [
-        "vim"
+        "vim",
+        "geEntryAbsolutePath"
     ],
     "diagnostics.disable": [
         "missing-fields",
         "assign-type-mismatch",
         "undefined-doc-name",
-        "deprecated"
+        "deprecated",
+        "undefined-global"
     ]
 }
