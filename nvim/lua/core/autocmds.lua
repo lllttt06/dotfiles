@@ -47,7 +47,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- vim.api.nvim_create_autocmd("VimEnter", {
 --     pattern = "*",
 --     callback = function()
---         if has_flutter_dependency_in_pubspec() then
+--         if has_flutter_dependency_in_pubspec() 
 --             vim.notify("Flutter dependency found in pubspec.yaml", "info", {
 --                 title = "Neovim",
 --                 timeout = 5000,
