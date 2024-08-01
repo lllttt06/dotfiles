@@ -52,13 +52,216 @@ return {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
     },
-    {
-        "nvim-lualine/lualine.nvim",
-        event = "VeryLazy",
-        dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
-        config = function() require("lualine").setup {} end
-    },
+    -- {
+    --     "nvim-lualine/lualine.nvim",
+    --     event = "VeryLazy",
+    --     dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
+    --     config = function() require("lualine").setup {} end
+    -- },
 
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = {
+            'linrongbin16/lsp-progress.nvim',
+            'AndreM222/copilot-lualine',
+            'uloco/bluloco.nvim',
+        },
+        event = 'VimEnter', -- 画面がちらつく
+        config = function()
+            require('lsp-progress').setup {}
+            local lualine = require 'lualine'
+            local theme_colors = {
+                blue = '#193b73',
+                cyan = '#79dac8',
+                black = '#0a0a06',
+                white = '#c6c6c6',
+                red = '#ff5189',
+                violet = '#d183e8',
+                grey = '#303030',
+                caloriemate = '#fbc114',
+            }
+
+            local bubbles_theme = {
+                normal = {
+                    a = { fg = theme_colors.white, bg = theme_colors.grey },
+                    b = { fg = theme_colors.white, bg = theme_colors.blue, gui = 'bold' },
+                    c = { fg = theme_colors.white },
+                    x = { fg = theme_colors.white },
+                    y = { fg = theme_colors.black, bg = theme_colors.caloriemate },
+                    z = { fg = theme_colors.white, bg = theme_colors.grey, gui = 'bold' },
+                },
+
+                -- insert = { a = { fg = colors.black, bg = colors.blue } },
+                -- visual = { a = { fg = colors.black, bg = colors.cyan } },
+                -- replace = { a = { fg = colors.black, bg = colors.red } },
+
+                inactive = {
+                    a = { fg = theme_colors.white, bg = theme_colors.black },
+                    b = { fg = theme_colors.white, bg = theme_colors.black },
+                    c = { fg = theme_colors.white },
+                },
+            }
+
+            local config = {
+                options = {
+                    disabled_filetypes = {
+                        statusline = { 'alpha' },
+                    },
+                    theme = bubbles_theme,
+                    component_separators = '',
+                    section_separators = { right = '', left = '' },
+                },
+                sections = {
+                    lualine_a = {
+                        {
+                            function()
+                                return ''
+                            end,
+                            padding = { left = 2, right = 3 },
+                            color = function()
+                                local evil_colors = {
+                                    bg = '#1c1f24',
+                                    fg = '#abb2bf',
+                                    yellow = '#d19a66',
+                                    cyan = '#2aa198',
+                                    darkblue = '#1c1f24',
+                                    green = '#98c379',
+                                    orange = '#e06c75',
+                                    violet = '#a9a1e1',
+                                    magenta = '#c678dd',
+                                    blue = '#61afef',
+                                    red = '#e06c75',
+                                }
+
+                                -- auto change color according to neovims mode
+                                local mode_color = {
+                                    n = evil_colors.blue,
+                                    i = evil_colors.green,
+                                    v = evil_colors.red,
+                                    [''] = evil_colors.red,
+                                    V = evil_colors.red,
+                                    c = evil_colors.magenta,
+                                    no = evil_colors.blue,
+                                    s = evil_colors.orange,
+                                    S = evil_colors.orange,
+                                    [''] = evil_colors.orange,
+                                    ic = evil_colors.yellow,
+                                    R = evil_colors.violet,
+                                    Rv = evil_colors.violet,
+                                    cv = evil_colors.blue,
+                                    ce = evil_colors.blue,
+                                    r = evil_colors.cyan,
+                                    rm = evil_colors.cyan,
+                                    ['r?'] = evil_colors.cyan,
+                                    ['!'] = evil_colors.blue,
+                                    t = evil_colors.blue,
+                                }
+                                return { fg = mode_color[vim.fn.mode()] }
+                            end,
+                        },
+                    },
+                    lualine_b = {
+                        {
+                            'branch',
+                            icon = ' ',
+                            padding = { left = 1, right = 1 },
+                        },
+                        {
+                            'filename',
+                            path = 1, -- 1: Relative path
+                            file_status = false,
+                            separator = { right = '' },
+                        },
+                    },
+                    lualine_c = {
+                        "'%='",
+                        {
+                            'diff',
+                            symbols = { added = '  ', modified = '  ', removed = '  ' },
+                            separator = ' ',
+                        },
+                        {
+                            'diagnostics',
+                            sources = { 'nvim_diagnostic' },
+                            symbols = { error = '  ', warn = '  ', info = '  ', hint = '  ' },
+                        },
+                    },
+                    lualine_x = {
+                        function()
+                            return require('lsp-progress').progress {
+                                format = function(messages)
+                                    local active_clients = vim.lsp.get_clients()
+                                    local client_count = #active_clients
+                                    if #messages > 0 then
+                                        return ' LSP:' .. client_count .. ' ' .. table.concat(messages, ' ')
+                                    end
+                                    if #active_clients <= 0 then
+                                        return ' LSP:' .. client_count
+                                    else
+                                        local client_names = {}
+                                        for _, client in ipairs(active_clients) do
+                                            if client and client.name ~= '' then
+                                                table.insert(client_names, '[' .. client.name .. ']')
+                                            end
+                                        end
+                                        return ' LSP:' .. client_count .. ' ' .. table.concat(client_names, ' ')
+                                    end
+                                end,
+                            }
+                        end,
+                    },
+                    lualine_y = {
+                        {
+                            'copilot',
+                            symbols = {
+                                -- spinners = require("copilot-lualine.spinners").moon
+                                -- https://github.com/AndreM222/copilot-lualine/blob/main/lua/copilot-lualine/spinners.lua
+                                spinners = {
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                    ' ',
+                                },
+                            },
+                            separator = { left = '' },
+                            padding = { left = 1, right = 2 },
+                        },
+                    },
+                    lualine_z = {
+                        {
+                            'filetype',
+                            icon_only = true,
+                            padding = { left = 2, right = 1 },
+                        },
+                        {
+                            'filetype',
+                            icons_enabled = false,
+                            padding = { left = 0, right = 2 },
+                        },
+                    },
+                },
+                inactive_sections = {
+                    lualine_a = {},
+                    lualine_b = {},
+                    lualine_c = {},
+                    lualine_x = {},
+                    lualine_y = {},
+                    lualine_z = {},
+                },
+            }
+            lualine.setup(config)
+        end,
+    },
     -- Buffer
     {
         "akinsho/bufferline.nvim",
@@ -515,6 +718,10 @@ return {
                         },
                     },
                 },
+                update_focused_file = {
+                    enable = true,
+                    update_cwd = false,
+                },
                 diagnostics = {
                     enable = true,
                     icons = {
@@ -527,6 +734,23 @@ return {
                 },
                 renderer = {
                     group_empty = true,
+                    highlight_git = true,
+                    highlight_opened_files = 'name',
+                    icons = {
+                        git_placement = 'signcolumn',
+                        modified_placement = 'signcolumn',
+                        glyphs = {
+                            git = {
+                                deleted = '',
+                                unstaged = '',
+                                untracked = '',
+                                staged = '',
+                                unmerged = '',
+                                renamed = '»',
+                                ignored = '◌',
+                            },
+                        },
+                    },
                 },
                 filters = {
                     dotfiles = false,
