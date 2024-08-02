@@ -40,25 +40,40 @@ return {
     },
     -- カラーテーマ
     {
-        "folke/tokyonight.nvim",
+        "Mofiqul/vscode.nvim",
         lazy = false,
         priority = 1000,
         opts = {},
         config = function()
-            vim.cmd("colorscheme tokyonight-night")
+            vim.cmd("colorscheme vscode")
         end
     },
+    -- {
+    --     "folke/tokyonight.nvim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     opts = {},
+    --     config = function()
+    --         vim.cmd("colorscheme tokyonight-night")
+    --     end
+    -- },
+    -- {
+    --     "neanias/everforest-nvim",
+    --     version = false,
+    --     lazy = false,
+    --     priority = 1000, -- make sure to load this before all the other start plugins
+    --     -- Optional; default configuration will be used if setup isn't called.
+    --     config = function()
+    --         require("everforest").setup({
+    --             background = "hard",
+    --         })
+    --         vim.cmd("colorscheme everforest")
+    --     end,
+    -- },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
     },
-    -- {
-    --     "nvim-lualine/lualine.nvim",
-    --     event = "VeryLazy",
-    --     dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
-    --     config = function() require("lualine").setup {} end
-    -- },
-
     {
         'nvim-lualine/lualine.nvim',
         dependencies = {
@@ -70,44 +85,11 @@ return {
         config = function()
             require('lsp-progress').setup {}
             local lualine = require 'lualine'
-            local theme_colors = {
-                blue = '#193b73',
-                cyan = '#79dac8',
-                black = '#0a0a06',
-                white = '#c6c6c6',
-                red = '#ff5189',
-                violet = '#d183e8',
-                grey = '#303030',
-                caloriemate = '#fbc114',
-            }
-
-            local bubbles_theme = {
-                normal = {
-                    a = { fg = theme_colors.white, bg = theme_colors.grey },
-                    b = { fg = theme_colors.white, bg = theme_colors.blue, gui = 'bold' },
-                    c = { fg = theme_colors.white },
-                    x = { fg = theme_colors.white },
-                    y = { fg = theme_colors.black, bg = theme_colors.caloriemate },
-                    z = { fg = theme_colors.white, bg = theme_colors.grey, gui = 'bold' },
-                },
-
-                -- insert = { a = { fg = colors.black, bg = colors.blue } },
-                -- visual = { a = { fg = colors.black, bg = colors.cyan } },
-                -- replace = { a = { fg = colors.black, bg = colors.red } },
-
-                inactive = {
-                    a = { fg = theme_colors.white, bg = theme_colors.black },
-                    b = { fg = theme_colors.white, bg = theme_colors.black },
-                    c = { fg = theme_colors.white },
-                },
-            }
-
             local config = {
                 options = {
                     disabled_filetypes = {
                         statusline = { 'alpha' },
                     },
-                    theme = bubbles_theme,
                     component_separators = '',
                     section_separators = { right = '', left = '' },
                 },
@@ -118,46 +100,6 @@ return {
                                 return ''
                             end,
                             padding = { left = 2, right = 3 },
-                            color = function()
-                                local evil_colors = {
-                                    bg = '#1c1f24',
-                                    fg = '#abb2bf',
-                                    yellow = '#d19a66',
-                                    cyan = '#2aa198',
-                                    darkblue = '#1c1f24',
-                                    green = '#98c379',
-                                    orange = '#e06c75',
-                                    violet = '#a9a1e1',
-                                    magenta = '#c678dd',
-                                    blue = '#61afef',
-                                    red = '#e06c75',
-                                }
-
-                                -- auto change color according to neovims mode
-                                local mode_color = {
-                                    n = evil_colors.blue,
-                                    i = evil_colors.green,
-                                    v = evil_colors.red,
-                                    [''] = evil_colors.red,
-                                    V = evil_colors.red,
-                                    c = evil_colors.magenta,
-                                    no = evil_colors.blue,
-                                    s = evil_colors.orange,
-                                    S = evil_colors.orange,
-                                    [''] = evil_colors.orange,
-                                    ic = evil_colors.yellow,
-                                    R = evil_colors.violet,
-                                    Rv = evil_colors.violet,
-                                    cv = evil_colors.blue,
-                                    ce = evil_colors.blue,
-                                    r = evil_colors.cyan,
-                                    rm = evil_colors.cyan,
-                                    ['r?'] = evil_colors.cyan,
-                                    ['!'] = evil_colors.blue,
-                                    t = evil_colors.blue,
-                                }
-                                return { fg = mode_color[vim.fn.mode()] }
-                            end,
                         },
                     },
                     lualine_b = {
@@ -480,14 +422,12 @@ return {
         },
     },
 
-
     -- Screenkey
     {
         "NStefan002/screenkey.nvim",
         version = "*",
         event = "VeryLazy",
     },
-
 
     -- シンタックスハイライト
     {
@@ -507,6 +447,21 @@ return {
         "brenoprata10/nvim-highlight-colors",
         event = "VeryLazy",
         config = function() require("nvim-highlight-colors").setup {} end
+    },
+    -- ログハイライト
+    {
+        'fei6409/log-highlight.nvim',
+        ft = 'log',
+        config = function()
+            -- ログのバッファだけ背景色を変える
+            vim.api.nvim_create_autocmd('FileType', {
+                pattern = 'log',
+                callback = function()
+                    vim.cmd 'highlight LogNormal guibg=#282828 ctermbg=darkgray'
+                    vim.cmd 'setlocal winhighlight=Normal:LogNormal'
+                end,
+            })
+        end,
     },
 
     -- カーソル位置ハイライト
@@ -768,9 +723,9 @@ return {
             local custom_actions = require("core.image")
             vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
             vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<C-i>', function() custom_actions.openWithQuickLook() end,
+            vim.keymap.set('n', '<leader>i', function() custom_actions.openWithQuickLook() end,
                 { noremap = true, silent = true })
-            vim.keymap.set('n', '<C-w>', function() custom_actions.weztermPreview() end,
+            vim.keymap.set('n', '<leader>w', function() custom_actions.weztermPreview() end,
                 { noremap = true, silent = true })
         end,
     },
@@ -826,7 +781,7 @@ return {
                     end, opts)
                     vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
                     vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-                    vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+                    -- vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
                     vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
                     vim.keymap.set('n', '<space>f', function()
                         vim.lsp.buf.format { async = true }
@@ -1045,7 +1000,7 @@ return {
                 }),
                 experimental = {
                     native_menu = false,
-                    ghost_text = true,
+                    ghost_text = { hl_group = 'BufferInactive' },
                 },
             })
 
@@ -1078,7 +1033,7 @@ return {
         event = "LspAttach",
         config = function()
             require('tiny-code-action').setup()
-            vim.keymap.set("n", "<leader>ck", function()
+            vim.keymap.set("n", "<leader>ca", function()
                 require("tiny-code-action").code_action()
             end, { noremap = true, silent = true })
         end
@@ -1285,6 +1240,8 @@ return {
         cmd = "Copilot",
         event = "InsertEnter",
         config = function()
+            -- Copilot の Suggestion の色を変更する
+            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
             require("copilot").setup({
                 suggestion = {
                     enabled = true,
