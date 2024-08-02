@@ -16,12 +16,13 @@
   "copilot.lua": { "branch": "master", "commit": "86537b286f18783f8b67bccd78a4ef4345679625" },
   "dashboard-nvim": { "branch": "master", "commit": "fabf5feec96185817c732d47d363f34034212685" },
   "dressing.nvim": { "branch": "master", "commit": "6741f1062d3dc6e4755367a7e9b347b553623f04" },
+  "everforest-nvim": { "branch": "main", "commit": "8fdccd1e45088be3309aaf82072b1f7fec2f6f2c" },
   "fidget.nvim": { "branch": "main", "commit": "d855eed8a06531a7e8fd0684889b2943f373c469" },
   "flash.nvim": { "branch": "main", "commit": "34c7be146a91fec3555c33fe89c7d643f6ef5cf1" },
   "flutter-tools.nvim": { "branch": "main", "commit": "5aa227fa083fd740184b55b5220dfabc24a25cc7" },
   "friendly-snippets": { "branch": "main", "commit": "00ebcaa159e817150bd83bfe2d51fa3b3377d5c4" },
   "garbage-day.nvim": { "branch": "main", "commit": "4a1160bfffb2f499fb55a54333f29d160ab3c8a1" },
-  "gitsigns.nvim": { "branch": "main", "commit": "f074844b60f9e151970fbcdbeb8a2cd52b6ef25a" },
+  "gitsigns.nvim": { "branch": "main", "commit": "0ed466953fe5885166e0d60799172a8b1f752d16" },
   "lazy.nvim": { "branch": "main", "commit": "077102c5bfc578693f12377846d427f49bc50076" },
   "lazygit.nvim": { "branch": "main", "commit": "dc56df433bfbf107fee0139e187eb9750878fa84" },
   "log-highlight.nvim": { "branch": "main", "commit": "2867afe132b1c94c454f95758409da320ab4b084" },
@@ -59,6 +60,5 @@
   "tiny-code-action.nvim": { "branch": "main", "commit": "b16e6031707efeccee65e277e309ea1c3447c272" },
   "toggleterm.nvim": { "branch": "main", "commit": "48be57eaba817f038d61bbf64d2c597f578c0827" },
   "trouble.nvim": { "branch": "main", "commit": "6efc446226679fda0547c0fd6a7892fd5f5b15d8" },
-  "vim-illuminate": { "branch": "master", "commit": "5eeb7951fc630682c322e88a9bbdae5c224ff0aa" },
-  "vscode.nvim": { "branch": "main", "commit": "f6c88cdf9d37d5c0bb1e492a13a3b4b4cc4dd13e" }
+  "vim-illuminate": { "branch": "master", "commit": "5eeb7951fc630682c322e88a9bbdae5c224ff0aa" }
 }
