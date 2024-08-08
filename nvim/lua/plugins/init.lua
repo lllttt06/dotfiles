@@ -48,28 +48,28 @@ return {
     -- 		vim.cmd("colorscheme vscode")
     -- 	end
     -- },
-    -- {
-    --     "folke/tokyonight.nvim",
-    --     lazy = false,
-    --     priority = 1000,
-    --     opts = {},
-    --     config = function()
-    --         vim.cmd("colorscheme tokyonight-night")
-    --     end
-    -- },
     {
-        "neanias/everforest-nvim",
-        version = false,
+        "folke/tokyonight.nvim",
         lazy = false,
-        priority = 1000, -- make sure to load this before all the other start plugins
-        -- Optional; default configuration will be used if setup isn't called.
+        priority = 1000,
+        opts = {},
         config = function()
-            require("everforest").setup({
-                background = "hard",
-            })
-            vim.cmd("colorscheme everforest")
-        end,
+            vim.cmd("colorscheme tokyonight-night")
+        end
     },
+    -- {
+    --     "neanias/everforest-nvim",
+    --     version = false,
+    --     lazy = false,
+    --     priority = 1000, -- make sure to load this before all the other start plugins
+    --     -- Optional; default configuration will be used if setup isn't called.
+    --     config = function()
+    --         require("everforest").setup({
+    --             background = "hard",
+    --         })
+    --         vim.cmd("colorscheme everforest")
+    --     end,
+    -- },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",

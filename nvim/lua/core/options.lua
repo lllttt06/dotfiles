@@ -18,6 +18,16 @@ vim.opt.fillchars:append({ stl = '─', stlnc = '─' })
 vim.opt.cursorline = true   -- カーソルがある行を強調
 vim.opt.cursorcolumn = true -- カーソルがある列を強調
 
+-- 区切り線のハイライトを抑え気味に
+vim.api.nvim_set_hl(0, 'StatusLine', { link = 'Comment' })
+vim.api.nvim_set_hl(0, 'StatusLineNC', { link = 'Comment' })
+
+if vim.fn.has('nvim') == 1 then
+    vim.api.nvim_set_hl(0, 'WinSeparator', { link = 'Comment' })
+else
+    vim.api.nvim_set_hl(0, 'VertSplit', { link = 'Comment' })
+end
+
 -- クリップボード共有
 vim.opt.clipboard:append({ "unnamedplus" }) -- レジスタとクリップボードを共有
 
