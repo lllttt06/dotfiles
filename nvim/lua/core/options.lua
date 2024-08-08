@@ -4,6 +4,16 @@ vim.opt.swapfile = false       -- スワップファイルを作成しない
 vim.opt.helplang = "ja"        -- ヘルプファイルの言語は日本語
 vim.opt.hidden = true          -- バッファを切り替えるときにファイルを保存しなくてもOKに
 
+-- ファイル末尾以降の`~`の表示を削除
+vim.opt.fillchars:append({ eob = ' ' })
+
+-- 縦区切り線をシンプルに
+vim.opt.fillchars:append({ vert = '│' })
+
+-- 横区切り線をシンプルに
+vim.opt.statusline = '─'
+vim.opt.fillchars:append({ stl = '─', stlnc = '─' })
+
 -- カーソルと表示
 vim.opt.cursorline = true   -- カーソルがある行を強調
 vim.opt.cursorcolumn = true -- カーソルがある列を強調
