@@ -4,9 +4,29 @@ vim.opt.swapfile = false       -- スワップファイルを作成しない
 vim.opt.helplang = "ja"        -- ヘルプファイルの言語は日本語
 vim.opt.hidden = true          -- バッファを切り替えるときにファイルを保存しなくてもOKに
 
+-- ファイル末尾以降の`~`の表示を削除
+vim.opt.fillchars:append({ eob = ' ' })
+
+-- 縦区切り線をシンプルに
+vim.opt.fillchars:append({ vert = '│' })
+
+-- 横区切り線をシンプルに
+vim.opt.statusline = '─'
+vim.opt.fillchars:append({ stl = '─', stlnc = '─' })
+
 -- カーソルと表示
 vim.opt.cursorline = true   -- カーソルがある行を強調
 vim.opt.cursorcolumn = true -- カーソルがある列を強調
+
+-- 区切り線のハイライトを抑え気味に
+vim.api.nvim_set_hl(0, 'StatusLine', { link = 'Comment' })
+vim.api.nvim_set_hl(0, 'StatusLineNC', { link = 'Comment' })
+
+if vim.fn.has('nvim') == 1 then
+    vim.api.nvim_set_hl(0, 'WinSeparator', { link = 'Comment' })
+else
+    vim.api.nvim_set_hl(0, 'VertSplit', { link = 'Comment' })
+end
 
 -- クリップボード共有
 vim.opt.clipboard:append({ "unnamedplus" }) -- レジスタとクリップボードを共有
