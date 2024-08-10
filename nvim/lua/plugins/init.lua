@@ -96,14 +96,22 @@ return {
                 sections = {
                     lualine_a = {
                         {
-                            'filename',
-                            path = 1, -- 1: Relative path
-                            padding = { left = 1, right = 1 },
-                            file_status = false,
+                            function()
+                                return ''
+                            end,
+                            padding = { left = 2, right = 2 },
                             separator = { right = '' },
                         },
                     },
                     lualine_b = {
+                        {
+                            'branch',
+                            icon = ' ',
+                            padding = { left = 2, right = 1 },
+                            separator = { right = '' },
+                        },
+                    },
+                    lualine_c = {
                         "'%='",
                         {
                             'diff',
@@ -180,7 +188,8 @@ return {
                         {
                             'filetype',
                             icons_enabled = false,
-                            padding = { left = 1, right = 1 },
+                            separator = { left = '' },
+                            padding = { left = 1, right = 2 },
                         },
                     },
                 },
