@@ -99,19 +99,15 @@ return {
                             function()
                                 return ''
                             end,
-                            padding = { left = 2, right = 3 },
+                            padding = { left = 2, right = 2 },
+                            separator = { right = '' },
                         },
                     },
                     lualine_b = {
                         {
                             'branch',
                             icon = ' ',
-                            padding = { left = 1, right = 1 },
-                        },
-                        {
-                            'filename',
-                            path = 1, -- 1: Relative path
-                            file_status = false,
+                            padding = { left = 2, right = 1 },
                             separator = { right = '' },
                         },
                     },
@@ -191,13 +187,9 @@ return {
                     lualine_z = {
                         {
                             'filetype',
-                            icon_only = true,
-                            padding = { left = 2, right = 1 },
-                        },
-                        {
-                            'filetype',
                             icons_enabled = false,
-                            padding = { left = 0, right = 2 },
+                            separator = { left = '' },
+                            padding = { left = 1, right = 2 },
                         },
                     },
                 },
@@ -270,19 +262,6 @@ return {
 
     },
 
-    {
-        "OXY2DEV/markview.nvim",
-        lazy = false, -- Recommended
-        -- ft = "markdown" -- If you decide to lazy-load anyway
-
-        dependencies = {
-            -- You will not need this if you installed the
-            -- parsers manually
-            -- Or if the parsers are in your $RUNTIMEPATH
-            "nvim-treesitter/nvim-treesitter",
-            "nvim-tree/nvim-web-devicons"
-        }
-    },
     -- 中央寄せ
     {
         "shortcuts/no-neck-pain.nvim",
@@ -555,6 +534,12 @@ return {
                 operator_mapping = "gkk",
             }
         end
+    },
+    -- TODO コメント
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        event = "VeryLazy",
     },
 
     -- brackets 補完
@@ -845,7 +830,7 @@ return {
             require("mason-tool-installer").setup({
                 ensure_installed = {
                     -- LSP
-                    "typos-lsp",
+                    -- "typos-lsp",
                     "gopls",
                     "lua-language-server",
                     "typescript-language-server",
