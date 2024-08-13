@@ -11,7 +11,7 @@ return {
                         enable = true,
                     },
                     shortcut = {
-                        { desc = '󰊳 Update', group = '@property', action = 'Lazy update', key = 'u' },
+                        { desc = '󰊳 Update', group = '@property', action = 'Lazy update', key = 'u', },
                         {
                             icon = ' ',
                             icon_hl = '@variable',
@@ -29,7 +29,7 @@ return {
                         {
                             desc = ' dotfiles',
                             group = 'Number',
-                            action = 'Telescope dotfiles',
+                            action = 'edit ~/dotfiles/nvim/lua/plugins/init.lua',
                             key = 'd',
                         },
                     },
@@ -444,6 +444,14 @@ return {
             }
         end
     },
+    -- Help ページのハイライト
+    {
+        "OXY2DEV/helpview.nvim",
+        lazy = false, -- Recommended
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter"
+        }
+    },
     {
         "brenoprata10/nvim-highlight-colors",
         event = "VeryLazy",
@@ -540,6 +548,7 @@ return {
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
         event = "VeryLazy",
+        opts = {},
     },
 
     -- brackets 補完
