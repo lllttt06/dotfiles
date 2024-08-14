@@ -623,6 +623,20 @@ return {
         end
     },
 
+    -- Url Open
+    {
+        "sontungexpt/url-open",
+        event = "VeryLazy",
+        cmd = "URLOpenUnderCursor",
+        config = function()
+            local status_ok, url_open = pcall(require, "url-open")
+            if not status_ok then
+                return
+            end
+            url_open.setup({})
+            vim.keymap.set("n", "gl", "<esc>:URLOpenUnderCursor<cr>")
+        end,
+    },
 
     -- ファイルビューワ
     {
@@ -646,6 +660,30 @@ return {
                         nowait = true,
                     }
                 end
+                -- カーソルの巡回を行う
+                local function wrap_cursor(direction)
+                    local line_count = vim.api.nvim_buf_line_count(bufnr)
+                    local cursor = vim.api.nvim_win_get_cursor(0)
+                    if direction == 'j' then
+                        if cursor[1] == line_count then
+                            vim.api.nvim_win_set_cursor(0, { 1, 0 })
+                        else
+                            vim.api.nvim_win_set_cursor(0, { cursor[1] + 1, 0 })
+                        end
+                    elseif direction == 'k' then
+                        if cursor[1] == 1 then
+                            vim.api.nvim_win_set_cursor(0, { line_count, 0 })
+                        else
+                            vim.api.nvim_win_set_cursor(0, { cursor[1] - 1, 0 })
+                        end
+                    end
+                end
+                vim.keymap.set('n', 'j', function()
+                    wrap_cursor 'j'
+                end, opts 'Down')
+                vim.keymap.set('n', 'k', function()
+                    wrap_cursor 'k'
+                end, opts 'Up')
 
                 api.config.mappings.default_on_attach(bufnr)
                 vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
@@ -748,17 +786,17 @@ return {
     },
 
     -- nvim-tree でファイル名変更した場合などに自動で更新
-    {
-        'antosha417/nvim-lsp-file-operations',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            'nvim-tree/nvim-tree.lua',
-        },
-        event = 'VeryLazy',
-        config = function()
-            require('lsp-file-operations').setup()
-        end,
-    },
+    -- {
+    --     'antosha417/nvim-lsp-file-operations',
+    --     dependencies = {
+    --         'nvim-lua/plenary.nvim',
+    --         'nvim-tree/nvim-tree.lua',
+    --     },
+    --     event = 'VeryLazy',
+    --     config = function()
+    --         require('lsp-file-operations').setup()
+    --     end,
+    -- },
 
     -- LSP Management
     {
@@ -798,7 +836,7 @@ return {
                     end, opts)
                     vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
                     vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-                    -- vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+                    vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
                     vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
                     vim.keymap.set('n', '<space>f', function()
                         vim.lsp.buf.format { async = true }
@@ -1056,20 +1094,20 @@ return {
             })
         end,
     },
-    {
-        "rachartier/tiny-code-action.nvim",
-        dependencies = {
-            { "nvim-lua/plenary.nvim" },
-            { "nvim-telescope/telescope.nvim" },
-        },
-        event = "LspAttach",
-        config = function()
-            require('tiny-code-action').setup()
-            vim.keymap.set("n", "<leader>ca", function()
-                require("tiny-code-action").code_action()
-            end, { noremap = true, silent = true })
-        end
-    },
+    -- {
+    --     "rachartier/tiny-code-action.nvim",
+    --     dependencies = {
+    --         { "nvim-lua/plenary.nvim" },
+    --         { "nvim-telescope/telescope.nvim" },
+    --     },
+    --     event = "LspAttach",
+    --     config = function()
+    --         require('tiny-code-action').setup()
+    --         vim.keymap.set("n", "<leader>ca", function()
+    --             require("tiny-code-action").code_action()
+    --         end, { noremap = true, silent = true })
+    --     end
+    -- },
 
     -- snippet
     {
@@ -1267,86 +1305,86 @@ return {
     },
 
     -- LSP Copilot
-    {
-        'zbirenbaum/copilot-cmp',
-        dependencies = {
-            'zbirenbaum/copilot.lua',
-        },
-        event = { 'InsertEnter', 'LspAttach' },
-        fix_pairs = true,
-        cmd = 'Copilot',
-        config = function()
-            require('copilot').setup {
-                panel = {
-                    enabled = false,
-                },
-                suggestion = {
-                    enabled = false,
-                },
-                filetypes = {
-                    yaml = true,
-                    markdown = false,
-                    help = false,
-                    gitcommit = false,
-                    gitrebase = false,
-                    hgcommit = false,
-                    svn = false,
-                    cvs = false,
-                    ['.'] = false,
-                },
-                -- copilot_node_command = vim.env.HOME .. '/.asdf/shims/node',
-                server_opts_overrides = {},
-            }
-            require('copilot.api').register_status_notification_handler(function(data)
-                local ns = vim.api.nvim_create_namespace 'user.copilot'
-                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-                if vim.fn.mode() == 'i' and data.status == 'InProgress' then
-                    vim.api.nvim_buf_set_extmark(0, ns, vim.fn.line '.' - 1, 0, {
-                        virt_text = { { '  ...', 'Comment' } },
-                        virt_text_pos = 'eol',
-                        hl_mode = 'combine',
-                    })
-                end
-            end)
-            require('copilot_cmp').setup {
-                method = 'getCompletionsCycling',
-            }
-        end,
-    },
     -- {
-    --     "zbirenbaum/copilot.lua",
-    --     cmd = "Copilot",
-    --     event = "InsertEnter",
+    --     'zbirenbaum/copilot-cmp',
+    --     dependencies = {
+    --         'zbirenbaum/copilot.lua',
+    --     },
+    --     event = { 'InsertEnter', 'LspAttach' },
+    --     fix_pairs = true,
+    --     cmd = 'Copilot',
     --     config = function()
-    --         -- Copilot の Suggestion の色を変更する
-    --         vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
-    --         require("copilot").setup({
+    --         require('copilot').setup {
+    --             panel = {
+    --                 enabled = false,
+    --             },
     --             suggestion = {
-    --                 enabled = true,
-    --                 auto_trigger = true,
-    --                 hide_during_completion = true,
-    --                 debounce = 75,
-    --                 keymap = {
-    --                     accept = "<C-a>",
-    --                     accept_word = false,
-    --                     accept_line = false,
-    --                     next = "<M-]>",
-    --                     prev = "<M-[>",
-    --                     dismiss = "<C-]>",
-    --                 },
+    --                 enabled = false,
     --             },
     --             filetypes = {
     --                 yaml = true,
-    --                 markdown = true,
+    --                 markdown = false,
     --                 help = false,
-    --                 gitcommit = true,
+    --                 gitcommit = false,
     --                 gitrebase = false,
     --                 hgcommit = false,
     --                 svn = false,
     --                 cvs = false,
-    --                 ["."] = false,
+    --                 ['.'] = false,
     --             },
-    --         })
+    --             -- copilot_node_command = vim.env.HOME .. '/.asdf/shims/node',
+    --             server_opts_overrides = {},
+    --         }
+    --         require('copilot.api').register_status_notification_handler(function(data)
+    --             local ns = vim.api.nvim_create_namespace 'user.copilot'
+    --             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+    --             if vim.fn.mode() == 'i' and data.status == 'InProgress' then
+    --                 vim.api.nvim_buf_set_extmark(0, ns, vim.fn.line '.' - 1, 0, {
+    --                     virt_text = { { '  ...', 'Comment' } },
+    --                     virt_text_pos = 'eol',
+    --                     hl_mode = 'combine',
+    --                 })
+    --             end
+    --         end)
+    --         require('copilot_cmp').setup {
+    --             method = 'getCompletionsCycling',
+    --         }
     --     end,
     -- },
+    {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+            -- Copilot の Suggestion の色を変更する
+            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
+            require("copilot").setup({
+                suggestion = {
+                    enabled = true,
+                    auto_trigger = true,
+                    hide_during_completion = true,
+                    debounce = 75,
+                    keymap = {
+                        accept = "<C-a>",
+                        accept_word = false,
+                        accept_line = false,
+                        next = "<M-]>",
+                        prev = "<M-[>",
+                        dismiss = "<C-]>",
+                    },
+                },
+                filetypes = {
+                    yaml = true,
+                    markdown = true,
+                    help = false,
+                    gitcommit = true,
+                    gitrebase = false,
+                    hgcommit = false,
+                    svn = false,
+                    cvs = false,
+                    ["."] = false,
+                },
+            })
+        end,
+    },
 }
