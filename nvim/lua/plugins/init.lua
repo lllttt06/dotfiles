@@ -472,7 +472,6 @@ return {
             })
         end,
     },
-
     -- カーソル位置ハイライト
     {
         "RRethy/vim-illuminate",
@@ -640,163 +639,184 @@ return {
 
     -- ファイルビューワ
     {
-        'nvim-tree/nvim-tree.lua',
-        dependencies = {
-            'b0o/nvim-tree-preview.lua',
-            'nvim-lua/plenary.nvim',
+        'echasnovski/mini.nvim',
+        version = false,
+        event = "VeryLazy",
+        keys = {
+            -- mini.filesオープン用のショートカット
+            { '<C-n>', ':lua if not MiniFiles.close() then MiniFiles.open() end<CR>' }
         },
-        event = 'VeryLazy',
         config = function()
-            local preview = require 'nvim-tree-preview'
-            local function on_attach(bufnr)
-                local api = require 'nvim-tree.api'
-
-                local function opts(desc)
-                    return {
-                        desc = 'nvim-tree: ' .. desc,
-                        buffer = bufnr,
-                        noremap = true,
-                        silent = true,
-                        nowait = true,
-                    }
+            require('mini.files').setup({})
+            -- 現在のファイルのディレクトリで mini.files を開く関数
+            function ToggleCurrentFile()
+                local current_file = vim.fn.expand('%:p:h')
+                if not require('mini.files').close() then
+                    require('mini.files').open(current_file)
                 end
-                -- カーソルの巡回を行う
-                local function wrap_cursor(direction)
-                    local line_count = vim.api.nvim_buf_line_count(bufnr)
-                    local cursor = vim.api.nvim_win_get_cursor(0)
-                    if direction == 'j' then
-                        if cursor[1] == line_count then
-                            vim.api.nvim_win_set_cursor(0, { 1, 0 })
-                        else
-                            vim.api.nvim_win_set_cursor(0, { cursor[1] + 1, 0 })
-                        end
-                    elseif direction == 'k' then
-                        if cursor[1] == 1 then
-                            vim.api.nvim_win_set_cursor(0, { line_count, 0 })
-                        else
-                            vim.api.nvim_win_set_cursor(0, { cursor[1] - 1, 0 })
-                        end
-                    end
-                end
-                vim.keymap.set('n', 'j', function()
-                    wrap_cursor 'j'
-                end, opts 'Down')
-                vim.keymap.set('n', 'k', function()
-                    wrap_cursor 'k'
-                end, opts 'Up')
-
-                api.config.mappings.default_on_attach(bufnr)
-                vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
-                vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
-                vim.keymap.set('n', '=', api.tree.change_root_to_node, opts 'CD')
-                vim.keymap.set('n', '-', api.tree.change_root_to_parent, opts 'Dir Up')
-                vim.keymap.set('n', 'l', api.node.open.edit, opts 'Edit')
-                vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Close Node')
-                vim.keymap.set('n', 's', '', opts '')
-                vim.keymap.set('n', 'sl', '<c-w>l', opts '')
-
-                vim.keymap.set('n', 'P', preview.watch, opts 'Preview (Watch)')
-                vim.keymap.set('n', '<Esc>', preview.unwatch, opts 'Close Preview/Unwatch')
-                vim.keymap.set('n', '<Tab>', function()
-                    local ok, node = pcall(api.tree.get_node_under_cursor)
-                    if ok and node then
-                        if node.type == 'directory' then
-                            api.node.open.edit()
-                        else
-                            preview.watch()
-                        end
-                    end
-                end, opts 'Preview')
             end
 
-            preview.setup {
-                keymaps = {
-                    ['<Esc>'] = { action = 'close', unwatch = true },
-                },
-                min_width = 60,
-                min_height = 15,
-                max_width = 160,
-                max_height = 40,
-                wrap = false,       -- Whether to wrap lines in the preview window
-                border = 'rounded', -- Border style for the preview window
-            }
-
-            require('nvim-tree').setup {
-                on_attach = on_attach,
-                view = {
-                    signcolumn = 'yes',
-                    float = {
-                        enable = true,
-                        open_win_config = {
-                            height = 65,
-                            width = 45,
-                        },
-                    },
-                },
-                update_focused_file = {
-                    enable = true,
-                    update_cwd = false,
-                },
-                diagnostics = {
-                    enable = true,
-                    icons = {
-                        hint = ' ',
-                        info = ' ',
-                        warning = ' ',
-                        error = ' ',
-                    },
-                    show_on_dirs = true,
-                },
-                renderer = {
-                    group_empty = true,
-                    highlight_git = true,
-                    highlight_opened_files = 'name',
-                    icons = {
-                        git_placement = 'signcolumn',
-                        modified_placement = 'signcolumn',
-                        glyphs = {
-                            git = {
-                                deleted = '',
-                                unstaged = '',
-                                untracked = '',
-                                staged = '',
-                                unmerged = '',
-                                renamed = '»',
-                                ignored = '◌',
-                            },
-                        },
-                    },
-                },
-                filters = {
-                    dotfiles = false,
-                },
-                git = {
-                    enable = true,
-                    ignore = false,
-                },
-            }
-            local custom_actions = require("core.image")
-            vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>i', function() custom_actions.openWithQuickLook() end,
-                { noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>w', function() custom_actions.weztermPreview() end,
-                { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<C-f>', ':lua ToggleCurrentFile()<CR>', { noremap = true, silent = true })
         end,
     },
-
-    -- nvim-tree でファイル名変更した場合などに自動で更新
     -- {
-    --     'antosha417/nvim-lsp-file-operations',
+    --     'nvim-tree/nvim-tree.lua',
     --     dependencies = {
+    --         'b0o/nvim-tree-preview.lua',
     --         'nvim-lua/plenary.nvim',
-    --         'nvim-tree/nvim-tree.lua',
     --     },
     --     event = 'VeryLazy',
     --     config = function()
-    --         require('lsp-file-operations').setup()
+    --         local preview = require 'nvim-tree-preview'
+    --         local function on_attach(bufnr)
+    --             local api = require 'nvim-tree.api'
+    --
+    --             local function opts(desc)
+    --                 return {
+    --                     desc = 'nvim-tree: ' .. desc,
+    --                     buffer = bufnr,
+    --                     noremap = true,
+    --                     silent = true,
+    --                     nowait = true,
+    --                 }
+    --             end
+    --             -- カーソルの巡回を行う
+    --             local function wrap_cursor(direction)
+    --                 local line_count = vim.api.nvim_buf_line_count(bufnr)
+    --                 local cursor = vim.api.nvim_win_get_cursor(0)
+    --                 if direction == 'j' then
+    --                     if cursor[1] == line_count then
+    --                         vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    --                     else
+    --                         vim.api.nvim_win_set_cursor(0, { cursor[1] + 1, 0 })
+    --                     end
+    --                 elseif direction == 'k' then
+    --                     if cursor[1] == 1 then
+    --                         vim.api.nvim_win_set_cursor(0, { line_count, 0 })
+    --                     else
+    --                         vim.api.nvim_win_set_cursor(0, { cursor[1] - 1, 0 })
+    --                     end
+    --                 end
+    --             end
+    --             vim.keymap.set('n', 'j', function()
+    --                 wrap_cursor 'j'
+    --             end, opts 'Down')
+    --             vim.keymap.set('n', 'k', function()
+    --                 wrap_cursor 'k'
+    --             end, opts 'Up')
+    --
+    --             api.config.mappings.default_on_attach(bufnr)
+    --             vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
+    --             vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
+    --             vim.keymap.set('n', '=', api.tree.change_root_to_node, opts 'CD')
+    --             vim.keymap.set('n', '-', api.tree.change_root_to_parent, opts 'Dir Up')
+    --             vim.keymap.set('n', 'l', api.node.open.edit, opts 'Edit')
+    --             vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Close Node')
+    --             vim.keymap.set('n', 's', '', opts '')
+    --             vim.keymap.set('n', 'sl', '<c-w>l', opts '')
+    --
+    --             vim.keymap.set('n', 'P', preview.watch, opts 'Preview (Watch)')
+    --             vim.keymap.set('n', '<Esc>', preview.unwatch, opts 'Close Preview/Unwatch')
+    --             vim.keymap.set('n', '<Tab>', function()
+    --                 local ok, node = pcall(api.tree.get_node_under_cursor)
+    --                 if ok and node then
+    --                     if node.type == 'directory' then
+    --                         api.node.open.edit()
+    --                     else
+    --                         preview.watch()
+    --                     end
+    --                 end
+    --             end, opts 'Preview')
+    --         end
+    --
+    --         preview.setup {
+    --             keymaps = {
+    --                 ['<Esc>'] = { action = 'close', unwatch = true },
+    --             },
+    --             min_width = 60,
+    --             min_height = 15,
+    --             max_width = 160,
+    --             max_height = 40,
+    --             wrap = false,       -- Whether to wrap lines in the preview window
+    --             border = 'rounded', -- Border style for the preview window
+    --         }
+    --
+    --         require('nvim-tree').setup {
+    --             on_attach = on_attach,
+    --             view = {
+    --                 signcolumn = 'yes',
+    --                 float = {
+    --                     enable = true,
+    --                     open_win_config = {
+    --                         height = 65,
+    --                         width = 45,
+    --                     },
+    --                 },
+    --             },
+    --             update_focused_file = {
+    --                 enable = true,
+    --                 update_cwd = false,
+    --             },
+    --             diagnostics = {
+    --                 enable = true,
+    --                 icons = {
+    --                     hint = ' ',
+    --                     info = ' ',
+    --                     warning = ' ',
+    --                     error = ' ',
+    --                 },
+    --                 show_on_dirs = true,
+    --             },
+    --             renderer = {
+    --                 group_empty = true,
+    --                 highlight_git = true,
+    --                 highlight_opened_files = 'name',
+    --                 icons = {
+    --                     git_placement = 'signcolumn',
+    --                     modified_placement = 'signcolumn',
+    --                     glyphs = {
+    --                         git = {
+    --                             deleted = '',
+    --                             unstaged = '',
+    --                             untracked = '',
+    --                             staged = '',
+    --                             unmerged = '',
+    --                             renamed = '»',
+    --                             ignored = '◌',
+    --                         },
+    --                     },
+    --                 },
+    --             },
+    --             filters = {
+    --                 dotfiles = false,
+    --             },
+    --             git = {
+    --                 enable = true,
+    --                 ignore = false,
+    --             },
+    --         }
+    --         local custom_actions = require("core.image")
+    --         vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+    --         vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
+    --         vim.keymap.set('n', '<leader>i', function() custom_actions.openWithQuickLook() end,
+    --             { noremap = true, silent = true })
+    --         vim.keymap.set('n', '<leader>w', function() custom_actions.weztermPreview() end,
+    --             { noremap = true, silent = true })
     --     end,
     -- },
+
+    -- nvim-tree でファイル名変更した場合などに自動で更新
+    {
+        'antosha417/nvim-lsp-file-operations',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'nvim-tree/nvim-tree.lua',
+        },
+        event = 'VeryLazy',
+        config = function()
+            require('lsp-file-operations').setup()
+        end,
+    },
 
     -- LSP Management
     {
