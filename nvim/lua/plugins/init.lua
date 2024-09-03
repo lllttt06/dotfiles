@@ -640,150 +640,171 @@ return {
 
     -- ファイルビューワ
     {
-        'nvim-tree/nvim-tree.lua',
-        dependencies = {
-            'b0o/nvim-tree-preview.lua',
-            'nvim-lua/plenary.nvim',
+        'echasnovski/mini.nvim',
+        version = false,
+        event = "VeryLazy",
+        keys = {
+            -- mini.filesオープン用のショートカット
+            { '<C-n>', ':lua if not MiniFiles.close() then MiniFiles.open() end<CR>' }
         },
-        event = 'VeryLazy',
         config = function()
-            local preview = require 'nvim-tree-preview'
-            local function on_attach(bufnr)
-                local api = require 'nvim-tree.api'
-
-                local function opts(desc)
-                    return {
-                        desc = 'nvim-tree: ' .. desc,
-                        buffer = bufnr,
-                        noremap = true,
-                        silent = true,
-                        nowait = true,
-                    }
+            require('mini.files').setup({})
+            -- 現在のファイルのディレクトリで mini.files を開く関数
+            function ToggleCurrentFile()
+                local current_file = vim.fn.expand('%:p:h')
+                if not require('mini.files').close() then
+                    require('mini.files').open(current_file)
                 end
-                -- カーソルの巡回を行う
-                local function wrap_cursor(direction)
-                    local line_count = vim.api.nvim_buf_line_count(bufnr)
-                    local cursor = vim.api.nvim_win_get_cursor(0)
-                    if direction == 'j' then
-                        if cursor[1] == line_count then
-                            vim.api.nvim_win_set_cursor(0, { 1, 0 })
-                        else
-                            vim.api.nvim_win_set_cursor(0, { cursor[1] + 1, 0 })
-                        end
-                    elseif direction == 'k' then
-                        if cursor[1] == 1 then
-                            vim.api.nvim_win_set_cursor(0, { line_count, 0 })
-                        else
-                            vim.api.nvim_win_set_cursor(0, { cursor[1] - 1, 0 })
-                        end
-                    end
-                end
-                vim.keymap.set('n', 'j', function()
-                    wrap_cursor 'j'
-                end, opts 'Down')
-                vim.keymap.set('n', 'k', function()
-                    wrap_cursor 'k'
-                end, opts 'Up')
-
-                api.config.mappings.default_on_attach(bufnr)
-                vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
-                vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
-                vim.keymap.set('n', '=', api.tree.change_root_to_node, opts 'CD')
-                vim.keymap.set('n', '-', api.tree.change_root_to_parent, opts 'Dir Up')
-                vim.keymap.set('n', 'l', api.node.open.edit, opts 'Edit')
-                vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Close Node')
-                vim.keymap.set('n', 's', '', opts '')
-                vim.keymap.set('n', 'sl', '<c-w>l', opts '')
-
-                vim.keymap.set('n', 'P', preview.watch, opts 'Preview (Watch)')
-                vim.keymap.set('n', '<Esc>', preview.unwatch, opts 'Close Preview/Unwatch')
-                vim.keymap.set('n', '<Tab>', function()
-                    local ok, node = pcall(api.tree.get_node_under_cursor)
-                    if ok and node then
-                        if node.type == 'directory' then
-                            api.node.open.edit()
-                        else
-                            preview.watch()
-                        end
-                    end
-                end, opts 'Preview')
             end
 
-            preview.setup {
-                keymaps = {
-                    ['<Esc>'] = { action = 'close', unwatch = true },
-                },
-                min_width = 60,
-                min_height = 15,
-                max_width = 160,
-                max_height = 40,
-                wrap = false,       -- Whether to wrap lines in the preview window
-                border = 'rounded', -- Border style for the preview window
-            }
-
-            require('nvim-tree').setup {
-                on_attach = on_attach,
-                view = {
-                    signcolumn = 'yes',
-                    float = {
-                        enable = true,
-                        open_win_config = {
-                            height = 65,
-                            width = 45,
-                        },
-                    },
-                },
-                update_focused_file = {
-                    enable = true,
-                    update_cwd = false,
-                },
-                diagnostics = {
-                    enable = true,
-                    icons = {
-                        hint = ' ',
-                        info = ' ',
-                        warning = ' ',
-                        error = ' ',
-                    },
-                    show_on_dirs = true,
-                },
-                renderer = {
-                    group_empty = true,
-                    highlight_git = true,
-                    highlight_opened_files = 'name',
-                    icons = {
-                        git_placement = 'signcolumn',
-                        modified_placement = 'signcolumn',
-                        glyphs = {
-                            git = {
-                                deleted = '',
-                                unstaged = '',
-                                untracked = '',
-                                staged = '',
-                                unmerged = '',
-                                renamed = '»',
-                                ignored = '◌',
-                            },
-                        },
-                    },
-                },
-                filters = {
-                    dotfiles = false,
-                },
-                git = {
-                    enable = true,
-                    ignore = false,
-                },
-            }
-            local custom_actions = require("core.image")
-            vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>i', function() custom_actions.openWithQuickLook() end,
-                { noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>w', function() custom_actions.weztermPreview() end,
-                { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('n', '<C-f>', ':lua ToggleCurrentFile()<CR>', { noremap = true, silent = true })
         end,
     },
+    -- {
+    --     'nvim-tree/nvim-tree.lua',
+    --     dependencies = {
+    --         'b0o/nvim-tree-preview.lua',
+    --         'nvim-lua/plenary.nvim',
+    --     },
+    --     event = 'VeryLazy',
+    --     config = function()
+    --         local preview = require 'nvim-tree-preview'
+    --         local function on_attach(bufnr)
+    --             local api = require 'nvim-tree.api'
+    --
+    --             local function opts(desc)
+    --                 return {
+    --                     desc = 'nvim-tree: ' .. desc,
+    --                     buffer = bufnr,
+    --                     noremap = true,
+    --                     silent = true,
+    --                     nowait = true,
+    --                 }
+    --             end
+    --             -- カーソルの巡回を行う
+    --             local function wrap_cursor(direction)
+    --                 local line_count = vim.api.nvim_buf_line_count(bufnr)
+    --                 local cursor = vim.api.nvim_win_get_cursor(0)
+    --                 if direction == 'j' then
+    --                     if cursor[1] == line_count then
+    --                         vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    --                     else
+    --                         vim.api.nvim_win_set_cursor(0, { cursor[1] + 1, 0 })
+    --                     end
+    --                 elseif direction == 'k' then
+    --                     if cursor[1] == 1 then
+    --                         vim.api.nvim_win_set_cursor(0, { line_count, 0 })
+    --                     else
+    --                         vim.api.nvim_win_set_cursor(0, { cursor[1] - 1, 0 })
+    --                     end
+    --                 end
+    --             end
+    --             vim.keymap.set('n', 'j', function()
+    --                 wrap_cursor 'j'
+    --             end, opts 'Down')
+    --             vim.keymap.set('n', 'k', function()
+    --                 wrap_cursor 'k'
+    --             end, opts 'Up')
+    --
+    --             api.config.mappings.default_on_attach(bufnr)
+    --             vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
+    --             vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
+    --             vim.keymap.set('n', '=', api.tree.change_root_to_node, opts 'CD')
+    --             vim.keymap.set('n', '-', api.tree.change_root_to_parent, opts 'Dir Up')
+    --             vim.keymap.set('n', 'l', api.node.open.edit, opts 'Edit')
+    --             vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Close Node')
+    --             vim.keymap.set('n', 's', '', opts '')
+    --             vim.keymap.set('n', 'sl', '<c-w>l', opts '')
+    --
+    --             vim.keymap.set('n', 'P', preview.watch, opts 'Preview (Watch)')
+    --             vim.keymap.set('n', '<Esc>', preview.unwatch, opts 'Close Preview/Unwatch')
+    --             vim.keymap.set('n', '<Tab>', function()
+    --                 local ok, node = pcall(api.tree.get_node_under_cursor)
+    --                 if ok and node then
+    --                     if node.type == 'directory' then
+    --                         api.node.open.edit()
+    --                     else
+    --                         preview.watch()
+    --                     end
+    --                 end
+    --             end, opts 'Preview')
+    --         end
+    --
+    --         preview.setup {
+    --             keymaps = {
+    --                 ['<Esc>'] = { action = 'close', unwatch = true },
+    --             },
+    --             min_width = 60,
+    --             min_height = 15,
+    --             max_width = 160,
+    --             max_height = 40,
+    --             wrap = false,       -- Whether to wrap lines in the preview window
+    --             border = 'rounded', -- Border style for the preview window
+    --         }
+    --
+    --         require('nvim-tree').setup {
+    --             on_attach = on_attach,
+    --             view = {
+    --                 signcolumn = 'yes',
+    --                 float = {
+    --                     enable = true,
+    --                     open_win_config = {
+    --                         height = 65,
+    --                         width = 45,
+    --                     },
+    --                 },
+    --             },
+    --             update_focused_file = {
+    --                 enable = true,
+    --                 update_cwd = false,
+    --             },
+    --             diagnostics = {
+    --                 enable = true,
+    --                 icons = {
+    --                     hint = ' ',
+    --                     info = ' ',
+    --                     warning = ' ',
+    --                     error = ' ',
+    --                 },
+    --                 show_on_dirs = true,
+    --             },
+    --             renderer = {
+    --                 group_empty = true,
+    --                 highlight_git = true,
+    --                 highlight_opened_files = 'name',
+    --                 icons = {
+    --                     git_placement = 'signcolumn',
+    --                     modified_placement = 'signcolumn',
+    --                     glyphs = {
+    --                         git = {
+    --                             deleted = '',
+    --                             unstaged = '',
+    --                             untracked = '',
+    --                             staged = '',
+    --                             unmerged = '',
+    --                             renamed = '»',
+    --                             ignored = '◌',
+    --                         },
+    --                     },
+    --                 },
+    --             },
+    --             filters = {
+    --                 dotfiles = false,
+    --             },
+    --             git = {
+    --                 enable = true,
+    --                 ignore = false,
+    --             },
+    --         }
+    --         local custom_actions = require("core.image")
+    --         vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+    --         vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
+    --         vim.keymap.set('n', '<leader>i', function() custom_actions.openWithQuickLook() end,
+    --             { noremap = true, silent = true })
+    --         vim.keymap.set('n', '<leader>w', function() custom_actions.weztermPreview() end,
+    --             { noremap = true, silent = true })
+    --     end,
+    -- },
 
     -- nvim-tree でファイル名変更した場合などに自動で更新
     -- {
@@ -949,10 +970,8 @@ return {
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
-
             "hrsh7th/cmp-nvim-lsp-signature-help",
             "hrsh7th/cmp-nvim-lsp-document-symbol",
-
             "onsails/lspkind-nvim",
         },
         event = { "InsertEnter", "LspAttach" },
@@ -1013,6 +1032,12 @@ return {
             vim.opt.completeopt = { "menu", "menuone", "noselect" }
             vim.o.completefunc = 'v:lua.require("cmp").complete()'
 
+            local has_words_before = function()
+                if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+            end
+
             cmp.setup({
                 completion = {
                     autocomplete = {
@@ -1051,6 +1076,13 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert({
+                    ["<Tab>"] = vim.schedule_wrap(function(fallback)
+                        if cmp.visible() and has_words_before() then
+                            cmp.confirm({ select = true })
+                        else
+                            fallback()
+                        end
+                    end),
                     ["<C-d>"] = cmp.mapping.scroll_docs(4),
                     ["<C-u>"] = cmp.mapping.scroll_docs(-4),
                     ["<C-p>"] = cmp.mapping.select_prev_item(),
@@ -1094,20 +1126,56 @@ return {
             })
         end,
     },
-    -- {
-    --     "rachartier/tiny-code-action.nvim",
-    --     dependencies = {
-    --         { "nvim-lua/plenary.nvim" },
-    --         { "nvim-telescope/telescope.nvim" },
-    --     },
-    --     event = "LspAttach",
-    --     config = function()
-    --         require('tiny-code-action').setup()
-    --         vim.keymap.set("n", "<leader>ca", function()
-    --             require("tiny-code-action").code_action()
-    --         end, { noremap = true, silent = true })
-    --     end
-    -- },
+    -- LSP Copilot
+    {
+        'zbirenbaum/copilot-cmp',
+        dependencies = {
+            'zbirenbaum/copilot.lua',
+        },
+        event = { 'InsertEnter', 'LspAttach' },
+        fix_pairs = true,
+        cmd = 'Copilot',
+        config = function()
+            -- Copilot の Suggestion の色を変更する
+            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
+            require('copilot').setup {
+                panel = {
+                    enabled = false,
+                },
+                suggestion = {
+                    enabled = false,
+                },
+                filetypes = {
+                    yaml = true,
+                    markdown = false,
+                    help = false,
+                    gitcommit = false,
+                    gitrebase = false,
+                    hgcommit = false,
+                    svn = false,
+                    cvs = false,
+                    ['.'] = false,
+                },
+                -- copilot_node_command = vim.env.HOME .. '/.asdf/shims/node',
+                server_opts_overrides = {},
+            }
+            require('copilot.api').register_status_notification_handler(function(data)
+                local ns = vim.api.nvim_create_namespace 'user.copilot'
+                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+                if vim.fn.mode() == 'i' and data.status == 'InProgress' then
+                    vim.api.nvim_buf_set_extmark(0, ns, vim.fn.line '.' - 1, 0, {
+                        virt_text = { { '  ...', 'Comment' } },
+                        virt_text_pos = 'eol',
+                        hl_mode = 'combine',
+                    })
+                end
+            end)
+            require('copilot_cmp').setup {
+                method = 'getCompletionsCycling',
+            }
+        end,
+    },
+
 
     -- snippet
     {
@@ -1304,87 +1372,57 @@ return {
         end
     },
 
-    -- LSP Copilot
     -- {
-    --     'zbirenbaum/copilot-cmp',
-    --     dependencies = {
-    --         'zbirenbaum/copilot.lua',
-    --     },
-    --     event = { 'InsertEnter', 'LspAttach' },
-    --     fix_pairs = true,
-    --     cmd = 'Copilot',
+    --     "zbirenbaum/copilot.lua",
+    --     cmd = "Copilot",
+    --     event = "InsertEnter",
     --     config = function()
-    --         require('copilot').setup {
-    --             panel = {
-    --                 enabled = false,
-    --             },
+    --         -- Copilot の Suggestion の色を変更する
+    --         vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
+    --         require("copilot").setup({
+    --             panel = { enabled = false },
     --             suggestion = {
-    --                 enabled = false,
+    --                 enabled = true,
+    --                 auto_trigger = true,
+    --                 hide_during_completion = true,
+    --                 debounce = 75,
+    --                 keymap = {
+    --                     accept = "<C-a>",
+    --                     accept_word = false,
+    --                     accept_line = false,
+    --                     next = "<M-]>",
+    --                     prev = "<M-[>",
+    --                     dismiss = "<C-]>",
+    --                 },
     --             },
     --             filetypes = {
     --                 yaml = true,
-    --                 markdown = false,
+    --                 markdown = true,
     --                 help = false,
-    --                 gitcommit = false,
+    --                 gitcommit = true,
     --                 gitrebase = false,
     --                 hgcommit = false,
     --                 svn = false,
     --                 cvs = false,
-    --                 ['.'] = false,
+    --                 ["."] = false,
     --             },
-    --             -- copilot_node_command = vim.env.HOME .. '/.asdf/shims/node',
-    --             server_opts_overrides = {},
-    --         }
-    --         require('copilot.api').register_status_notification_handler(function(data)
-    --             local ns = vim.api.nvim_create_namespace 'user.copilot'
-    --             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-    --             if vim.fn.mode() == 'i' and data.status == 'InProgress' then
-    --                 vim.api.nvim_buf_set_extmark(0, ns, vim.fn.line '.' - 1, 0, {
-    --                     virt_text = { { '  ...', 'Comment' } },
-    --                     virt_text_pos = 'eol',
-    --                     hl_mode = 'combine',
-    --                 })
-    --             end
-    --         end)
-    --         require('copilot_cmp').setup {
-    --             method = 'getCompletionsCycling',
-    --         }
+    --         })
     --     end,
     -- },
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-            -- Copilot の Suggestion の色を変更する
-            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
-            require("copilot").setup({
-                suggestion = {
-                    enabled = true,
-                    auto_trigger = true,
-                    hide_during_completion = true,
-                    debounce = 75,
-                    keymap = {
-                        accept = "<C-a>",
-                        accept_word = false,
-                        accept_line = false,
-                        next = "<M-]>",
-                        prev = "<M-[>",
-                        dismiss = "<C-]>",
-                    },
-                },
-                filetypes = {
-                    yaml = true,
-                    markdown = true,
-                    help = false,
-                    gitcommit = true,
-                    gitrebase = false,
-                    hgcommit = false,
-                    svn = false,
-                    cvs = false,
-                    ["."] = false,
-                },
-            })
-        end,
-    },
+    --
+
+    -- {
+    --     "rachartier/tiny-code-action.nvim",
+    --     dependencies = {
+    --         { "nvim-lua/plenary.nvim" },
+    --         { "nvim-telescope/telescope.nvim" },
+    --     },
+    --     event = "LspAttach",
+    --     config = function()
+    --         require('tiny-code-action').setup()
+    --         vim.keymap.set("n", "<leader>ca", function()
+    --             require("tiny-code-action").code_action()
+    --         end, { noremap = true, silent = true })
+    --     end
+    -- },
 }
