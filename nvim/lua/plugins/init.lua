@@ -649,17 +649,18 @@ return {
         },
         config = function()
             require('mini.files').setup({})
-            -- 現在のファイルのディレクトリで mini.files を開く関数
+            -- 現在のファイルのディレクトリで mini.files を開き、カーソルを現在のファイルに移動する関数
             function ToggleCurrentFile()
-                local current_file = vim.fn.expand('%:p:h')
+                local current_file = vim.api.nvim_buf_get_name(0)
                 if not require('mini.files').close() then
-                    require('mini.files').open(current_file)
+                    require('mini.files').open(current_file, true)
                 end
             end
 
             vim.api.nvim_set_keymap('n', '<C-f>', ':lua ToggleCurrentFile()<CR>', { noremap = true, silent = true })
         end,
     },
+
     -- {
     --     'nvim-tree/nvim-tree.lua',
     --     dependencies = {
@@ -1175,7 +1176,6 @@ return {
             }
         end,
     },
-
 
     -- snippet
     {
