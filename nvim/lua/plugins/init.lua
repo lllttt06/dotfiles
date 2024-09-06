@@ -583,6 +583,12 @@ return {
     {
         "nvim-telescope/telescope.nvim",
         event = "VeryLazy",
+        keys = {
+            { "sf", mode = { "n" }, function() require("telescope.builtin").find_files({ hidden = true }) end, },
+            { "sg", mode = { "n" }, function() require("telescope.builtin").live_grep({ hidden = true }) end, },
+            { "sb", mode = { "n" }, function() require("telescope.builtin").buffers() end, },
+            { "sh", mode = { "n" }, function() require("telescope.builtin").help_tags() end, },
+        },
         config = function()
             local focus_preview = function(prompt_bufnr)
                 local action_state = require("telescope.actions.state")
@@ -658,167 +664,208 @@ return {
             end
 
             vim.api.nvim_set_keymap('n', '<C-f>', ':lua ToggleCurrentFile()<CR>', { noremap = true, silent = true })
+
+            local nsMiniFiles = vim.api.nvim_create_namespace("mini_files_git")
+            local autocmd = vim.api.nvim_create_autocmd
+            local _, MiniFiles = pcall(require, "mini.files")
+
+            -- Cache for git status
+            local gitStatusCache = {}
+            local cacheTimeout = 2000 -- Cache timeout in milliseconds
+
+            ---@type table<string, {symbol: string, hlGroup: string}>
+            ---@param status string
+            ---@return string symbol, string hlGroup
+            local function mapSymbols(status)
+                local statusMap = {
+                    -- stylua: ignore start
+                    [" M"] = { symbol = "•", hlGroup = "GitSignsChange" }, -- Modified in the working directory
+                    ["M "] = { symbol = "✹", hlGroup = "GitSignsChange" }, -- modified in index
+                    ["MM"] = { symbol = "≠", hlGroup = "GitSignsChange" }, -- modified in both working tree and index
+                    ["A "] = { symbol = "+", hlGroup = "GitSignsAdd" }, -- Added to the staging area, new file
+                    ["AA"] = { symbol = "≈", hlGroup = "GitSignsAdd" }, -- file is added in both working tree and index
+                    ["D "] = { symbol = "-", hlGroup = "GitSignsDelete" }, -- Deleted from the staging area
+                    ["AM"] = { symbol = "⊕", hlGroup = "GitSignsChange" }, -- added in working tree, modified in index
+                    ["AD"] = { symbol = "-•", hlGroup = "GitSignsChange" }, -- Added in the index and deleted in the working directory
+                    ["R "] = { symbol = "→", hlGroup = "GitSignsChange" }, -- Renamed in the index
+                    ["U "] = { symbol = "‖", hlGroup = "GitSignsChange" }, -- Unmerged path
+                    ["UU"] = { symbol = "⇄", hlGroup = "GitSignsAdd" }, -- file is unmerged
+                    ["UA"] = { symbol = "⊕", hlGroup = "GitSignsAdd" }, -- file is unmerged and added in working tree
+                    ["??"] = { symbol = "?", hlGroup = "GitSignsDelete" }, -- Untracked files
+                    ["!!"] = { symbol = "!", hlGroup = "GitSignsChange" }, -- Ignored files
+                    -- stylua: ignore end
+                }
+
+                local result = statusMap[status]
+                    or { symbol = "?", hlGroup = "NonText" }
+                return result.symbol, result.hlGroup
+            end
+
+            ---@param cwd string
+            ---@param callback function
+            ---@return nil
+            local function fetchGitStatus(cwd, callback)
+                local function on_exit(content)
+                    if content.code == 0 then
+                        callback(content.stdout)
+                        vim.g.content = content.stdout
+                    end
+                end
+                vim.system(
+                    { "git", "status", "--ignored", "--porcelain" },
+                    { text = true, cwd = cwd },
+                    on_exit
+                )
+            end
+
+            ---@param str string?
+            local function escapePattern(str)
+                return str:gsub("([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")
+            end
+
+            ---@param buf_id integer
+            ---@param gitStatusMap table
+            ---@return nil
+            local function updateMiniWithGit(buf_id, gitStatusMap)
+                vim.schedule(function()
+                    local nlines = vim.api.nvim_buf_line_count(buf_id)
+                    local cwd = vim.fs.root(buf_id, ".git")
+                    local escapedcwd = escapePattern(cwd)
+                    if vim.fn.has("win32") == 1 then
+                        escapedcwd = escapedcwd:gsub("\\", "/")
+                    end
+
+                    for i = 1, nlines do
+                        local entry = MiniFiles.get_fs_entry(buf_id, i)
+                        if not entry then
+                            break
+                        end
+                        local relativePath = entry.path:gsub("^" .. escapedcwd .. "/", "")
+                        local status = gitStatusMap[relativePath]
+
+                        if status then
+                            local symbol, hlGroup = mapSymbols(status)
+                            vim.api.nvim_buf_set_extmark(buf_id, nsMiniFiles, i - 1, 0, {
+                                -- NOTE: if you want the signs on the right uncomment those and comment
+                                -- the 3 lines after
+                                -- virt_text = { { symbol, hlGroup } },
+                                -- virt_text_pos = "right_align",
+                                sign_text = symbol,
+                                sign_hl_group = hlGroup,
+                                priority = 2,
+                            })
+                        else
+                        end
+                    end
+                end)
+            end
+
+
+            -- Thanks for the idea of gettings https://github.com/refractalize/oil-git-status.nvim signs for dirs
+            ---@param content string
+            ---@return table
+            local function parseGitStatus(content)
+                local gitStatusMap = {}
+                -- lua match is faster than vim.split (in my experience )
+                for line in content:gmatch("[^\r\n]+") do
+                    local status, filePath = string.match(line, "^(..)%s+(.*)")
+                    -- Split the file path into parts
+                    local parts = {}
+                    for part in filePath:gmatch("[^/]+") do
+                        table.insert(parts, part)
+                    end
+                    -- Start with the root directory
+                    local currentKey = ""
+                    for i, part in ipairs(parts) do
+                        if i > 1 then
+                            -- Concatenate parts with a separator to create a unique key
+                            currentKey = currentKey .. "/" .. part
+                        else
+                            currentKey = part
+                        end
+                        -- If it's the last part, it's a file, so add it with its status
+                        if i == #parts then
+                            gitStatusMap[currentKey] = status
+                        else
+                            -- If it's not the last part, it's a directory. Check if it exists, if not, add it.
+                            if not gitStatusMap[currentKey] then
+                                gitStatusMap[currentKey] = status
+                            end
+                        end
+                    end
+                end
+                return gitStatusMap
+            end
+
+            ---@param buf_id integer
+            ---@return nil
+            local function updateGitStatus(buf_id)
+                if not vim.fs.root(vim.uv.cwd(), ".git") then
+                    return
+                end
+
+                local cwd = vim.fn.expand("%:p:h")
+                local currentTime = os.time()
+                if
+                    gitStatusCache[cwd]
+                    and currentTime - gitStatusCache[cwd].time < cacheTimeout
+                then
+                    updateMiniWithGit(buf_id, gitStatusCache[cwd].statusMap)
+                else
+                    fetchGitStatus(cwd, function(content)
+                        local gitStatusMap = parseGitStatus(content)
+                        gitStatusCache[cwd] = {
+                            time = currentTime,
+                            statusMap = gitStatusMap,
+                        }
+                        updateMiniWithGit(buf_id, gitStatusMap)
+                    end)
+                end
+            end
+
+            ---@return nil
+            local function clearCache()
+                gitStatusCache = {}
+            end
+
+            local function augroup(name)
+                return vim.api.nvim_create_augroup(
+                    "MiniFiles_" .. name,
+                    { clear = true }
+                )
+            end
+
+            autocmd("User", {
+                group = augroup("start"),
+                pattern = "MiniFilesExplorerOpen",
+                -- pattern = { "minifiles" },
+                callback = function()
+                    local bufnr = vim.api.nvim_get_current_buf()
+                    updateGitStatus(bufnr)
+                end,
+            })
+
+            autocmd("User", {
+                group = augroup("close"),
+                pattern = "MiniFilesExplorerClose",
+                callback = function()
+                    clearCache()
+                end,
+            })
+
+            autocmd("User", {
+                group = augroup("update"),
+                pattern = "MiniFilesBufferUpdate",
+                callback = function(sii)
+                    local bufnr = sii.data.buf_id
+                    local cwd = vim.fn.expand("%:p:h")
+                    if gitStatusCache[cwd] then
+                        updateMiniWithGit(bufnr, gitStatusCache[cwd].statusMap)
+                    end
+                end,
+            })
         end,
     },
-
-    -- {
-    --     'nvim-tree/nvim-tree.lua',
-    --     dependencies = {
-    --         'b0o/nvim-tree-preview.lua',
-    --         'nvim-lua/plenary.nvim',
-    --     },
-    --     event = 'VeryLazy',
-    --     config = function()
-    --         local preview = require 'nvim-tree-preview'
-    --         local function on_attach(bufnr)
-    --             local api = require 'nvim-tree.api'
-    --
-    --             local function opts(desc)
-    --                 return {
-    --                     desc = 'nvim-tree: ' .. desc,
-    --                     buffer = bufnr,
-    --                     noremap = true,
-    --                     silent = true,
-    --                     nowait = true,
-    --                 }
-    --             end
-    --             -- カーソルの巡回を行う
-    --             local function wrap_cursor(direction)
-    --                 local line_count = vim.api.nvim_buf_line_count(bufnr)
-    --                 local cursor = vim.api.nvim_win_get_cursor(0)
-    --                 if direction == 'j' then
-    --                     if cursor[1] == line_count then
-    --                         vim.api.nvim_win_set_cursor(0, { 1, 0 })
-    --                     else
-    --                         vim.api.nvim_win_set_cursor(0, { cursor[1] + 1, 0 })
-    --                     end
-    --                 elseif direction == 'k' then
-    --                     if cursor[1] == 1 then
-    --                         vim.api.nvim_win_set_cursor(0, { line_count, 0 })
-    --                     else
-    --                         vim.api.nvim_win_set_cursor(0, { cursor[1] - 1, 0 })
-    --                     end
-    --                 end
-    --             end
-    --             vim.keymap.set('n', 'j', function()
-    --                 wrap_cursor 'j'
-    --             end, opts 'Down')
-    --             vim.keymap.set('n', 'k', function()
-    --                 wrap_cursor 'k'
-    --             end, opts 'Up')
-    --
-    --             api.config.mappings.default_on_attach(bufnr)
-    --             vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
-    --             vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
-    --             vim.keymap.set('n', '=', api.tree.change_root_to_node, opts 'CD')
-    --             vim.keymap.set('n', '-', api.tree.change_root_to_parent, opts 'Dir Up')
-    --             vim.keymap.set('n', 'l', api.node.open.edit, opts 'Edit')
-    --             vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Close Node')
-    --             vim.keymap.set('n', 's', '', opts '')
-    --             vim.keymap.set('n', 'sl', '<c-w>l', opts '')
-    --
-    --             vim.keymap.set('n', 'P', preview.watch, opts 'Preview (Watch)')
-    --             vim.keymap.set('n', '<Esc>', preview.unwatch, opts 'Close Preview/Unwatch')
-    --             vim.keymap.set('n', '<Tab>', function()
-    --                 local ok, node = pcall(api.tree.get_node_under_cursor)
-    --                 if ok and node then
-    --                     if node.type == 'directory' then
-    --                         api.node.open.edit()
-    --                     else
-    --                         preview.watch()
-    --                     end
-    --                 end
-    --             end, opts 'Preview')
-    --         end
-    --
-    --         preview.setup {
-    --             keymaps = {
-    --                 ['<Esc>'] = { action = 'close', unwatch = true },
-    --             },
-    --             min_width = 60,
-    --             min_height = 15,
-    --             max_width = 160,
-    --             max_height = 40,
-    --             wrap = false,       -- Whether to wrap lines in the preview window
-    --             border = 'rounded', -- Border style for the preview window
-    --         }
-    --
-    --         require('nvim-tree').setup {
-    --             on_attach = on_attach,
-    --             view = {
-    --                 signcolumn = 'yes',
-    --                 float = {
-    --                     enable = true,
-    --                     open_win_config = {
-    --                         height = 65,
-    --                         width = 45,
-    --                     },
-    --                 },
-    --             },
-    --             update_focused_file = {
-    --                 enable = true,
-    --                 update_cwd = false,
-    --             },
-    --             diagnostics = {
-    --                 enable = true,
-    --                 icons = {
-    --                     hint = ' ',
-    --                     info = ' ',
-    --                     warning = ' ',
-    --                     error = ' ',
-    --                 },
-    --                 show_on_dirs = true,
-    --             },
-    --             renderer = {
-    --                 group_empty = true,
-    --                 highlight_git = true,
-    --                 highlight_opened_files = 'name',
-    --                 icons = {
-    --                     git_placement = 'signcolumn',
-    --                     modified_placement = 'signcolumn',
-    --                     glyphs = {
-    --                         git = {
-    --                             deleted = '',
-    --                             unstaged = '',
-    --                             untracked = '',
-    --                             staged = '',
-    --                             unmerged = '',
-    --                             renamed = '»',
-    --                             ignored = '◌',
-    --                         },
-    --                     },
-    --                 },
-    --             },
-    --             filters = {
-    --                 dotfiles = false,
-    --             },
-    --             git = {
-    --                 enable = true,
-    --                 ignore = false,
-    --             },
-    --         }
-    --         local custom_actions = require("core.image")
-    --         vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-    --         vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', { noremap = true, silent = true })
-    --         vim.keymap.set('n', '<leader>i', function() custom_actions.openWithQuickLook() end,
-    --             { noremap = true, silent = true })
-    --         vim.keymap.set('n', '<leader>w', function() custom_actions.weztermPreview() end,
-    --             { noremap = true, silent = true })
-    --     end,
-    -- },
-
-    -- nvim-tree でファイル名変更した場合などに自動で更新
-    -- {
-    --     'antosha417/nvim-lsp-file-operations',
-    --     dependencies = {
-    --         'nvim-lua/plenary.nvim',
-    --         'nvim-tree/nvim-tree.lua',
-    --     },
-    --     event = 'VeryLazy',
-    --     config = function()
-    --         require('lsp-file-operations').setup()
-    --     end,
-    -- },
 
     -- LSP Management
     {
@@ -931,20 +978,6 @@ return {
                     -- end
                 end,
             })
-
-            -- typo-lsp
-            -- lspconfig.typos_lsp.setup({
-            --     on_attach = function(client, bufnr)
-            --         local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-            --         if filetype == "log" or filetype == "toggleterm" then
-            --             client.stop()
-            --         end
-            --     end,
-            --     init_options = {
-            --         config = "$HOME/.config/nvim/typos.toml",
-            --         diagnosticSeverity = "Warning",
-            --     },
-            -- })
         end,
     },
 
@@ -1127,6 +1160,7 @@ return {
             })
         end,
     },
+
     -- LSP Copilot
     {
         'zbirenbaum/copilot-cmp',
@@ -1238,6 +1272,12 @@ return {
                 flutter_lookup_cmd = "asdf where flutter",
                 fvm = false,
                 widget_guides = { enabled = true },
+                closing_tags = {
+                    enabled = true,
+                    highlight = 'LineNr',
+                    prefix = '󰡒  ',
+                    priority = 0,
+                },
                 lsp = {
                     settings = {
                         showtodos = true,
@@ -1368,48 +1408,54 @@ return {
         "lewis6991/gitsigns.nvim",
         event = "VeryLazy",
         config = function()
-            require('gitsigns').setup()
+            require('gitsigns').setup {
+                on_attach = function(bufnr)
+                    local gitsigns = require('gitsigns')
+
+                    local function map(mode, l, r, opts)
+                        opts = opts or {}
+                        opts.buffer = bufnr
+                        vim.keymap.set(mode, l, r, opts)
+                    end
+
+                    -- Navigation
+                    map('n', ']c', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ ']c', bang = true })
+                        else
+                            gitsigns.nav_hunk('next')
+                        end
+                    end)
+
+                    map('n', '[c', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ '[c', bang = true })
+                        else
+                            gitsigns.nav_hunk('prev')
+                        end
+                    end)
+
+                    -- Actions
+                    map('n', '<leader>hs', gitsigns.stage_hunk)
+                    map('n', '<leader>hr', gitsigns.reset_hunk)
+                    map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+                    map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+                    map('n', '<leader>hS', gitsigns.stage_buffer)
+                    map('n', '<leader>hu', gitsigns.undo_stage_hunk)
+                    map('n', '<leader>hR', gitsigns.reset_buffer)
+                    map('n', '<leader>hp', gitsigns.preview_hunk)
+                    map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end)
+                    map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
+                    map('n', '<leader>hd', gitsigns.diffthis)
+                    map('n', '<leader>hD', function() gitsigns.diffthis('~') end)
+                    map('n', '<leader>td', gitsigns.toggle_deleted)
+
+                    -- Text object
+                    map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+                end
+            }
         end
     },
-
-    -- {
-    --     "zbirenbaum/copilot.lua",
-    --     cmd = "Copilot",
-    --     event = "InsertEnter",
-    --     config = function()
-    --         -- Copilot の Suggestion の色を変更する
-    --         vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
-    --         require("copilot").setup({
-    --             panel = { enabled = false },
-    --             suggestion = {
-    --                 enabled = true,
-    --                 auto_trigger = true,
-    --                 hide_during_completion = true,
-    --                 debounce = 75,
-    --                 keymap = {
-    --                     accept = "<C-a>",
-    --                     accept_word = false,
-    --                     accept_line = false,
-    --                     next = "<M-]>",
-    --                     prev = "<M-[>",
-    --                     dismiss = "<C-]>",
-    --                 },
-    --             },
-    --             filetypes = {
-    --                 yaml = true,
-    --                 markdown = true,
-    --                 help = false,
-    --                 gitcommit = true,
-    --                 gitrebase = false,
-    --                 hgcommit = false,
-    --                 svn = false,
-    --                 cvs = false,
-    --                 ["."] = false,
-    --             },
-    --         })
-    --     end,
-    -- },
-    --
 
     -- {
     --     "rachartier/tiny-code-action.nvim",
