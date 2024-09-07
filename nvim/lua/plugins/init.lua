@@ -582,6 +582,12 @@ return {
     {
         "nvim-telescope/telescope.nvim",
         event = "VeryLazy",
+        keys = {
+            { "sf", mode = { "n" }, function() require("telescope.builtin").find_files({ hidden = true }) end, },
+            { "sg", mode = { "n" }, function() require("telescope.builtin").live_grep({ hidden = true }) end, },
+            { "sb", mode = { "n" }, function() require("telescope.builtin").buffers() end, },
+            { "sh", mode = { "n" }, function() require("telescope.builtin").help_tags() end, },
+        },
         config = function()
             local focus_preview = function(prompt_bufnr)
                 local action_state = require("telescope.actions.state")
@@ -648,11 +654,11 @@ return {
         },
         config = function()
             require('mini.files').setup({})
-            -- 現在のファイルのディレクトリで mini.files を開く関数
+            -- 現在のファイルのディレクトリで mini.files を開き、カーソルを現在のファイルに移動する関数
             function ToggleCurrentFile()
-                local current_file = vim.fn.expand('%:p:h')
+                local current_file = vim.api.nvim_buf_get_name(0)
                 if not require('mini.files').close() then
-                    require('mini.files').open(current_file)
+                    require('mini.files').open(current_file, true)
                 end
             end
 
@@ -929,20 +935,6 @@ return {
                     -- end
                 end,
             })
-
-            -- typo-lsp
-            -- lspconfig.typos_lsp.setup({
-            --     on_attach = function(client, bufnr)
-            --         local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-            --         if filetype == "log" or filetype == "toggleterm" then
-            --             client.stop()
-            --         end
-            --     end,
-            --     init_options = {
-            --         config = "$HOME/.config/nvim/typos.toml",
-            --         diagnosticSeverity = "Warning",
-            --     },
-            -- })
         end,
     },
 
@@ -969,10 +961,8 @@ return {
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
-
             "hrsh7th/cmp-nvim-lsp-signature-help",
             "hrsh7th/cmp-nvim-lsp-document-symbol",
-
             "onsails/lspkind-nvim",
         },
         event = { "InsertEnter", "LspAttach" },
@@ -1033,6 +1023,12 @@ return {
             vim.opt.completeopt = { "menu", "menuone", "noselect" }
             vim.o.completefunc = 'v:lua.require("cmp").complete()'
 
+            local has_words_before = function()
+                if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+            end
+
             cmp.setup({
                 completion = {
                     autocomplete = {
@@ -1071,6 +1067,13 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert({
+                    ["<Tab>"] = vim.schedule_wrap(function(fallback)
+                        if cmp.visible() and has_words_before() then
+                            cmp.confirm({ select = true })
+                        else
+                            fallback()
+                        end
+                    end),
                     ["<C-d>"] = cmp.mapping.scroll_docs(4),
                     ["<C-u>"] = cmp.mapping.scroll_docs(-4),
                     ["<C-p>"] = cmp.mapping.select_prev_item(),
@@ -1114,20 +1117,56 @@ return {
             })
         end,
     },
-    -- {
-    --     "rachartier/tiny-code-action.nvim",
-    --     dependencies = {
-    --         { "nvim-lua/plenary.nvim" },
-    --         { "nvim-telescope/telescope.nvim" },
-    --     },
-    --     event = "LspAttach",
-    --     config = function()
-    --         require('tiny-code-action').setup()
-    --         vim.keymap.set("n", "<leader>ca", function()
-    --             require("tiny-code-action").code_action()
-    --         end, { noremap = true, silent = true })
-    --     end
-    -- },
+
+    -- LSP Copilot
+    {
+        'zbirenbaum/copilot-cmp',
+        dependencies = {
+            'zbirenbaum/copilot.lua',
+        },
+        event = { 'InsertEnter', 'LspAttach' },
+        fix_pairs = true,
+        cmd = 'Copilot',
+        config = function()
+            -- Copilot の Suggestion の色を変更する
+            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
+            require('copilot').setup {
+                panel = {
+                    enabled = false,
+                },
+                suggestion = {
+                    enabled = false,
+                },
+                filetypes = {
+                    yaml = true,
+                    markdown = false,
+                    help = false,
+                    gitcommit = false,
+                    gitrebase = false,
+                    hgcommit = false,
+                    svn = false,
+                    cvs = false,
+                    ['.'] = false,
+                },
+                -- copilot_node_command = vim.env.HOME .. '/.asdf/shims/node',
+                server_opts_overrides = {},
+            }
+            require('copilot.api').register_status_notification_handler(function(data)
+                local ns = vim.api.nvim_create_namespace 'user.copilot'
+                vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+                if vim.fn.mode() == 'i' and data.status == 'InProgress' then
+                    vim.api.nvim_buf_set_extmark(0, ns, vim.fn.line '.' - 1, 0, {
+                        virt_text = { { '  ...', 'Comment' } },
+                        virt_text_pos = 'eol',
+                        hl_mode = 'combine',
+                    })
+                end
+            end)
+            require('copilot_cmp').setup {
+                method = 'getCompletionsCycling',
+            }
+        end,
+    },
 
     -- snippet
     {
@@ -1190,6 +1229,12 @@ return {
                 flutter_lookup_cmd = "asdf where flutter",
                 fvm = false,
                 widget_guides = { enabled = true },
+                closing_tags = {
+                    enabled = true,
+                    highlight = 'LineNr',
+                    prefix = '󰡒  ',
+                    priority = 0,
+                },
                 lsp = {
                     settings = {
                         showtodos = true,
@@ -1320,91 +1365,67 @@ return {
         "lewis6991/gitsigns.nvim",
         event = "VeryLazy",
         config = function()
-            require('gitsigns').setup()
+            require('gitsigns').setup {
+                on_attach = function(bufnr)
+                    local gitsigns = require('gitsigns')
+
+                    local function map(mode, l, r, opts)
+                        opts = opts or {}
+                        opts.buffer = bufnr
+                        vim.keymap.set(mode, l, r, opts)
+                    end
+
+                    -- Navigation
+                    map('n', ']c', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ ']c', bang = true })
+                        else
+                            gitsigns.nav_hunk('next')
+                        end
+                    end)
+
+                    map('n', '[c', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ '[c', bang = true })
+                        else
+                            gitsigns.nav_hunk('prev')
+                        end
+                    end)
+
+                    -- Actions
+                    map('n', '<leader>hs', gitsigns.stage_hunk)
+                    map('n', '<leader>hr', gitsigns.reset_hunk)
+                    map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+                    map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+                    map('n', '<leader>hS', gitsigns.stage_buffer)
+                    map('n', '<leader>hu', gitsigns.undo_stage_hunk)
+                    map('n', '<leader>hR', gitsigns.reset_buffer)
+                    map('n', '<leader>hp', gitsigns.preview_hunk)
+                    map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end)
+                    map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
+                    map('n', '<leader>hd', gitsigns.diffthis)
+                    map('n', '<leader>hD', function() gitsigns.diffthis('~') end)
+                    map('n', '<leader>td', gitsigns.toggle_deleted)
+
+                    -- Text object
+                    map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+                end
+            }
         end
     },
 
-    -- LSP Copilot
     -- {
-    --     'zbirenbaum/copilot-cmp',
+    --     "rachartier/tiny-code-action.nvim",
     --     dependencies = {
-    --         'zbirenbaum/copilot.lua',
+    --         { "nvim-lua/plenary.nvim" },
+    --         { "nvim-telescope/telescope.nvim" },
     --     },
-    --     event = { 'InsertEnter', 'LspAttach' },
-    --     fix_pairs = true,
-    --     cmd = 'Copilot',
+    --     event = "LspAttach",
     --     config = function()
-    --         require('copilot').setup {
-    --             panel = {
-    --                 enabled = false,
-    --             },
-    --             suggestion = {
-    --                 enabled = false,
-    --             },
-    --             filetypes = {
-    --                 yaml = true,
-    --                 markdown = false,
-    --                 help = false,
-    --                 gitcommit = false,
-    --                 gitrebase = false,
-    --                 hgcommit = false,
-    --                 svn = false,
-    --                 cvs = false,
-    --                 ['.'] = false,
-    --             },
-    --             -- copilot_node_command = vim.env.HOME .. '/.asdf/shims/node',
-    --             server_opts_overrides = {},
-    --         }
-    --         require('copilot.api').register_status_notification_handler(function(data)
-    --             local ns = vim.api.nvim_create_namespace 'user.copilot'
-    --             vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-    --             if vim.fn.mode() == 'i' and data.status == 'InProgress' then
-    --                 vim.api.nvim_buf_set_extmark(0, ns, vim.fn.line '.' - 1, 0, {
-    --                     virt_text = { { '  ...', 'Comment' } },
-    --                     virt_text_pos = 'eol',
-    --                     hl_mode = 'combine',
-    --                 })
-    --             end
-    --         end)
-    --         require('copilot_cmp').setup {
-    --             method = 'getCompletionsCycling',
-    --         }
-    --     end,
+    --         require('tiny-code-action').setup()
+    --         vim.keymap.set("n", "<leader>ca", function()
+    --             require("tiny-code-action").code_action()
+    --         end, { noremap = true, silent = true })
+    --     end
     -- },
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-            -- Copilot の Suggestion の色を変更する
-            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#E5C07B" })
-            require("copilot").setup({
-                suggestion = {
-                    enabled = true,
-                    auto_trigger = true,
-                    hide_during_completion = true,
-                    debounce = 75,
-                    keymap = {
-                        accept = "<C-a>",
-                        accept_word = false,
-                        accept_line = false,
-                        next = "<M-]>",
-                        prev = "<M-[>",
-                        dismiss = "<C-]>",
-                    },
-                },
-                filetypes = {
-                    yaml = true,
-                    markdown = true,
-                    help = false,
-                    gitcommit = true,
-                    gitrebase = false,
-                    hgcommit = false,
-                    svn = false,
-                    cvs = false,
-                    ["."] = false,
-                },
-            })
-        end,
-    },
 }
