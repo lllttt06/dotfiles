@@ -463,13 +463,13 @@ return {
         ft = 'log',
         config = function()
             -- ログのバッファだけ背景色を変える
-            vim.api.nvim_create_autocmd('FileType', {
-                pattern = 'log',
-                callback = function()
-                    vim.cmd 'highlight LogNormal guibg=#282828 ctermbg=darkgray'
-                    vim.cmd 'setlocal winhighlight=Normal:LogNormal'
-                end,
-            })
+            -- vim.api.nvim_create_autocmd('FileType', {
+            --     pattern = 'log',
+            --     callback = function()
+            --         vim.cmd 'highlight LogNormal guibg=#282828 ctermbg=darkgray'
+            --         vim.cmd 'setlocal winhighlight=Normal:LogNormal'
+            --     end,
+            -- })
         end,
     },
     -- カーソル位置ハイライト
@@ -1218,6 +1218,7 @@ return {
     -- Flutter
     {
         "akinsho/flutter-tools.nvim",
+        tag = 'v1.14.0',
         event = "VeryLazy",
         dependencies = {
             "nvim-lua/plenary.nvim",
@@ -1226,7 +1227,7 @@ return {
         config = function()
             require("flutter-tools").setup {
                 flutter_path = nil,
-                flutter_lookup_cmd = "asdf where flutter",
+                flutter_lookup_cmd = "mise where flutter",
                 fvm = false,
                 widget_guides = { enabled = true },
                 closing_tags = {
@@ -1235,13 +1236,31 @@ return {
                     prefix = '󰡒  ',
                     priority = 0,
                 },
+                dev_log = {
+                    enabled = true,
+                    notify_errors = false,
+                    open_cmd = 'botright 15split',
+                    filter = function(log_line)
+                        if log_line:find('ImpellerValidationBreak') then
+                            return false
+                        end
+                        return true
+                    end,
+                },
+                decorations = {
+                    statusline = {
+                        app_version = true,
+                        device = true,
+                        project_config = true,
+                    }
+                },
                 lsp = {
                     settings = {
                         showtodos = true,
                         completefunctioncalls = true,
                         analysisexcludedfolders = {
                             vim.fn.expand("$Home/.pub-cache"),
-                            vim.fn.expand("$HOME/.asdf/installs/flutter"),
+                            -- vim.fn.expand("$HOME/.asdf/installs/flutter"),
                         },
                         renamefileswithclasses = "prompt",
                         updateimportsonrename = true,
@@ -1252,6 +1271,7 @@ return {
                     enabled = true,
                     run_via_dap = true,
                     exception_breakpoints = {},
+                    evaluate_to_string_in_debug_views = true,
                     register_configurations = function(paths)
                         local dap = require("dap")
                         -- これを入れないと debugger が動かない
