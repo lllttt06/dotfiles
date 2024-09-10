@@ -272,6 +272,7 @@ return {
             }
         end,
     },
+
     -- Chunk
     {
         'echasnovski/mini.indentscope',
@@ -387,7 +388,7 @@ return {
                     },
                 },
             },
-        }, -- for default options, refer to the configuration section for custom setup.
+        },
         cmd = "Trouble",
         keys = {
             {
@@ -428,6 +429,9 @@ return {
         "NStefan002/screenkey.nvim",
         version = "*",
         event = "VeryLazy",
+        keys = {
+            { "sk", mode = { "n" }, function() require("screenkey").toggle() end, desc = "Screenkey" },
+        }
     },
 
     -- シンタックスハイライト
@@ -573,7 +577,7 @@ return {
         keys = {
             { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
             { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
-            { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+            { "r",     mode = { "o" },           function() require("flash").remote() end,            desc = "Remote Flash" },
             { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
             { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
         },
@@ -625,6 +629,8 @@ return {
             require("telescope").load_extension("flutter")
             -- require("telescope").load_extension("dap")
             require("telescope").load_extension("notify")
+            vim.keymap.set("n", "sn", '<cmd>lua require("telescope").extensions.notify.notify()<cr>')
+            vim.keymap.set("n", "fl", '<cmd>lua require("telescope").extensions.flutter.commands()<cr>')
         end
     },
 

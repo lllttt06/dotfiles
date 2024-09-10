@@ -33,15 +33,7 @@ keymap("n", "x", '"_x', opts)
 keymap("x", "x", '"_x', opts)
 keymap("x", "p", '"_dP', opts)
 
--- バッファを中央に寄せる
 keymap("n", "-", ":NoNeckPain<cr>", opts)
-
--- ScreenKey
-keymap("n", "sk", ':Screenkey toggle<cr>', opts)
-
--- ファイル検索
-keymap("n", "sn", '<cmd>lua require("telescope").extensions.notify.notify()<cr>', opts)
-keymap("n", "fl", '<cmd>lua require("telescope").extensions.flutter.commands()<cr>', opts)
 
 -- Insert
 -- Emacs keybind
