@@ -27,12 +27,21 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     end,
 })
 
+vim.api.nvim_create_autocmd('User', {
+    pattern = 'GitConflictDetected',
+    callback = function()
+        vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
+        vim.keymap.set('n', 'cww', function()
+            engage.conflict_buster()
+            create_buffer_local_mappings()
+        end)
+    end
+})
+
 -- vim.api.nvim_create_autocmd("VimEnter", {
 --     pattern = "*",
 --     command = "Screenkey toggle"
 -- })
-
-
 
 -- local function has_flutter_dependency_in_pubspec()
 --     local pubspec = vim.fn.glob("pubspec.yaml")
@@ -47,7 +56,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- vim.api.nvim_create_autocmd("VimEnter", {
 --     pattern = "*",
 --     callback = function()
---         if has_flutter_dependency_in_pubspec() 
+--         if has_flutter_dependency_in_pubspec()
 --             vim.notify("Flutter dependency found in pubspec.yaml", "info", {
 --                 title = "Neovim",
 --                 timeout = 5000,
