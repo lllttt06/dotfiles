@@ -38,16 +38,6 @@ return {
         end,
         dependencies = { { 'nvim-tree/nvim-web-devicons' } }
     },
-    -- カラーテーマ
-    -- {
-    -- 	"Mofiqul/vscode.nvim",
-    -- 	lazy = false,
-    -- 	priority = 1000,
-    -- 	opts = {},
-    -- 	config = function()
-    -- 		vim.cmd("colorscheme vscode")
-    -- 	end
-    -- },
     {
         "folke/tokyonight.nvim",
         lazy = false,
@@ -57,19 +47,6 @@ return {
             vim.cmd("colorscheme tokyonight-night")
         end
     },
-    -- {
-    --     "neanias/everforest-nvim",
-    --     version = false,
-    --     lazy = false,
-    --     priority = 1000, -- make sure to load this before all the other start plugins
-    --     -- Optional; default configuration will be used if setup isn't called.
-    --     config = function()
-    --         require("everforest").setup({
-    --             background = "hard",
-    --         })
-    --         vim.cmd("colorscheme everforest")
-    --     end,
-    -- },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
@@ -877,23 +854,6 @@ return {
             })
 
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-            -- local on_attach = function(_, bufnr)
-            --     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-            --
-            --     local set = vim.keymap.set
-            --     set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-            --     set("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
-            --     set("n", "<C-m>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
-            --     set("n", "gy", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
-            --     set("n", "rn", "<cmd>lua vim.lsp.buf.rename()<CR>")
-            --     set("n", "ma", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-            --     set("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-            --     set("n", "<space>e", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
-            --     set("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>")
-            --     set("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>")
-            -- end
-
             local lspconfig = require("lspconfig")
             require("mason").setup({
                 ui = {
@@ -1438,6 +1398,12 @@ return {
                 end
             }
         end
+    },
+    {
+        'akinsho/git-conflict.nvim',
+        event = 'VeryLazy',
+        version = "*",
+        config = true,
     },
 
     -- {
