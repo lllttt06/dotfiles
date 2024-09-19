@@ -14,8 +14,6 @@ if not vim.loop.fs_stat(lazypath) then
     })
 end
 
--- Obsidian API key をセットする
--- vim.env.OBSIDIAN_REST_API_KEY = '86dcd3f82d555be94345a66fa7f960fdb1c7f82dede0bfd680940f6812ed9e04'
 vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
     spec = {
