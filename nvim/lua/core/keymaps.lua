@@ -37,7 +37,7 @@ keymap("n", "-", ":NoNeckPain<cr>", opts)
 
 -- Insert
 -- Emacs keybind
-keymap("i", "jj", "<ESC>", opts)
+keymap("i", "ii", "<ESC>", opts)
 keymap("i", "<C-k>", "<Up>", opts)
 keymap("i", "<C-j>", "<Down>", opts)
 keymap("i", "<C-h>", "<Left>", opts)
@@ -49,7 +49,7 @@ keymap("i", "<C-e>", "<C-o>$", opts)
 keymap("n", "@t", ":terminal<CR>", opts)
 keymap('n', '@tv', '<C-w>v<C-w><C-w>:terminal<CR>', opts)
 keymap('n', '@ts', '<C-w>s<C-w><C-w>:terminal<CR>', opts)
-keymap("t", "jj", "<C-\\><C-n>", opts)
+keymap("t", "ii", "<C-\\><C-n>", opts)
 
 -- buffer
 keymap("n", "bh", ":bprev<CR>", opts)

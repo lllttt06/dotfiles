@@ -627,27 +627,61 @@ return {
     },
 
     -- ファイルビューワ
+    ---@type LazySpec
     {
-        'echasnovski/mini.nvim',
-        version = false,
+        "mikavilpas/yazi.nvim",
         event = "VeryLazy",
         keys = {
-            -- mini.filesオープン用のショートカット
-            { '<C-n>', ':lua if not MiniFiles.close() then MiniFiles.open() end<CR>' }
+            -- 👇 in this section, choose your own keymappings!
+            {
+                "<C-f>",
+                "<cmd>Yazi<cr>",
+                desc = "Open yazi at the current file",
+            },
+            {
+                -- Open in the current working directory
+                "<leader>cw",
+                "<cmd>Yazi cwd<cr>",
+                desc = "Open the file manager in nvim's working directory",
+            },
+            {
+                -- NOTE: this requires a version of yazi that includes
+                -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
+                '<c-up>',
+                "<cmd>Yazi toggle<cr>",
+                desc = "Resume the last yazi session",
+            },
         },
-        config = function()
-            require('mini.files').setup({})
-            -- 現在のファイルのディレクトリで mini.files を開き、カーソルを現在のファイルに移動する関数
-            function ToggleCurrentFile()
-                local current_file = vim.api.nvim_buf_get_name(0)
-                if not require('mini.files').close() then
-                    require('mini.files').open(current_file, true)
-                end
-            end
-
-            vim.api.nvim_set_keymap('n', '<C-f>', ':lua ToggleCurrentFile()<CR>', { noremap = true, silent = true })
-        end,
+        ---@type YaziConfig
+        opts = {
+            -- if you want to open yazi instead of netrw, see below for more info
+            open_for_directories = false,
+            keymaps = {
+                show_help = '<C-g>',
+            },
+        },
     },
+    -- {
+    --     'echasnovski/mini.nvim',
+    --     version = false,
+    --     event = "VeryLazy",
+    --     keys = {
+    --         -- mini.filesオープン用のショートカット
+    --         { '<C-n>', ':lua if not MiniFiles.close() then MiniFiles.open() end<CR>' }
+    --     },
+    --     config = function()
+    --         require('mini.files').setup({})
+    --         -- 現在のファイルのディレクトリで mini.files を開き、カーソルを現在のファイルに移動する関数
+    --         function ToggleCurrentFile()
+    --             local current_file = vim.api.nvim_buf_get_name(0)
+    --             if not require('mini.files').close() then
+    --                 require('mini.files').open(current_file, true)
+    --             end
+    --         end
+    --
+    --         vim.api.nvim_set_keymap('n', '<C-f>', ':lua ToggleCurrentFile()<CR>', { noremap = true, silent = true })
+    --     end,
+    -- },
     -- {
     --     'nvim-tree/nvim-tree.lua',
     --     dependencies = {
