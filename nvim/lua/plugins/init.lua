@@ -1177,12 +1177,23 @@ return {
         },
         build = "make tiktoken",          -- Only on MacOS or Linux
         keys = {
-            { "<leader>cc", "<cmd>CopilotChatToggle<cr>", desc = "CopilotChat" },
-            { "<leader>co", "<cmd>CopilotChatCommit<cr>", desc = "CopilotChat" },
-            { "<leader>cr", "<cmd>CopilotChatReview<cr>", desc = "CopilotChat" }
+            { "<leader>cc", "<cmd>CopilotChatToggle<cr>",       desc = "CopilotChat" },
+            { "<leader>co", "<cmd>CopilotChatCommitStaged<cr>", desc = "CopilotChat" },
+            { "<leader>cr", "<cmd>CopilotChatReview<cr>",       desc = "CopilotChat" }
         },
         config = function()
             local select = require('CopilotChat.select')
+            local commit_staged_prompt = [[
+                以下の条件を踏まえて変更に対するコミットメッセージを書いてください。
+
+                - コミットメッセージのprefixは、commitizenの規約に従ってください。
+                - コミットメッセージ本文は日本語で書いてください。
+                - タイトルは最大50文字、変更理由を含めてください。
+                - メッセージは72文字で折り返してください。
+                - コミットメッセージをgitcommit言語のコードブロックで囲んでください。
+                - ソースを見ても変更した理由がわからない時は、コミットメッセージを作る前に質問して、その回答も参考にコミットメッセージを生成してください。
+            ]]
+
             require('CopilotChat').setup {
                 debug = true,               -- Enable debugging
                 window = {
@@ -1199,17 +1210,17 @@ return {
                 },
                 prompts = {
                     Explain = {
-                        prompt = '/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text.',
+                        prompt = '/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text in Japanese.',
                     },
                     Fix = {
                         prompt =
-                        '/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed.',
+                        '/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed. If you explane the problem, it will be in Japanese.',
                     },
                     Optimize = {
                         prompt = '/COPILOT_GENERATE Optimize the selected code to improve performance and readability.',
                     },
                     Docs = {
-                        prompt = '/COPILOT_GENERATE Please add documentation comment for the selection.',
+                        prompt = '/COPILOT_GENERATE Please add documentation comment for the selection in Japanese.',
                     },
                     Tests = {
                         prompt = '/COPILOT_GENERATE Please generate tests for my code.',
@@ -1219,15 +1230,33 @@ return {
                         selection = select.diagnostics,
                     },
                     Commit = {
-                        prompt =
-                        'Write commit message for the change with commitizen convention in Japanese. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.',
+                        prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
                         selection = select.gitdiff,
+                        callback = function(response, _)
+                            local commit_message = response:match("```gitcommit(.-)```")
+                            if commit_message then
+                                -- 2行目を抽出
+                                local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
+                                if second_line then
+                                    vim.fn.setreg("+", second_line, "c")
+                                end
+                            end
+                        end,
                     },
                     CommitStaged = {
-                        prompt =
-                        'Write commit message for the change with commitizen convention in Japanese. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.',
+                        prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
                         selection = function(source)
                             return select.gitdiff(source, true)
+                        end,
+                        callback = function(response, _)
+                            local commit_message = response:match("```gitcommit(.-)```")
+                            if commit_message then
+                                -- 2行目を抽出
+                                local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
+                                if second_line then
+                                    vim.fn.setreg("+", second_line, "c")
+                                end
+                            end
                         end,
                     },
                     Review = {
