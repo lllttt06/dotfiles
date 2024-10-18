@@ -1573,11 +1573,10 @@ return {
     },
     {
         'akinsho/git-conflict.nvim',
-        event = 'VeryLazy',
+        -- event = 'VeryLazy',
         version = "*",
         config = true,
     },
-
     {
         "rachartier/tiny-code-action.nvim",
         dependencies = {
@@ -1591,5 +1590,5 @@ return {
                 require("tiny-code-action").code_action()
             end, { noremap = true, silent = true })
         end
-    },
+    }
 }
