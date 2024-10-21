@@ -1226,7 +1226,7 @@ return {
                         return true
                     end,
                 },
-                decorations = {
+               decorations = {
                     statusline = {
                         app_version = true,
                         device = true,
@@ -1432,5 +1432,5 @@ return {
                 require("tiny-code-action").code_action()
             end, { noremap = true, silent = true })
         end
-    }
+    },
 }
