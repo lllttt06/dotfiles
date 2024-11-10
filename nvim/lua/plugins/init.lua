@@ -38,24 +38,24 @@ return {
         end,
         dependencies = { { 'nvim-tree/nvim-web-devicons' } }
     },
-    {
-        "Mofiqul/vscode.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-        config = function()
-            vim.cmd("colorscheme vscode")
-        end
-    },
     -- {
-    --     "folke/tokyonight.nvim",
+    --     "Mofiqul/vscode.nvim",
     --     lazy = false,
     --     priority = 1000,
     --     opts = {},
     --     config = function()
-    --         vim.cmd("colorscheme tokyonight-night")
+    --         vim.cmd("colorscheme vscode")
     --     end
     -- },
+    {
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+        config = function()
+            vim.cmd("colorscheme tokyonight-night")
+        end
+    },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
@@ -546,29 +546,17 @@ return {
         event = "VeryLazy",
         config = function() require("nvim-autopairs").setup {} end
     },
+    -- surround 操作
+    {
+        'tpope/vim-surround',
+        event = 'VeryLazy',
+    },
 
     -- ファイル検索
     {
         "nvim-lua/plenary.nvim",
         event = "VeryLazy",
     },
-
-    -- Motion
-    {
-        "folke/flash.nvim",
-        event = "VeryLazy",
-        ---@type Flash.Config
-        opts = {},
-        -- stylua: ignore
-        keys = {
-            { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
-            { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
-            { "r",     mode = { "o" },           function() require("flash").remote() end,            desc = "Remote Flash" },
-            { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-            { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
-        },
-    },
-
     {
         "nvim-telescope/telescope.nvim",
         event = "VeryLazy",
@@ -1419,19 +1407,11 @@ return {
         version = "*",
         config = true,
     },
-
+    -- dynamic macro
     {
-        "rachartier/tiny-code-action.nvim",
-        dependencies = {
-            { "nvim-lua/plenary.nvim" },
-            { "nvim-telescope/telescope.nvim" },
-        },
-        event = "LspAttach",
-        config = function()
-            require('tiny-code-action').setup()
-            vim.keymap.set("n", "<leader>ca", function()
-                require("tiny-code-action").code_action()
-            end, { noremap = true, silent = true })
-        end
+        'tani/dmacro.vim',
+        keys = {
+            { "dm", mode = { "n", "i" }, '<Plug>(dmacro-play-macro)', desc = "dmacro" },
+        }
     },
 }
