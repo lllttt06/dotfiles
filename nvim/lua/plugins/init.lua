@@ -795,6 +795,7 @@ return {
             "hrsh7th/cmp-nvim-lsp-signature-help",
             "hrsh7th/cmp-nvim-lsp-document-symbol",
             "onsails/lspkind-nvim",
+            "vim-skk/skkeleton",
         },
         event = { "InsertEnter", "LspAttach" },
         config = function()
@@ -919,6 +920,7 @@ return {
                     { name = "vsnip",                   group_index = 2 },
                     { name = "nvim_lsp_signature_help", group_index = 2 },
                     { name = "path",                    group_index = 2 },
+                    { name = "skkeleton",               group_index = 2 },
                 }, {
                     { name = "buffer", group_index = 2 },
                 }),
@@ -947,6 +949,28 @@ return {
                 matching = { disallow_symbol_nonprefix_matching = false },
             })
         end,
+    },
+
+    -- SKK
+    {
+        "vim-skk/skkeleton",
+        dependencies = {
+            "vim-denops/denops.vim",
+            -- nvim-cmp との連携
+            "rinx/cmp-skkeleton"
+        },
+        keys = {
+            { "<C-t>", mode = { "i", "c", "t" }, '<Plug>(skkeleton-enable)', desc = "skkeleton" },
+        },
+        config = function()
+            vim.fn['skkeleton#config']({
+                eggLikeNewline = true,
+                keepState = true,
+                globalDictionaries = {
+                    '~/dotfiles/skk/SKK-JISYO.L',
+                },
+            })
+        end
     },
 
     -- LSP Copilot
@@ -1458,57 +1482,4 @@ return {
             { "dm", mode = { "n", "i" }, '<Plug>(dmacro-play-macro)', desc = "dmacro" },
         }
     },
-    -- denoops
-    -- {
-    --     'vim-denops/denops.vim',
-    --     event = "VeryLazy"
-    -- },
-    -- SKK
-    {
-        "vim-skk/skkeleton",
-        dependencies = {
-            "vim-denops/denops.vim",
-            -- "Shougo/ddc.vim"
-        },
-        keys = {
-            { "<C-t>", mode = { "i" }, '<Plug>(skkeleton-enable)', desc = "skkeleton" },
-        },
-        config = function()
-            vim.fn['skkeleton#config']({
-                eggLikeNewline = true,
-                keepState = true,
-                globalDictionaries = {
-                    '~/dotfiles/skk/SKK-JISYO.L',
-                },
-            })
-            --
-            -- -- DDC 設定
-            -- local ddc_config = {
-            --     sources = { "skkeleton" },
-            --     sourceOptions = {
-            --         _ = {
-            --             matchers = { "matcher_head" },
-            --             sorters = { "sorter_rank" },
-            --         },
-            --         skkeleton = {
-            --             mark = "skkeleton",
-            --             matchers = {},
-            --             sorters = {},
-            --             converters = {},
-            --             isVolatile = true,
-            --             minAutoCompleteLength = 1,
-            --         }
-            --     },
-            --     ui = 'pum'
-            -- }
-            --
-            -- -- DDC 設定を適用
-            -- vim.cmd("call ddc#custom#patch_global('sources', " .. vim.inspect(ddc_config.sources) .. ")")
-            -- vim.cmd("call ddc#custom#patch_global('sourceOptions', " .. vim.inspect(ddc_config.sourceOptions) .. ")")
-            -- vim.cmd("call ddc#custom#patch_global('ui', '" .. ddc_config.ui .. "')")
-            --
-            -- -- DDC を有効化
-            -- vim.cmd("call ddc#enable()")
-        end
-    }
 }
