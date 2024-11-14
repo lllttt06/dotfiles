@@ -1214,7 +1214,7 @@ return {
                         return true
                     end,
                 },
-               decorations = {
+                decorations = {
                     statusline = {
                         app_version = true,
                         device = true,
@@ -1408,6 +1408,36 @@ return {
         config = true,
     },
     {
+        'isakbm/gitgraph.nvim',
+        opts = {
+            symbols = {
+                merge_commit = 'M',
+                commit = '*',
+            },
+            format = {
+                timestamp = '%H:%M:%S %d-%m-%Y',
+                fields = { 'hash', 'timestamp', 'author', 'branch_name', 'tag' },
+            },
+            hooks = {
+                on_select_commit = function(commit)
+                    print('selected commit:', commit.hash)
+                end,
+                on_select_range_commit = function(from, to)
+                    print('selected range:', from.hash, to.hash)
+                end,
+            },
+        },
+        keys = {
+            {
+                "<leader>pp",
+                function()
+                    require('gitgraph').draw({}, { all = true, max_count = 5000 })
+                end,
+                desc = "GitGraph - Draw",
+            },
+        },
+    },
+    {
         "rachartier/tiny-code-action.nvim",
         dependencies = {
             { "nvim-lua/plenary.nvim" },
@@ -1428,4 +1458,57 @@ return {
             { "dm", mode = { "n", "i" }, '<Plug>(dmacro-play-macro)', desc = "dmacro" },
         }
     },
+    -- denoops
+    -- {
+    --     'vim-denops/denops.vim',
+    --     event = "VeryLazy"
+    -- },
+    -- SKK
+    {
+        "vim-skk/skkeleton",
+        dependencies = {
+            "vim-denops/denops.vim",
+            -- "Shougo/ddc.vim"
+        },
+        keys = {
+            { "<C-t>", mode = { "i" }, '<Plug>(skkeleton-enable)', desc = "skkeleton" },
+        },
+        config = function()
+            vim.fn['skkeleton#config']({
+                eggLikeNewline = true,
+                keepState = true,
+                globalDictionaries = {
+                    '~/dotfiles/skk/SKK-JISYO.L',
+                },
+            })
+            --
+            -- -- DDC 設定
+            -- local ddc_config = {
+            --     sources = { "skkeleton" },
+            --     sourceOptions = {
+            --         _ = {
+            --             matchers = { "matcher_head" },
+            --             sorters = { "sorter_rank" },
+            --         },
+            --         skkeleton = {
+            --             mark = "skkeleton",
+            --             matchers = {},
+            --             sorters = {},
+            --             converters = {},
+            --             isVolatile = true,
+            --             minAutoCompleteLength = 1,
+            --         }
+            --     },
+            --     ui = 'pum'
+            -- }
+            --
+            -- -- DDC 設定を適用
+            -- vim.cmd("call ddc#custom#patch_global('sources', " .. vim.inspect(ddc_config.sources) .. ")")
+            -- vim.cmd("call ddc#custom#patch_global('sourceOptions', " .. vim.inspect(ddc_config.sourceOptions) .. ")")
+            -- vim.cmd("call ddc#custom#patch_global('ui', '" .. ddc_config.ui .. "')")
+            --
+            -- -- DDC を有効化
+            -- vim.cmd("call ddc#enable()")
+        end
+    }
 }
