@@ -38,24 +38,24 @@ return {
         end,
         dependencies = { { 'nvim-tree/nvim-web-devicons' } }
     },
-    -- {
-    --     "Mofiqul/vscode.nvim",
-    --     lazy = false,
-    --     priority = 1000,
-    --     opts = {},
-    --     config = function()
-    --         vim.cmd("colorscheme vscode")
-    --     end
-    -- },
     {
-        "folke/tokyonight.nvim",
+        "Mofiqul/vscode.nvim",
         lazy = false,
         priority = 1000,
         opts = {},
         config = function()
-            vim.cmd("colorscheme tokyonight-night")
+            vim.cmd("colorscheme vscode")
         end
     },
+    -- {
+    --     "folke/tokyonight.nvim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     opts = {},
+    --     config = function()
+    --         vim.cmd("colorscheme tokyonight-night")
+    --     end
+    -- },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
@@ -788,6 +788,7 @@ return {
         "hrsh7th/nvim-cmp",
         dependencies = {
             "neovim/nvim-lspconfig",
+            "L3MON4D3/LuaSnip",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
@@ -796,6 +797,7 @@ return {
             "hrsh7th/cmp-nvim-lsp-document-symbol",
             "onsails/lspkind-nvim",
             "vim-skk/skkeleton",
+            ""
         },
         event = { "InsertEnter", "LspAttach" },
         config = function()
@@ -819,6 +821,7 @@ return {
             local cmp = require("cmp")
             local types = require("cmp.types")
             local lspkind = require("lspkind")
+            local luasnip = require("luasnip")
 
             lspkind.init({
                 mode = "symbol_text",
@@ -862,6 +865,11 @@ return {
             end
 
             cmp.setup({
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
+                },
                 completion = {
                     autocomplete = {
                         types.cmp.TriggerEvent.InsertEnter,
@@ -902,22 +910,44 @@ return {
                     ["<Tab>"] = vim.schedule_wrap(function(fallback)
                         if cmp.visible() and has_words_before() then
                             cmp.confirm({ select = true })
+                            -- elseif luasnip.locally_jumpable(1) then
+                            --     luasnip.jump(1)
                         else
                             fallback()
                         end
                     end),
+                    -- ['<C-s>'] = cmp.mapping(function(fallback)
+                    --     if luasnip.expand_or_jumpable() then
+                    --         luasnip.expand_or_jump()
+                    --     else
+                    --         fallback()
+                    --     end
+                    -- end, { 'i', 's' }),
+
                     ["<C-d>"] = cmp.mapping.scroll_docs(4),
                     ["<C-u>"] = cmp.mapping.scroll_docs(-4),
                     ["<C-p>"] = cmp.mapping.select_prev_item(),
                     ["<C-n>"] = cmp.mapping.select_next_item(),
                     ["<C-Space>"] = cmp.mapping.complete(),
                     ["<C-e>"] = cmp.mapping.abort(),
-                    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+                    ['<CR>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            if luasnip.expandable() then
+                                luasnip.expand()
+                            else
+                                cmp.confirm({
+                                    select = true,
+                                })
+                            end
+                        else
+                            fallback()
+                        end
+                    end),
                 }),
                 sources = cmp.config.sources({
                     { name = "copilot",                 group_index = 2 },
                     { name = "nvim_lsp",                group_index = 2 },
-                    { name = "vsnip",                   group_index = 2 },
+                    { name = "luasnip",                 group_index = 2 },
                     { name = "nvim_lsp_signature_help", group_index = 2 },
                     { name = "path",                    group_index = 2 },
                     { name = "skkeleton",               group_index = 2 },
@@ -1159,27 +1189,6 @@ return {
             }
         end
     },
-
-    -- snippet
-    {
-        "L3MON4D3/LuaSnip",
-        event = "VeryLazy",
-        config = function()
-            require("luasnip").config.set_config {
-                history = true,
-                updateevents = "TextChanged,TextChangedI",
-            }
-        end
-    },
-    {
-        "rafamadriz/friendly-snippets",
-        event = "VeryLazy",
-    },
-    {
-        "saadparwaiz1/cmp_luasnip",
-        event = "VeryLazy",
-    },
-
     -- debugger
     {
         "mfussenegger/nvim-dap",
@@ -1197,7 +1206,7 @@ return {
                             { id = "scopes", size = 0.25 },
                             "breakpoints",
                             "stacks",
-                            "watches",
+
                         },
                         size = 10, -- columns
                         position = "bottom",
@@ -1482,4 +1491,149 @@ return {
             { "dm", mode = { "n", "i" }, '<Plug>(dmacro-play-macro)', desc = "dmacro" },
         }
     },
+    {
+        "nvzone/timerly",
+        dependencies = {
+            "nvzone/volt",
+        }
+    },
+
+    -- snippet
+    {
+        "L3MON4D3/LuaSnip",
+        dependencies = { "rafamadriz/friendly-snippets" },
+        -- build = "make install_jsregexp",
+        config = function()
+            require("luasnip.loaders.from_vscode").lazy_load({ paths = { "./luasnippets/flutter.json" } })
+
+            local ls = require("luasnip")
+            -- some shorthands...
+            local snip = ls.snippet
+            local node = ls.snippet_node
+            local text = ls.text_node
+            local insert = ls.insert_node
+            local func = ls.function_node
+            local choice = ls.choice_node
+            local dynamicn = ls.dynamic_node
+
+            ls.add_snippets(nil, {
+                yaml = {
+                    snip({
+                        trig = "config",
+                        namr = "config",
+                        dscr = "config.yaml of devtools_ext",
+                    }, {
+                        text({
+                            "name: flutterkaigi",
+                            "issueTracker: 'https://github.com/lllttt06/flutter_kaigi_2024/issues'",
+                            "version: 0.0.1",
+                            "materialIconCodePoint: '0xe0b1'",
+                            "requiresConnection: true",
+                        })
+                    }),
+                },
+                dart = {
+                    snip(
+                        {
+                            trig = "devtools_ext",
+                            namr = "devtools_ext",
+                        }, {
+                            text({
+                                "import 'package:devtools_extensions/devtools_extensions.dart'",
+                                "import 'package:flutter/material.dart'",
+                                "",
+                                "void main() {",
+                                "  runApp(const MyToolsExtension());",
+                                "}",
+                                "",
+                                "class MyToolsExtension extends StatelessWidget {",
+                                "  const MyToolsExtension({super.key});",
+                                "",
+                                "  @override",
+                                "  Widget build(BuildContext context) {",
+                                "    return const DevToolsExtension(child: Text('Loading State Toggle', style: TextStyle(fontSize: 32)));",
+                                "  }",
+                                "}",
+                            }),
+                        }
+                    ),
+                    snip(
+                        {
+                            trig = "LoadingStateToggle",
+                            namr = "LoadingStateToggle",
+                        }, {
+                            text({
+                                "class LoadingStateToggle extends HookWidget {",
+                                "  const LoadingStateToggle({super.key});",
+                                "",
+                                "  @override",
+                                "  Widget build(BuildContext context) {",
+                                "    final enabled = useState(false);",
+                                "    return Column(",
+                                "      children: [",
+                                "        SwitchListTile(",
+                                "          title: const Text('Loading State Toggle', style: TextStyle(fontSize: 32)),",
+                                "          value: enabled.value,",
+                                "          onChanged: (value) async {",
+                                "            enabled.value = value;",
+                                "          },",
+                                "        ),",
+                                "      ],",
+                                "    );",
+                                "  }",
+                                "}",
+                            }),
+                        }
+                    ),
+                    snip(
+                        {
+                            trig = "register_extension",
+                            namr = "register_extension",
+                        }, {
+                            text({
+                                "useEffect(",
+                                "  () {",
+                                "    // Loading 状態更新用",
+                                "    registerExtension(",
+                                "      'ext.loadingState.update',",
+                                "      (_, parameters) async {",
+                                "        final isLoading = jsonDecode(parameters['loading'] ?? '') as bool?;",
+                                "",
+                                "        ref",
+                                "            .read(debugLoadingStateProvider.notifier)",
+                                "            .update(isLoading: isLoading ?? false);",
+                                "",
+                                "        return ServiceExtensionResponse.result(jsonEncode({}));",
+                                "      },",
+                                "    );",
+                                "    return null;",
+                                "  },",
+                                "  const [],",
+                                ");",
+                            }),
+                        }
+                    ),
+                    snip(
+                        {
+                            trig = "service_manager",
+                            namr = "service_manager",
+                        }, {
+                            text({
+                                "await serviceManager.callServiceExtensionOnMainIsolate(",
+                                " 'ext.loadingState.update',",
+                                "  args: {'loading': isLoading},",
+                                ");",
+                            }),
+                        }
+                    ),
+                },
+
+            })
+        end
+    },
+    {
+        "saadparwaiz1/cmp_luasnip",
+        event = "VeryLazy",
+    },
+
 }
