@@ -898,15 +898,15 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert({
-                    -- ["<Tab>"] = vim.schedule_wrap(function(fallback)
-                    --     if cmp.visible() and has_words_before() then
-                    --         cmp.confirm({ select = true })
-                    --     elseif luasnip.locally_jumpable(1) then
-                    --         luasnip.jump(1)
-                    --     else
-                    --         fallback()
-                    --     end
-                    -- end),
+                    ["<Tab>"] = vim.schedule_wrap(function(fallback)
+                        if cmp.visible() and has_words_before() then
+                            cmp.confirm({ select = true })
+                        elseif luasnip.locally_jumpable(1) then
+                            luasnip.jump(1)
+                        else
+                            fallback()
+                        end
+                    end),
                     -- ['<C-s>'] = cmp.mapping(function(fallback)
                     --     if luasnip.expand_or_jumpable() then
                     --         luasnip.expand_or_jump()
@@ -1556,6 +1556,7 @@ return {
                             namr = "LoadingStateToggle",
                         }, {
                             text({
+                                "import 'package:flutter_hooks/flutter_hooks.dart';",
                                 "class LoadingStateToggle extends HookWidget {",
                                 "  const LoadingStateToggle({super.key});",
                                 "",
@@ -1584,6 +1585,9 @@ return {
                             namr = "register_extension",
                         }, {
                             text({
+                                "import 'dart:convert';",
+                                "import 'dart:developer';",
+                                "import 'package:app/component/graphql_query_container.dart';",
                                 "useEffect(",
                                 "  () {",
                                 "    // Loading 状態更新用",
@@ -1614,7 +1618,7 @@ return {
                             text({
                                 "await serviceManager.callServiceExtensionOnMainIsolate(",
                                 " 'ext.loadingState.update',",
-                                "  args: {'loading': isLoading},",
+                                "  args: {'loading': value},",
                                 ");",
                             }),
                         }
