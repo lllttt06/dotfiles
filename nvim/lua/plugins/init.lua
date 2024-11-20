@@ -305,21 +305,18 @@ return {
         config = function() require("fidget").setup {} end,
     },
     {
-        "rcarriga/nvim-notify",
+        "folke/noice.nvim",
         event = "VeryLazy",
+        dependencies = {
+            "muniftanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        },
         config = function()
             require("notify").setup {
                 stages = "fade_in_slide_out",
                 background_colour = "floatshadow",
-                timeout = 3000,
+                timeout = 500,
             }
-            vim.notify = require("notify")
-        end
-    },
-    {
-        "folke/noice.nvim",
-        event = "VimEnter",
-        config = function()
             require("noice").setup {
                 lsp = {
                     -- override markdown rendering so that **cmp** and other plugins **treesitter**
@@ -348,10 +345,6 @@ return {
                 },
             }
         end,
-        dependencies = {
-            "muniftanjim/nui.nvim",
-            "rcarriga/nvim-notify",
-        }
     },
 
     -- Diagnostics
@@ -788,7 +781,6 @@ return {
         "hrsh7th/nvim-cmp",
         dependencies = {
             "neovim/nvim-lspconfig",
-            "L3MON4D3/LuaSnip",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
@@ -797,7 +789,6 @@ return {
             "hrsh7th/cmp-nvim-lsp-document-symbol",
             "onsails/lspkind-nvim",
             "vim-skk/skkeleton",
-            ""
         },
         event = { "InsertEnter", "LspAttach" },
         config = function()
@@ -858,11 +849,11 @@ return {
             vim.opt.completeopt = { "menu", "menuone", "noselect" }
             vim.o.completefunc = 'v:lua.require("cmp").complete()'
 
-            local has_words_before = function()
-                if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
-                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-                return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
-            end
+            -- local has_words_before = function()
+            --     if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+            --     local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+            --     return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+            -- end
 
             cmp.setup({
                 snippet = {
@@ -907,15 +898,15 @@ return {
                     end,
                 },
                 mapping = cmp.mapping.preset.insert({
-                    ["<Tab>"] = vim.schedule_wrap(function(fallback)
-                        if cmp.visible() and has_words_before() then
-                            cmp.confirm({ select = true })
-                            -- elseif luasnip.locally_jumpable(1) then
-                            --     luasnip.jump(1)
-                        else
-                            fallback()
-                        end
-                    end),
+                    -- ["<Tab>"] = vim.schedule_wrap(function(fallback)
+                    --     if cmp.visible() and has_words_before() then
+                    --         cmp.confirm({ select = true })
+                    --     elseif luasnip.locally_jumpable(1) then
+                    --         luasnip.jump(1)
+                    --     else
+                    --         fallback()
+                    --     end
+                    -- end),
                     -- ['<C-s>'] = cmp.mapping(function(fallback)
                     --     if luasnip.expand_or_jumpable() then
                     --         luasnip.expand_or_jump()
@@ -1493,28 +1484,25 @@ return {
     },
     {
         "nvzone/timerly",
-        dependencies = {
-            "nvzone/volt",
-        }
+        dependencies = { "nvzone/volt" }
     },
-
     -- snippet
     {
         "L3MON4D3/LuaSnip",
-        dependencies = { "rafamadriz/friendly-snippets" },
-        -- build = "make install_jsregexp",
+        -- dependencies = { "rafamadriz/friendly-snippets" },
+        build = "make install_jsregexp",
         config = function()
-            require("luasnip.loaders.from_vscode").lazy_load({ paths = { "./luasnippets/flutter.json" } })
+            -- require("luasnip.loaders.from_vscode").lazy_load({ paths = { "./luasnippets/flutter.json" } })
 
             local ls = require("luasnip")
             -- some shorthands...
             local snip = ls.snippet
-            local node = ls.snippet_node
+            -- local node = ls.snippet_node
             local text = ls.text_node
-            local insert = ls.insert_node
-            local func = ls.function_node
-            local choice = ls.choice_node
-            local dynamicn = ls.dynamic_node
+            -- local insert = ls.insert_node
+            -- local func = ls.function_node
+            -- local choice = ls.choice_node
+            -- local dynamicn = ls.dynamic_node
 
             ls.add_snippets(nil, {
                 yaml = {
