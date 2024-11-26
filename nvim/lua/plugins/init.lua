@@ -3,6 +3,7 @@ return {
     {
         'nvimdev/dashboard-nvim',
         event = 'VimEnter',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
         config = function()
             require('dashboard').setup {
                 theme = 'hyper',
@@ -36,17 +37,29 @@ return {
                 },
             }
         end,
-        dependencies = { { 'nvim-tree/nvim-web-devicons' } }
     },
     {
-        "Mofiqul/vscode.nvim",
+        'AlexvZyl/nordic.nvim',
         lazy = false,
         priority = 1000,
-        opts = {},
         config = function()
-            vim.cmd("colorscheme vscode")
+            require('nordic').load()
+            require('lualine').setup {
+                options = {
+                    theme = 'nordic'
+                }
+            }
         end
     },
+    -- {
+    --     "Mofiqul/vscode.nvim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     opts = {},
+    --     config = function()
+    --         vim.cmd("colorscheme vscode")
+    --     end
+    -- },
     -- {
     --     "folke/tokyonight.nvim",
     --     lazy = false,
@@ -493,6 +506,10 @@ return {
                 mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-y>", "zt", "zz", "zb" },
             }
         end
+    },
+    {
+        "sphamba/smear-cursor.nvim",
+        opts = {},
     },
     {
         "petertriho/nvim-scrollbar",
@@ -1277,6 +1294,39 @@ return {
                 },
             }
         end
+    },
+    -- テストフレームワーク
+    {
+        'nvim-neotest/neotest',
+        dependencies = {
+            'nvim-neotest/nvim-nio',
+            'nvim-lua/plenary.nvim',
+            'antoinemadec/FixCursorHold.nvim',
+            'nvim-treesitter/nvim-treesitter',
+            -- マルチパッケージに対応していないので Fork したものを使用
+            -- https://github.com/sidlatau/neotest-dart/pull/13
+            -- 'sidlatau/neotest-dart',
+            'IgorKhramtsov/neotest-dart',
+        },
+        event = 'VeryLazy',
+        config = function()
+            require('neotest').setup {
+                adapters = {
+                    require 'neotest-dart' {
+                        command = 'flutter',
+                        use_lsp = true,
+                        custom_test_method_names = {},
+                    },
+                },
+                consumers = { require('neotest').diagnostic, require('neotest').status },
+            }
+            vim.keymap.set('n', '<Leader>te', "<cmd>lua require('neotest').run.run()<CR>", keymap_opts)
+            vim.keymap.set('n', '<Leader>ta', "<cmd>lua require('neotest').run.run(vim.fn.expand '%')<CR>", keymap_opts)
+            vim.keymap.set('n', '<Leader>td', "<cmd>lua require('neotest').run.run({strategy = 'dap'})<CR>", keymap_opts)
+            vim.keymap.set('n', '<Leader>tu', "<cmd>lua require('neotest').output_panel.open()<CR>", keymap_opts)
+            vim.keymap.set('n', '<Leader>tp', "<cmd>lua require('neotest').output.open()<CR>", keymap_opts)
+            vim.keymap.set('n', '<Leader>ts', "<cmd>lua require('neotest').summary.toggle()<CR>", keymap_opts)
+        end,
     },
     {
         "stevearc/overseer.nvim",
