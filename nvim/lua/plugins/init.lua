@@ -38,24 +38,24 @@ return {
         end,
         dependencies = { { 'nvim-tree/nvim-web-devicons' } }
     },
-    {
-        "Mofiqul/vscode.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-        config = function()
-            vim.cmd("colorscheme vscode")
-        end
-    },
     -- {
-    --     "folke/tokyonight.nvim",
+    --     "Mofiqul/vscode.nvim",
     --     lazy = false,
     --     priority = 1000,
     --     opts = {},
     --     config = function()
-    --         vim.cmd("colorscheme tokyonight-night")
+    --         vim.cmd("colorscheme vscode")
     --     end
     -- },
+    {
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+        config = function()
+            vim.cmd("colorscheme tokyonight-night")
+        end
+    },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
@@ -513,6 +513,14 @@ return {
             }
         end
     },
+    {
+        'gen740/SmoothCursor.nvim',
+        event = "VeryLazy",
+        config = function()
+            require('smoothcursor').setup()
+        end
+    },
+
 
     -- コメントアウト
     {
