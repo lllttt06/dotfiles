@@ -27,7 +27,6 @@ vim.api.nvim_create_autocmd('User', {
     end
 })
 
-
 -- 前回開いたファイルのカーソル位置を復旧する
 vim.api.nvim_create_autocmd("BufReadPost", {
     group = vim.api.nvim_create_augroup("restore_cursor", { clear = true }),
@@ -38,17 +37,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
             vim.api.nvim_win_set_cursor(0, { row, col })
         end
     end,
-})
-
-vim.api.nvim_create_autocmd('User', {
-    pattern = 'GitConflictDetected',
-    callback = function()
-        vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
-        vim.keymap.set('n', 'cww', function()
-            engage.conflict_buster()
-            create_buffer_local_mappings()
-        end)
-    end
 })
 
 -- vim.api.nvim_create_autocmd("VimEnter", {
