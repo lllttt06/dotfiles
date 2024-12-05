@@ -38,19 +38,19 @@ return {
             }
         end,
     },
-    {
-        'AlexvZyl/nordic.nvim',
-        lazy = false,
-        priority = 1000,
-        config = function()
-            require('nordic').load()
-            require('lualine').setup {
-                options = {
-                    theme = 'nordic'
-                }
-            }
-        end
-    },
+    -- {
+    --     'AlexvZyl/nordic.nvim',
+    --     lazy = false,
+    --     priority = 1000,
+    --     config = function()
+    --         require('nordic').load()
+    --         require('lualine').setup {
+    --             options = {
+    --                 theme = 'nordic'
+    --             }
+    --         }
+    --     end
+    -- },
     -- {
     --     "Mofiqul/vscode.nvim",
     --     lazy = false,
@@ -60,15 +60,15 @@ return {
     --         vim.cmd("colorscheme vscode")
     --     end
     -- },
-    -- {
-    --     "folke/tokyonight.nvim",
-    --     lazy = false,
-    --     priority = 1000,
-    --     opts = {},
-    --     config = function()
-    --         vim.cmd("colorscheme tokyonight-night")
-    --     end
-    -- },
+    {
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+        config = function()
+            vim.cmd("colorscheme tokyonight-night")
+        end
+    },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
@@ -1563,8 +1563,7 @@ return {
         "L3MON4D3/LuaSnip",
         version = "v2.*",
         config = function()
-            require("luasnip.loaders.from_vscode").lazy_load()
-            require("luasnip.loaders.from_lua").lazy_load({ paths = { "~/.config/nvim/snippets/" } })
+            require("luasnip.loaders.from_vscode").lazy_load({ paths = { "~/.config/nvim/snippets/" } })
         end
     },
     {
