@@ -60,6 +60,9 @@ vim.opt.showtabline = 2   -- タブラインを表示
 -- （1:常に表示、2:タブが開かれたときに表示）
 vim.opt.visualbell = true -- ビープ音を表示する代わりに画面をフラッシュ
 vim.opt.showmatch = true  -- 対応する括弧をハイライト表示
+-- 空白文字の表示
+vim.o.list = true
+vim.o.listchars = "tab:→ ,trail:·,extends:↷,precedes:↶"
 
 -- インタフェース
 vim.opt.winblend = 20      -- ウィンドウの不透明度

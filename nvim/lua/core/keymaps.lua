@@ -26,9 +26,11 @@ keymap("n", ";", ":", opts)
 -- Delete a word backwards
 keymap("n", "dw", 'vb"_d', opts)
 
--- 削除の時にコピー
+-- 削除の時にコピーしない
 keymap("n", "d", '"_d', opts)
 keymap("x", "d", '"_d', opts)
+keymap("n", "D", '"_D', opts)
+keymap("x", "D", '"_D', opts)
 keymap("n", "x", '"_x', opts)
 keymap("x", "x", '"_x', opts)
 keymap("x", "p", '"_dP', opts)

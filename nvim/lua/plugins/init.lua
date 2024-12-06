@@ -1088,7 +1088,7 @@ return {
             local select = require('CopilotChat.select')
             local commit_staged_prompt = [[
                 以下の条件を踏まえて変更に対するコミットメッセージを書いてください。
-    
+
                 - コミットメッセージのprefixは、commitizenの規約に従ってください。
                 - コミットメッセージ本文は日本語で書いてください。
                 - タイトルは最大50文字、変更理由を含めてください。
@@ -1185,7 +1185,7 @@ return {
                                         end_line = start_line
                                         message = message_match
                                     end
-    
+
                                     if start_line and end_line then
                                         table.insert(diagnostics, {
                                             lnum = start_line - 1,
@@ -1202,8 +1202,8 @@ return {
                         end,
                     },
                 },
-    
-    
+
+
             }
         end
     },
@@ -1570,5 +1570,10 @@ return {
         "saadparwaiz1/cmp_luasnip",
         event = "VeryLazy",
     },
-
+    {
+        "marcussimonsen/let-it-snow.nvim",
+        cmd = "LetItSnow", -- Wait with loading until command is run
+        event = "VeryLazy",
+        opts = {},
+    }
 }
