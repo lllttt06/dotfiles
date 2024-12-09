@@ -709,7 +709,7 @@ return {
             "WhoIsSethDaniel/mason-tool-installer.nvim",
             "hrsh7th/cmp-nvim-lsp",
         },
-        event = "VeryLazy",
+        event = { "BufReadPost", "BufNewFile" },
         config = function()
             vim.keymap.set('n', '<space>di', vim.diagnostic.open_float)
             vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -748,6 +748,16 @@ return {
 
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
             local lspconfig = require("lspconfig")
+
+            lspconfig.sourcekit.setup {
+                capabilities = {
+                    workspace = {
+                        didChangeWatchedFiles = {
+                            dynamicRegistration = true,
+                        },
+                    },
+                },
+            }
             require("mason").setup({
                 ui = {
                     border = "rounded",
@@ -803,7 +813,7 @@ return {
         dependencies = 'neovim/nvim-lspconfig',
         event = 'VeryLazy',
         opts = {
-            excluded_lsp_clients = { 'copilot', 'dartls' },
+            excluded_lsp_clients = { 'copilot', 'dartls', 'sourcekit' },
             aggressive_mode = false,
             grace_period = 60 * 30, -- 30 minutes
             wakeup_delay = 5000,
@@ -1193,7 +1203,6 @@ return {
                                         end_line = start_line
                                         message = message_match
                                     end
-
                                     if start_line and end_line then
                                         table.insert(diagnostics, {
                                             lnum = start_line - 1,
@@ -1210,8 +1219,6 @@ return {
                         end,
                     },
                 },
-
-
             }
         end
     },
@@ -1583,5 +1590,16 @@ return {
         cmd = "LetItSnow", -- Wait with loading until command is run
         event = "VeryLazy",
         opts = {},
-    }
+    },
+    -- {
+    --     'eero-lehtinen/oklch-color-picker.nvim',
+    --     event = "VeryLazy",
+    --     config = function()
+    --         require('oklch-color-picker').setup {}
+    --         -- One handed keymaps recommended, you will be using the mouse
+    --         vim.keymap.set('n', '<leader>v', function()
+    --             require('oklch-color-picker').pick_under_cursor()
+    --         end, { desc = 'Color pick under cursor' })
+    --     end,
+    -- },
 }
