@@ -51,24 +51,24 @@ return {
     --         }
     --     end
     -- },
-    -- {
-    --     "Mofiqul/vscode.nvim",
-    --     lazy = false,
-    --     priority = 1000,
-    --     opts = {},
-    --     config = function()
-    --         vim.cmd("colorscheme vscode")
-    --     end
-    -- },
     {
-        "folke/tokyonight.nvim",
+        "Mofiqul/vscode.nvim",
         lazy = false,
         priority = 1000,
         opts = {},
         config = function()
-            vim.cmd("colorscheme tokyonight-night")
+            vim.cmd("colorscheme vscode")
         end
     },
+    -- {
+    --     "folke/tokyonight.nvim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     opts = {},
+    --     config = function()
+    --         vim.cmd("colorscheme tokyonight-night")
+    --     end
+    -- },
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
@@ -583,15 +583,15 @@ return {
             { "sg", mode = { "n" }, function() require("telescope.builtin").live_grep({ hidden = true }) end, },
             { "sb", mode = { "n" }, function() require("telescope.builtin").buffers() end, },
             { "sh", mode = { "n" }, function() require("telescope.builtin").help_tags() end, },
-            {
-                "<leader>ccp",
-                mode = { "n", "v" },
-                function()
-                    local actions = require("CopilotChat.actions")
-                    require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
-                end,
-                desc = "CopilotChat - Prompt actions",
-            },
+            -- {
+            --     "<leader>ccp",
+            --     mode = { "n", "v" },
+            --     function()
+            --         local actions = require("CopilotChat.actions")
+            --         require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
+            --     end,
+            --     desc = "CopilotChat - Prompt actions",
+            -- },
 
         },
         config = function()
@@ -652,40 +652,184 @@ return {
     },
 
     -- ファイルビューワ
-    ---@type LazySpec
     {
-        "mikavilpas/yazi.nvim",
-        event = "VeryLazy",
-        keys = {
-            -- 👇 in this section, choose your own keymappings!
-            {
-                "<C-f>",
-                "<cmd>Yazi<cr>",
-                desc = "Open yazi at the current file",
-            },
-            {
-                -- Open in the current working directory
-                "<leader>cw",
-                "<cmd>Yazi cwd<cr>",
-                desc = "Open the file manager in nvim's working directory",
-            },
-            {
-                -- NOTE: this requires a version of yazi that includes
-                -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
-                '<c-up>',
-                "<cmd>Yazi toggle<cr>",
-                desc = "Resume the last yazi session",
-            },
+        'nvim-tree/nvim-tree.lua',
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'b0o/nvim-tree-preview.lua',
         },
-        ---@type YaziConfig
-        opts = {
-            -- if you want to open yazi instead of netrw, see below for more info
-            open_for_directories = false,
-            keymaps = {
-                show_help = '<C-g>',
-            },
-        },
+        event = 'VeryLazy',
+        config = function()
+            local preview = require 'nvim-tree-preview'
+            local function on_attach(bufnr)
+                local api = require 'nvim-tree.api'
+                local function opts(desc)
+                    return {
+                        desc = 'nvim-tree: ' .. desc,
+                        buffer = bufnr,
+                        noremap = true,
+                        silent = true,
+                        nowait = true,
+                    }
+                end
+
+                api.config.mappings.default_on_attach(bufnr)
+                -- カーソルの巡回を行う
+                local function wrap_cursor(direction)
+                    local line_count = vim.api.nvim_buf_line_count(bufnr)
+                    local cursor = vim.api.nvim_win_get_cursor(0)
+                    if direction == 'j' then
+                        if cursor[1] == line_count then
+                            vim.api.nvim_win_set_cursor(0, { 1, 0 })
+                        else
+                            vim.api.nvim_win_set_cursor(0, { cursor[1] + 1, 0 })
+                        end
+                    elseif direction == 'k' then
+                        if cursor[1] == 1 then
+                            vim.api.nvim_win_set_cursor(0, { line_count, 0 })
+                        else
+                            vim.api.nvim_win_set_cursor(0, { cursor[1] - 1, 0 })
+                        end
+                    end
+                end
+                vim.keymap.set('n', 'j', function()
+                    wrap_cursor 'j'
+                end, opts 'Down')
+                vim.keymap.set('n', 'k', function()
+                    wrap_cursor 'k'
+                end, opts 'Up')
+                vim.keymap.set('n', 'x', api.node.run.system, opts 'Open System')
+                vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
+                vim.keymap.set('n', '=', api.tree.change_root_to_node, opts 'CD')
+                vim.keymap.set('n', '-', api.tree.change_root_to_parent, opts 'Dir Up')
+                vim.keymap.set('n', 'l', api.node.open.edit, opts 'Edit')
+                vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Close Node')
+                vim.keymap.set('n', 's', '', opts 'Nop')
+                vim.keymap.set('n', 'sl', '<c-w>l', opts 'Nop')
+                vim.keymap.set('n', 'P', preview.watch, opts 'Preview (Watch)')
+                vim.keymap.set('n', '<Esc>', preview.unwatch, opts 'Close Preview/Unwatch')
+                vim.keymap.set('n', '<Tab>', function()
+                    local ok, node = pcall(api.tree.get_node_under_cursor)
+                    if ok and node then
+                        if node.type == 'directory' then
+                            api.node.open.edit()
+                        else
+                            preview.watch()
+                        end
+                    end
+                end, opts 'Preview')
+            end
+
+            preview.setup {
+                keymaps = {
+                    ['<Esc>'] = { action = 'close', unwatch = true },
+                },
+                min_width = 60,
+                min_height = 15,
+                max_width = 160,
+                max_height = 40,
+                wrap = false,       -- Whether to wrap lines in the preview window
+                border = 'rounded', -- Border style for the preview window
+            }
+
+            require('nvim-tree').setup {
+                on_attach = on_attach,
+                view = {
+                    signcolumn = 'yes',
+                    float = {
+                        enable = true,
+                        open_win_config = {
+                            height = 65,
+                            width = 50,
+                        },
+                    },
+                },
+                update_focused_file = {
+                    enable = true,
+                    update_cwd = false,
+                },
+                diagnostics = {
+                    enable = true,
+                    icons = {
+                        hint = ' ',
+                        info = ' ',
+                        warning = ' ',
+                        error = ' ',
+                    },
+                    show_on_dirs = true,
+                },
+                renderer = {
+                    group_empty = true,
+                    highlight_git = true,
+                    highlight_opened_files = 'name',
+                    icons = {
+                        git_placement = 'signcolumn',
+                        modified_placement = 'signcolumn',
+                        glyphs = {
+                            git = {
+                                deleted = '',
+                                unstaged = '',
+                                untracked = '',
+                                staged = '',
+                                unmerged = '',
+                                renamed = '»',
+                                ignored = '◌',
+                            },
+                        },
+                    },
+                },
+                filters = {
+                    dotfiles = false,
+                },
+                git = {
+                    enable = true,
+                    ignore = false,
+                },
+            }
+            vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', {
+                noremap = true,
+                silent = true,
+            })
+            vim.keymap.set('n', '<C-f>', ':NvimTreeFindFile<CR>', {
+                noremap = true,
+                silent = true,
+            })
+        end,
     },
+    -- ---@type LazySpec
+    -- {
+    --     "mikavilpas/yazi.nvim",
+    --     event = "VeryLazy",
+    --     keys = {
+    --         -- 👇 in this section, choose your own keymappings!
+    --         {
+    --             "<C-f>",
+    --             "<cmd>Yazi<cr>",
+    --             desc = "Open yazi at the current file",
+    --         },
+    --         {
+    --             -- Open in the current working directory
+    --             "<leader>cw",
+    --             "<cmd>Yazi cwd<cr>",
+    --             desc = "Open the file manager in nvim's working directory",
+    --         },
+    --         {
+    --             -- NOTE: this requires a version of yazi that includes
+    --             -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
+    --             '<c-up>',
+    --             "<cmd>Yazi toggle<cr>",
+    --             desc = "Resume the last yazi session",
+    --         },
+    --     },
+    --     ---@type YaziConfig
+    --     opts = {
+    --         -- if you want to open yazi instead of netrw, see below for more info
+    --         open_for_directories = false,
+    --         keymaps = {
+    --             show_help = '<C-g>',
+    --         },
+    --     },
+    -- },
 
     -- nvim-tree でファイル名変更した場合などに自動で更新
     {
@@ -1089,139 +1233,139 @@ return {
             }
         end,
     },
-    {
-        "CopilotC-Nvim/CopilotChat.nvim",
-        event = "VeryLazy",
-        dependencies = {
-            { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-            { "nvim-lua/plenary.nvim" },  -- for curl, log wrapper
-        },
-        build = "make tiktoken",          -- Only on MacOS or Linux
-        keys = {
-            { "<leader>cc", "<cmd>CopilotChatToggle<cr>",       desc = "CopilotChat" },
-            { "<leader>co", "<cmd>CopilotChatCommitStaged<cr>", desc = "CopilotChat" },
-            { "<leader>cr", "<cmd>CopilotChatReview<cr>",       desc = "CopilotChat" }
-        },
-        config = function()
-            local select = require('CopilotChat.select')
-            local commit_staged_prompt = [[
-                以下の条件を踏まえて変更に対するコミットメッセージを書いてください。
-
-                - コミットメッセージのprefixは、commitizenの規約に従ってください。
-                - コミットメッセージ本文は日本語で書いてください。
-                - タイトルは最大50文字、変更理由を含めてください。
-                - メッセージは72文字で折り返してください。
-                - コミットメッセージをgitcommit言語のコードブロックで囲んでください。
-            ]]
-
-            require('CopilotChat').setup {
-                debug = true,               -- Enable debugging
-                window = {
-                    layout = 'float',       -- 'vertical', 'horizontal', 'float', 'replace'
-                    width = 0.7,            -- fractional width of parent, or absolute width in columns when > 1
-                    height = 0.7,           -- fractional height of parent, or absolute height in rows when > 1
-                    relative = 'editor',    -- 'editor', 'win', 'cursor', 'mouse'
-                    border = 'rounded',     -- 'none', single', 'double', 'rounded', 'solid', 'shadow'
-                    row = nil,              -- row position of the window, default is centered
-                    col = nil,              -- column position of the window, default is centered
-                    title = 'Copilot Chat', -- title of chat window
-                    footer = nil,           -- footer of chat window
-                    zindex = 1,             -- determines if window is on top or below other floating windows
-                },
-                prompts = {
-                    Explain = {
-                        prompt = '/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text in Japanese.',
-                    },
-                    Fix = {
-                        prompt =
-                        '/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed. If you explane the problem, it will be in Japanese.',
-                    },
-                    Optimize = {
-                        prompt = '/COPILOT_GENERATE Optimize the selected code to improve performance and readability.',
-                    },
-                    Docs = {
-                        prompt = '/COPILOT_GENERATE Please add documentation comment for the selection in Japanese.',
-                    },
-                    Tests = {
-                        prompt = '/COPILOT_GENERATE Please generate tests for my code.',
-                    },
-                    FixDiagnostic = {
-                        prompt = 'Please assist with the following diagnostic issue in file:',
-                        selection = select.diagnostics,
-                    },
-                    Commit = {
-                        prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
-                        selection = select.gitdiff,
-                        callback = function(response, _)
-                            local commit_message = response:match("```gitcommit(.-)```")
-                            if commit_message then
-                                -- 2行目を抽出
-                                local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
-                                if second_line then
-                                    vim.fn.setreg("+", second_line, "c")
-                                end
-                            end
-                        end,
-                    },
-                    CommitStaged = {
-                        prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
-                        selection = function(source)
-                            return select.gitdiff(source, true)
-                        end,
-                        callback = function(response, _)
-                            local commit_message = response:match("```gitcommit(.-)```")
-                            if commit_message then
-                                -- 2行目を抽出
-                                local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
-                                if second_line then
-                                    vim.fn.setreg("+", second_line, "c")
-                                end
-                            end
-                        end,
-                    },
-                    Review = {
-                        prompt = '/COPILOT_REVIEW Review the selected code and answer in Japanese.',
-                        callback = function(response, source)
-                            local ns = vim.api.nvim_create_namespace('copilot_review')
-                            local diagnostics = {}
-                            for line in response:gmatch('[^\r\n]+') do
-                                if line:find('^line=') then
-                                    local start_line = nil
-                                    local end_line = nil
-                                    local message = nil
-                                    local single_match, message_match = line:match('^line=(%d+): (.*)$')
-                                    if not single_match then
-                                        local start_match, end_match, m_message_match = line:match(
-                                            '^line=(%d+)-(%d+): (.*)$')
-                                        if start_match and end_match then
-                                            start_line = tonumber(start_match)
-                                            end_line = tonumber(end_match)
-                                            message = m_message_match
-                                        end
-                                    else
-                                        start_line = tonumber(single_match)
-                                        end_line = start_line
-                                        message = message_match
-                                    end
-                                    if start_line and end_line then
-                                        table.insert(diagnostics, {
-                                            lnum = start_line - 1,
-                                            end_lnum = end_line - 1,
-                                            col = 0,
-                                            message = message,
-                                            severity = vim.diagnostic.severity.WARN,
-                                            source = 'Copilot Review',
-                                        })
-                                    end
-                                end
-                            end
-                            vim.diagnostic.set(ns, source.bufnr, diagnostics)
-                        end,
-                    },
-                },
-            }
-        end
-    },
+    -- {
+    --     "CopilotC-Nvim/CopilotChat.nvim",
+    --     event = "VeryLazy",
+    --     dependencies = {
+    --         { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+    --         { "nvim-lua/plenary.nvim" },  -- for curl, log wrapper
+    --     },
+    --     build = "make tiktoken",          -- Only on MacOS or Linux
+    --     keys = {
+    --         { "<leader>cc", "<cmd>CopilotChatToggle<cr>",       desc = "CopilotChat" },
+    --         { "<leader>co", "<cmd>CopilotChatCommitStaged<cr>", desc = "CopilotChat" },
+    --         { "<leader>cr", "<cmd>CopilotChatReview<cr>",       desc = "CopilotChat" }
+    --     },
+    --     config = function()
+    --         local select = require('CopilotChat.select')
+    --         local commit_staged_prompt = [[
+    --             以下の条件を踏まえて変更に対するコミットメッセージを書いてください。
+    --
+    --             - コミットメッセージのprefixは、commitizenの規約に従ってください。
+    --             - コミットメッセージ本文は日本語で書いてください。
+    --             - タイトルは最大50文字、変更理由を含めてください。
+    --             - メッセージは72文字で折り返してください。
+    --             - コミットメッセージをgitcommit言語のコードブロックで囲んでください。
+    --         ]]
+    --
+    --         require('CopilotChat').setup {
+    --             debug = true,               -- Enable debugging
+    --             window = {
+    --                 layout = 'float',       -- 'vertical', 'horizontal', 'float', 'replace'
+    --                 width = 0.7,            -- fractional width of parent, or absolute width in columns when > 1
+    --                 height = 0.7,           -- fractional height of parent, or absolute height in rows when > 1
+    --                 relative = 'editor',    -- 'editor', 'win', 'cursor', 'mouse'
+    --                 border = 'rounded',     -- 'none', single', 'double', 'rounded', 'solid', 'shadow'
+    --                 row = nil,              -- row position of the window, default is centered
+    --                 col = nil,              -- column position of the window, default is centered
+    --                 title = 'Copilot Chat', -- title of chat window
+    --                 footer = nil,           -- footer of chat window
+    --                 zindex = 1,             -- determines if window is on top or below other floating windows
+    --             },
+    --             prompts = {
+    --                 Explain = {
+    --                     prompt = '/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text in Japanese.',
+    --                 },
+    --                 Fix = {
+    --                     prompt =
+    --                     '/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed. If you explane the problem, it will be in Japanese.',
+    --                 },
+    --                 Optimize = {
+    --                     prompt = '/COPILOT_GENERATE Optimize the selected code to improve performance and readability.',
+    --                 },
+    --                 Docs = {
+    --                     prompt = '/COPILOT_GENERATE Please add documentation comment for the selection in Japanese.',
+    --                 },
+    --                 Tests = {
+    --                     prompt = '/COPILOT_GENERATE Please generate tests for my code.',
+    --                 },
+    --                 FixDiagnostic = {
+    --                     prompt = 'Please assist with the following diagnostic issue in file:',
+    --                     selection = select.diagnostics,
+    --                 },
+    --                 Commit = {
+    --                     prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
+    --                     selection = select.gitdiff,
+    --                     callback = function(response, _)
+    --                         local commit_message = response:match("```gitcommit(.-)```")
+    --                         if commit_message then
+    --                             -- 2行目を抽出
+    --                             local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
+    --                             if second_line then
+    --                                 vim.fn.setreg("+", second_line, "c")
+    --                             end
+    --                         end
+    --                     end,
+    --                 },
+    --                 CommitStaged = {
+    --                     prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
+    --                     selection = function(source)
+    --                         return select.gitdiff(source, true)
+    --                     end,
+    --                     callback = function(response, _)
+    --                         local commit_message = response:match("```gitcommit(.-)```")
+    --                         if commit_message then
+    --                             -- 2行目を抽出
+    --                             local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
+    --                             if second_line then
+    --                                 vim.fn.setreg("+", second_line, "c")
+    --                             end
+    --                         end
+    --                     end,
+    --                 },
+    --                 Review = {
+    --                     prompt = '/COPILOT_REVIEW Review the selected code and answer in Japanese.',
+    --                     callback = function(response, source)
+    --                         local ns = vim.api.nvim_create_namespace('copilot_review')
+    --                         local diagnostics = {}
+    --                         for line in response:gmatch('[^\r\n]+') do
+    --                             if line:find('^line=') then
+    --                                 local start_line = nil
+    --                                 local end_line = nil
+    --                                 local message = nil
+    --                                 local single_match, message_match = line:match('^line=(%d+): (.*)$')
+    --                                 if not single_match then
+    --                                     local start_match, end_match, m_message_match = line:match(
+    --                                         '^line=(%d+)-(%d+): (.*)$')
+    --                                     if start_match and end_match then
+    --                                         start_line = tonumber(start_match)
+    --                                         end_line = tonumber(end_match)
+    --                                         message = m_message_match
+    --                                     end
+    --                                 else
+    --                                     start_line = tonumber(single_match)
+    --                                     end_line = start_line
+    --                                     message = message_match
+    --                                 end
+    --                                 if start_line and end_line then
+    --                                     table.insert(diagnostics, {
+    --                                         lnum = start_line - 1,
+    --                                         end_lnum = end_line - 1,
+    --                                         col = 0,
+    --                                         message = message,
+    --                                         severity = vim.diagnostic.severity.WARN,
+    --                                         source = 'Copilot Review',
+    --                                     })
+    --                                 end
+    --                             end
+    --                         end
+    --                         vim.diagnostic.set(ns, source.bufnr, diagnostics)
+    --                     end,
+    --                 },
+    --             },
+    --         }
+    --     end
+    -- },
     -- debugger
     {
         "mfussenegger/nvim-dap",
@@ -1602,4 +1746,62 @@ return {
     --         end, { desc = 'Color pick under cursor' })
     --     end,
     -- },
+    {
+        "yetone/avante.nvim",
+        event = "VeryLazy",
+        lazy = false,
+        version = false, -- set this if you want to always pull the latest change
+        opts = {
+            -- add any opts here
+            provider = "copilot",
+            -- provider = "claude",
+            -- provider = "openai",
+            auto_suggestions_provider = "copilot",
+            windows = {
+                position = "right",
+                width = 40,
+                sidebar_header = {
+                    align = "center",
+                    rounded = false,
+                },
+            },
+        },
+        -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+        build = "make",
+        -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "stevearc/dressing.nvim",
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+            --- The below dependencies are optional,
+            "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+            "zbirenbaum/copilot.lua",      -- for providers='copilot'
+            {
+                -- support for image pasting
+                "HakonHarnes/img-clip.nvim",
+                event = "VeryLazy",
+                opts = {
+                    -- recommended settings
+                    default = {
+                        embed_image_as_base64 = false,
+                        prompt_for_file_name = false,
+                        drag_and_drop = {
+                            insert_mode = true,
+                        },
+                        -- required for Windows users
+                        use_absolute_path = true,
+                    },
+                },
+            },
+            {
+                -- Make sure to set this up properly if you have lazy=true
+                'MeanderingProgrammer/render-markdown.nvim',
+                opts = {
+                    file_types = { "markdown", "Avante" },
+                },
+                ft = { "markdown", "Avante" },
+            },
+        },
+    }
 }
