@@ -1,9 +1,9 @@
 local opts = { noremap = true, silent = true }
 
---local keymap = vim.keymap
-local keymap = vim.api.nvim_set_keymap
+-- Define key mappings using variables for key combinations and commands
+local keymap = vim.keymap.set
 
---Remap space as leader key
+-- Remap space as leader key
 keymap("", "<space>", "<Nop>", opts)
 
 -- Esc 連打でハイライトを消す
