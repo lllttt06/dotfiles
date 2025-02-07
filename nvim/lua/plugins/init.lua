@@ -51,15 +51,40 @@ return {
     --         }
     --     end
     -- },
+    -- {
+    --     "Mofiqul/vscode.nvim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     opts = {},
+    --     config = function()
+    --         vim.cmd("colorscheme vscode")
+    --     end
+    -- },
     {
-        "Mofiqul/vscode.nvim",
+        'uloco/bluloco.nvim',
+        dependencies = { 'rktjmp/lush.nvim' },
         lazy = false,
         priority = 1000,
-        opts = {},
         config = function()
-            vim.cmd("colorscheme vscode")
-        end
+            require('bluloco').setup {
+                style = 'dark',
+                transparent = false,
+                italics = false,
+                terminal = vim.fn.has 'gui_running' == 1,
+                guicursor = false,
+            }
+            vim.cmd 'colorscheme bluloco'
+            -- vim.cmd 'hi LspInlayHint gui=italic guibg=NONE  guifg=#7A82DA'
+        end,
     },
+    -- {
+    --     "wtfox/jellybeans.nvim",
+    --     priority = 1000,
+    --     config = function()
+    --         require("jellybeans").setup()
+    --         vim.cmd.colorscheme("jellybeans")
+    --     end,
+    -- },
     -- {
     --     "folke/tokyonight.nvim",
     --     lazy = false,
@@ -73,6 +98,7 @@ return {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
     },
+    -- ステータスバー
     {
         'nvim-lualine/lualine.nvim',
         dependencies = {
@@ -95,9 +121,10 @@ return {
                 sections = {
                     lualine_a = {
                         {
-                            function()
-                                return ''
-                            end,
+                            'filename',
+                            icon = '',
+                            path = 1, -- 1: Relative path
+                            file_status = false,
                             padding = { left = 2, right = 2 },
                             separator = { right = '' },
                         },
@@ -916,8 +943,7 @@ return {
             require("mason-tool-installer").setup({
                 ensure_installed = {
                     -- LSP
-                    -- "typos-lsp",
-                    "gopls",
+                    "typos-lsp",
                     "lua-language-server",
                     "typescript-language-server",
                     "graphql-language-service-cli",
@@ -933,6 +959,7 @@ return {
                     "yamlfmt",
                     "yamllint",
                 },
+                -- notif
                 auto_update = true,
                 run_on_start = true,
                 start_delay = 3000,
@@ -948,6 +975,11 @@ return {
                     -- end
                 end,
             })
+            -- require('lspconfig').typos_lsp.setup({
+            --     init_options = {
+            --         config = '~/.config/nvim/spell/.typos.toml',
+            --     },
+            -- })
         end,
     },
 
@@ -1233,139 +1265,6 @@ return {
             }
         end,
     },
-    -- {
-    --     "CopilotC-Nvim/CopilotChat.nvim",
-    --     event = "VeryLazy",
-    --     dependencies = {
-    --         { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-    --         { "nvim-lua/plenary.nvim" },  -- for curl, log wrapper
-    --     },
-    --     build = "make tiktoken",          -- Only on MacOS or Linux
-    --     keys = {
-    --         { "<leader>cc", "<cmd>CopilotChatToggle<cr>",       desc = "CopilotChat" },
-    --         { "<leader>co", "<cmd>CopilotChatCommitStaged<cr>", desc = "CopilotChat" },
-    --         { "<leader>cr", "<cmd>CopilotChatReview<cr>",       desc = "CopilotChat" }
-    --     },
-    --     config = function()
-    --         local select = require('CopilotChat.select')
-    --         local commit_staged_prompt = [[
-    --             以下の条件を踏まえて変更に対するコミットメッセージを書いてください。
-    --
-    --             - コミットメッセージのprefixは、commitizenの規約に従ってください。
-    --             - コミットメッセージ本文は日本語で書いてください。
-    --             - タイトルは最大50文字、変更理由を含めてください。
-    --             - メッセージは72文字で折り返してください。
-    --             - コミットメッセージをgitcommit言語のコードブロックで囲んでください。
-    --         ]]
-    --
-    --         require('CopilotChat').setup {
-    --             debug = true,               -- Enable debugging
-    --             window = {
-    --                 layout = 'float',       -- 'vertical', 'horizontal', 'float', 'replace'
-    --                 width = 0.7,            -- fractional width of parent, or absolute width in columns when > 1
-    --                 height = 0.7,           -- fractional height of parent, or absolute height in rows when > 1
-    --                 relative = 'editor',    -- 'editor', 'win', 'cursor', 'mouse'
-    --                 border = 'rounded',     -- 'none', single', 'double', 'rounded', 'solid', 'shadow'
-    --                 row = nil,              -- row position of the window, default is centered
-    --                 col = nil,              -- column position of the window, default is centered
-    --                 title = 'Copilot Chat', -- title of chat window
-    --                 footer = nil,           -- footer of chat window
-    --                 zindex = 1,             -- determines if window is on top or below other floating windows
-    --             },
-    --             prompts = {
-    --                 Explain = {
-    --                     prompt = '/COPILOT_EXPLAIN Write an explanation for the active selection as paragraphs of text in Japanese.',
-    --                 },
-    --                 Fix = {
-    --                     prompt =
-    --                     '/COPILOT_GENERATE There is a problem in this code. Rewrite the code to show it with the bug fixed. If you explane the problem, it will be in Japanese.',
-    --                 },
-    --                 Optimize = {
-    --                     prompt = '/COPILOT_GENERATE Optimize the selected code to improve performance and readability.',
-    --                 },
-    --                 Docs = {
-    --                     prompt = '/COPILOT_GENERATE Please add documentation comment for the selection in Japanese.',
-    --                 },
-    --                 Tests = {
-    --                     prompt = '/COPILOT_GENERATE Please generate tests for my code.',
-    --                 },
-    --                 FixDiagnostic = {
-    --                     prompt = 'Please assist with the following diagnostic issue in file:',
-    --                     selection = select.diagnostics,
-    --                 },
-    --                 Commit = {
-    --                     prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
-    --                     selection = select.gitdiff,
-    --                     callback = function(response, _)
-    --                         local commit_message = response:match("```gitcommit(.-)```")
-    --                         if commit_message then
-    --                             -- 2行目を抽出
-    --                             local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
-    --                             if second_line then
-    --                                 vim.fn.setreg("+", second_line, "c")
-    --                             end
-    --                         end
-    --                     end,
-    --                 },
-    --                 CommitStaged = {
-    --                     prompt = "/COPILOT_GENERATE" .. commit_staged_prompt,
-    --                     selection = function(source)
-    --                         return select.gitdiff(source, true)
-    --                     end,
-    --                     callback = function(response, _)
-    --                         local commit_message = response:match("```gitcommit(.-)```")
-    --                         if commit_message then
-    --                             -- 2行目を抽出
-    --                             local second_line = commit_message:match("^[^\n]*\n([^\n]*)")
-    --                             if second_line then
-    --                                 vim.fn.setreg("+", second_line, "c")
-    --                             end
-    --                         end
-    --                     end,
-    --                 },
-    --                 Review = {
-    --                     prompt = '/COPILOT_REVIEW Review the selected code and answer in Japanese.',
-    --                     callback = function(response, source)
-    --                         local ns = vim.api.nvim_create_namespace('copilot_review')
-    --                         local diagnostics = {}
-    --                         for line in response:gmatch('[^\r\n]+') do
-    --                             if line:find('^line=') then
-    --                                 local start_line = nil
-    --                                 local end_line = nil
-    --                                 local message = nil
-    --                                 local single_match, message_match = line:match('^line=(%d+): (.*)$')
-    --                                 if not single_match then
-    --                                     local start_match, end_match, m_message_match = line:match(
-    --                                         '^line=(%d+)-(%d+): (.*)$')
-    --                                     if start_match and end_match then
-    --                                         start_line = tonumber(start_match)
-    --                                         end_line = tonumber(end_match)
-    --                                         message = m_message_match
-    --                                     end
-    --                                 else
-    --                                     start_line = tonumber(single_match)
-    --                                     end_line = start_line
-    --                                     message = message_match
-    --                                 end
-    --                                 if start_line and end_line then
-    --                                     table.insert(diagnostics, {
-    --                                         lnum = start_line - 1,
-    --                                         end_lnum = end_line - 1,
-    --                                         col = 0,
-    --                                         message = message,
-    --                                         severity = vim.diagnostic.severity.WARN,
-    --                                         source = 'Copilot Review',
-    --                                     })
-    --                                 end
-    --                             end
-    --                         end
-    --                         vim.diagnostic.set(ns, source.bufnr, diagnostics)
-    --                     end,
-    --                 },
-    --             },
-    --         }
-    --     end
-    -- },
     -- debugger
     {
         "mfussenegger/nvim-dap",
@@ -1735,16 +1634,16 @@ return {
         lazy = false,
         version = false, -- set this if you want to always pull the latest change
         opts = {
-            provider = "openai",
+            provider = "copilot",
             auto_suggestions_provider = "copilot",
-            openai = {
-                endpoint = "https://api.deepseek.com/v1",
-                model = "deepseek-chat",
-                timeout = 30000, -- Timeout in milliseconds
-                temperature = 0,
-                max_tokens = 4096,
-                api_key_name = "DEEPSEEK_API_KEY",
-            },
+            -- openai = {
+            --     endpoint = "https://api.deepseek.com/v1",
+            --     model = "deepseek-chat",
+            --     timeout = 30000, -- Timeout in milliseconds
+            --     temperature = 0,
+            --     max_tokens = 4096,
+            --     api_key_name = "DEEPSEEK_API_KEY",
+            -- },
             windows = {
                 position = "right",
                 width = 40,
