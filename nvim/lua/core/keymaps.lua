@@ -56,3 +56,11 @@ keymap("t", "ii", "<C-\\><C-n>", opts)
 -- buffer
 keymap("n", "bh", ":bprev<CR>", opts)
 keymap("n", "bl", ":bnext<CR>", opts)
+
+-- zz でカーソル位置を中央にする
+local function z1()
+    vim.cmd("zt")
+end
+
+-- Map the functions to keys
+keymap("n", "zz", function() z1() end, opts)
