@@ -38,19 +38,19 @@ return {
             }
         end,
     },
-    -- {
-    --     'AlexvZyl/nordic.nvim',
-    --     lazy = false,
-    --     priority = 1000,
-    --     config = function()
-    --         require('nordic').load()
-    --         require('lualine').setup {
-    --             options = {
-    --                 theme = 'nordic'
-    --             }
-    --         }
-    --     end
-    -- },
+    {
+        'AlexvZyl/nordic.nvim',
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require('nordic').load()
+            require('lualine').setup {
+                options = {
+                    theme = 'nordic'
+                }
+            }
+        end
+    },
     -- {
     --     "Mofiqul/vscode.nvim",
     --     lazy = false,
@@ -60,23 +60,23 @@ return {
     --         vim.cmd("colorscheme vscode")
     --     end
     -- },
-    {
-        'uloco/bluloco.nvim',
-        dependencies = { 'rktjmp/lush.nvim' },
-        lazy = false,
-        priority = 1000,
-        config = function()
-            require('bluloco').setup {
-                style = 'dark',
-                transparent = false,
-                italics = false,
-                terminal = vim.fn.has 'gui_running' == 1,
-                guicursor = false,
-            }
-            vim.cmd 'colorscheme bluloco'
-            -- vim.cmd 'hi LspInlayHint gui=italic guibg=NONE  guifg=#7A82DA'
-        end,
-    },
+    -- {
+    --     'uloco/bluloco.nvim',
+    --     dependencies = { 'rktjmp/lush.nvim' },
+    --     lazy = false,
+    --     priority = 1000,
+    --     config = function()
+    --         require('bluloco').setup {
+    --             style = 'dark',
+    --             transparent = false,
+    --             italics = false,
+    --             terminal = vim.fn.has 'gui_running' == 1,
+    --             guicursor = false,
+    --         }
+    --         vim.cmd 'colorscheme bluloco'
+    --         -- vim.cmd 'hi LspInlayHint gui=italic guibg=NONE  guifg=#7A82DA'
+    --     end,
+    -- },
     -- {
     --     "wtfox/jellybeans.nvim",
     --     priority = 1000,
@@ -97,6 +97,12 @@ return {
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
+    },
+    {
+        'Bekaboo/dropbar.nvim',
+        config = function()
+            require('dropbar').setup {}
+        end,
     },
     -- ステータスバー
     {
@@ -121,10 +127,9 @@ return {
                 sections = {
                     lualine_a = {
                         {
-                            'filename',
-                            icon = '',
-                            path = 1, -- 1: Relative path
-                            file_status = false,
+                            function()
+                                return ''
+                            end,
                             padding = { left = 2, right = 2 },
                             separator = { right = '' },
                         },
@@ -639,6 +644,7 @@ return {
 
             require("telescope").setup {
                 defaults = {
+                    file_ignore_patterns = { 'node_modules', '.git' },
                     mappings = {
                         n = {
                             ["<C-p>"] = require("telescope.actions.layout").toggle_preview,
@@ -1634,19 +1640,19 @@ return {
         lazy = false,
         version = false, -- set this if you want to always pull the latest change
         opts = {
-            provider = "copilot",
+            provider = "openai",
             auto_suggestions_provider = "copilot",
-            -- openai = {
-            --     endpoint = "https://api.deepseek.com/v1",
-            --     model = "deepseek-chat",
-            --     timeout = 30000, -- Timeout in milliseconds
-            --     temperature = 0,
-            --     max_tokens = 4096,
-            --     api_key_name = "DEEPSEEK_API_KEY",
-            -- },
+            openai = {
+                endpoint = "https://api.deepseek.com/v1",
+                model = "deepseek-chat",
+                timeout = 30000, -- Timeout in milliseconds
+                temperature = 0,
+                max_tokens = 4096,
+                api_key_name = "DEEPSEEK_API_KEY",
+            },
             windows = {
                 position = "right",
-                width = 40,
+                width = 50,
                 sidebar_header = {
                     align = "center",
                     rounded = true,
